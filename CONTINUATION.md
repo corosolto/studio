@@ -32,3 +32,11 @@ Research and art direction are substantially advanced, with an evidence-backed s
 Final verification passed: Studio structure and public asset boundary, source contracts, PBR mutant rejection, pack/gauntlet positive and negative fixtures, and actual loop-02 images, GLBs, collision, navigation, spawns and regions. The pistol-source check requires `CORO_CLIENT_ROOT=/Volumes/Zenith/Projects/game/corosolto/csbrasil/client`; it passes with that explicit existing client root.
 
 The genuine private candidate is `map/lajes/0.1.0`, source revision `892b54f4c57d3ffaed46b11182fc03d529515873`, with 98 hashed files and manifest SHA-256 `5f95943ad9fae20b2fd1322b48c71eced94978e83ae3ad05b74c7a048e33890d`. Schema, byte sizes and hashes were validated. It remains an unapproved owner-review candidate, not a published or runtime-promoted release. No 8/9 claim.
+
+## Hand-off
+
+- Public Studio PR: https://github.com/corosolto/studio/pull/1
+- Private assets PR: https://github.com/corosolto/studio-assets/pull/1
+- Branches were pushed; no merge or deployment was performed.
+- `ClientPackIntegration` received the private manifest path, package root, source revision, manifest hash and candidate status for local install/verify work.
+- Owner review must accept or reject the recorded dimensional deviations, visual polish, runtime evidence and camera contract before promotion.
