@@ -1,0 +1,260 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120" role="img" aria-labelledby="title desc">
+  <title id="title">Lajes vertical slice — alley, corner and rooftop metric composition callouts</title>
+  <desc id="desc">Static vector direction for a fictional Rio de Janeiro hillside terrace. Three panels show a 2.40 metre alley, a family grocery corner with 1.80 metre sidewalk and 0.15 metre curb, and a stair-accessible roof with 1.10 metre parapets and two 1000 litre tanks. Five candidate loop-02 camera poses and shared scale rules appear below. This is a composition diagram, not an as-built coordinate survey; owner review is pending.</desc>
+  <defs>
+    <style>
+      .title{font:700 31px Inter,Segoe UI,Arial,sans-serif;fill:#243331;letter-spacing:.2px}
+      .subtitle{font:400 15px Inter,Segoe UI,Arial,sans-serif;fill:#5A6560}
+      .panel-title{font:700 20px Inter,Segoe UI,Arial,sans-serif;fill:#243331;letter-spacing:1px}
+      .label{font:600 13px Inter,Segoe UI,Arial,sans-serif;fill:#243331}
+      .small{font:400 12px Inter,Segoe UI,Arial,sans-serif;fill:#46534F}
+      .tiny{font:500 10px Inter,Segoe UI,Arial,sans-serif;fill:#46534F;letter-spacing:.4px}
+      .metric{font:700 14px Inter,Segoe UI,Arial,sans-serif;fill:#8B4B35}
+      .sign{font:700 16px Inter,Segoe UI,Arial,sans-serif;fill:#F1E3C2;letter-spacing:.8px}
+      .call{fill:#F8F5ED;stroke:#C9C2B3;stroke-width:1}
+      .leader{fill:none;stroke:#8B4B35;stroke-width:1.5;marker-end:url(#arrow)}
+      .dim{fill:none;stroke:#8B4B35;stroke-width:1.5;marker-start:url(#arrow);marker-end:url(#arrow)}
+      .guide{fill:none;stroke:#F1E3C2;stroke-width:1.2;stroke-dasharray:6 5;opacity:.8}
+      .wire{fill:none;stroke:#353B3B;stroke-width:2;stroke-linecap:round}
+      .thin{fill:none;stroke:#46534F;stroke-width:1.2}
+    </style>
+    <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#8B4B35"/>
+    </marker>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5E91B4"/>
+      <stop offset="1" stop-color="#C8D8D4"/>
+    </linearGradient>
+    <linearGradient id="tank" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1D577C"/>
+      <stop offset=".48" stop-color="#347FA9"/>
+      <stop offset="1" stop-color="#246C9B"/>
+    </linearGradient>
+    <pattern id="brick" width="28" height="16" patternUnits="userSpaceOnUse">
+      <rect width="28" height="16" fill="#9E513B"/>
+      <path d="M0 0H28M0 8H28M14 0V8M0 8V16M28 8V16" stroke="#8D8172" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="1120" fill="#F2EEE5"/>
+  <text x="40" y="49" class="title">LAJES / ONE TERRACE, BUILT OVER TIME</text>
+  <text x="40" y="78" class="subtitle">Fictional North Zone Rio hillside · humid summer, 16:20 after rain · constructible direction, not research clearance</text>
+  <text x="40" y="99" class="tiny">COMPOSITION DIAGRAM — NOT AN AS-BUILT COORDINATE SURVEY · LOOP-02 CAMERA CANDIDATES / OWNER REVIEW PENDING</text>
+  <g transform="translate(1215 37)">
+    <circle cx="0" cy="0" r="12" fill="#D7C7A8"/><circle cx="32" cy="0" r="12" fill="#8FAE9E"/>
+    <circle cx="64" cy="0" r="12" fill="#9E513B"/><circle cx="96" cy="0" r="12" fill="#1E6663"/>
+    <circle cx="128" cy="0" r="12" fill="#246C9B"/><circle cx="160" cy="0" r="12" fill="#8C867A"/>
+    <text x="0" y="31" class="tiny">WARM / SAGE / CERAMIC / TEAL / WATER / CONCRETE</text>
+  </g>
+
+  <!-- ALLEY -->
+  <g transform="translate(40 112)">
+    <rect width="480" height="800" rx="4" fill="#FBF9F3" stroke="#C9C2B3"/>
+    <text x="20" y="34" class="panel-title">01 / ALLEY — TERRACE CIRCULATION</text>
+    <text x="20" y="57" class="small">Level route on one occupied terrace; hill appears above.</text>
+    <svg x="16" y="76" width="448" height="490" viewBox="0 0 448 490">
+      <rect width="448" height="490" fill="url(#sky)"/>
+      <!-- distant occupied bands -->
+      <path d="M130 150V98H176V72H218V118H260V84H302V154Z" fill="#8FAE9E" opacity=".65"/>
+      <path d="M168 151V116H204V94H238V126H276V105H315V158Z" fill="#D7C7A8" opacity=".8"/>
+      <!-- west facade, east facade and ground perspective -->
+      <path d="M0 62L174 144V365L0 475Z" fill="#D7C7A8"/>
+      <path d="M448 48L274 142V365L448 474Z" fill="#9E513B"/>
+      <path d="M448 48L414 67V442L448 474Z" fill="#8FAE9E" opacity=".72"/>
+      <path d="M174 365H274L448 475V490H0V475Z" fill="#817F73"/>
+      <path d="M174 365L0 475M274 365L448 475" class="thin" opacity=".5"/>
+      <!-- upper addition and construction seam -->
+      <path d="M0 62L174 144V208L0 140Z" fill="#8FAE9E"/>
+      <path d="M26 82V448" stroke="#8C867A" stroke-width="7" opacity=".8"/>
+      <!-- openings west -->
+      <path d="M51 274L99 286V400L51 422Z" fill="#353B3B"/>
+      <path d="M56 279L94 289V397L56 413Z" fill="#B8B19D" opacity=".45"/>
+      <path d="M111 179L151 194V241L111 230Z" fill="#252C2B"/>
+      <path d="M34 158L77 176V215L34 201Z" fill="#252C2B"/>
+      <!-- east openings and bounded brick repair -->
+      <path d="M349 281L397 263V409L349 392Z" fill="#252C2B"/>
+      <path d="M299 182L339 165V219L299 231Z" fill="#252C2B"/>
+      <path d="M382 100L420 82V130L382 143Z" fill="#252C2B"/>
+      <path d="M394 326L433 307V370L394 383Z" fill="url(#brick)" stroke="#8D8172" stroke-width="3"/>
+      <!-- drain and damp strip -->
+      <path d="M274 365L448 475V490L266 374Z" fill="#454B49"/>
+      <path d="M274 365L448 474V444L274 350Z" fill="#5E665B" opacity=".55"/>
+      <!-- supported service spans -->
+      <path d="M23 134Q223 214 423 120" class="wire"/>
+      <path d="M22 154Q223 226 423 142" class="wire" stroke-width="1.4"/>
+      <rect x="16" y="126" width="12" height="20" fill="#353B3B"/>
+      <rect x="418" y="110" width="12" height="20" fill="#353B3B"/>
+      <!-- eye line -->
+      <path d="M75 342H375" class="guide"/>
+      <text x="183" y="334" class="tiny" fill="#F1E3C2">EYE +1.65 m</text>
+      <!-- route arrow -->
+      <path d="M224 458V392" class="leader"/>
+      <text x="184" y="480" class="tiny">CLEAR WALKING LINE</text>
+    </svg>
+    <path d="M90 604H390" class="dim"/>
+    <text x="178" y="593" class="metric">2.40 m CLEAR</text>
+    <text x="91" y="624" class="small">finished faces X=7.40 / 9.80</text>
+    <rect x="20" y="647" width="207" height="61" rx="3" class="call"/>
+    <text x="31" y="667" class="label">GROUND / DRAIN</text>
+    <text x="31" y="687" class="small">1.5% crossfall · 0.18 m channel</text>
+    <text x="31" y="702" class="small">2.18 m remains walkable</text>
+    <rect x="241" y="647" width="219" height="61" rx="3" class="call"/>
+    <text x="252" y="667" class="label">OPENINGS / PHASES</text>
+    <text x="252" y="687" class="small">0.90 × 2.10 m stair door</text>
+    <text x="252" y="702" class="small">3.30 m storeys · real recesses</text>
+    <rect x="20" y="721" width="440" height="58" rx="3" class="call"/>
+    <text x="31" y="742" class="label">COMPOSITION GATE</text>
+    <text x="31" y="762" class="small">Two facade phases + drain + stair entry; ≤3 supported spans; no route clutter.</text>
+  </g>
+
+  <!-- CORNER -->
+  <g transform="translate(560 112)">
+    <rect width="480" height="800" rx="4" fill="#FBF9F3" stroke="#C9C2B3"/>
+    <text x="20" y="34" class="panel-title">02 / CORNER — DAILY-NEEDS GROCERY</text>
+    <text x="20" y="57" class="small">Commercial use explains the opening, awning and sign.</text>
+    <svg x="16" y="76" width="448" height="490" viewBox="0 0 448 490">
+      <rect width="448" height="490" fill="url(#sky)"/>
+      <!-- west front and alley return -->
+      <path d="M35 78H341V369H35Z" fill="#D7C7A8"/>
+      <path d="M341 78L422 122V369H341Z" fill="#8FAE9E"/>
+      <path d="M35 78H341V183H35Z" fill="#8FAE9E"/>
+      <path d="M35 183H341" stroke="#8C867A" stroke-width="8"/>
+      <path d="M35 78V369" stroke="#8C867A" stroke-width="8"/>
+      <!-- upper windows -->
+      <rect x="74" y="103" width="57" height="55" fill="#252C2B"/>
+      <rect x="235" y="103" width="57" height="55" fill="#252C2B"/>
+      <path d="M69 158H136M230 158H297" stroke="#8C867A" stroke-width="5"/>
+      <!-- sign -->
+      <rect x="62" y="199" width="225" height="42" fill="#1E6663"/>
+      <text x="75" y="225" class="sign">MERCEARIA IRMÃOS REIS</text>
+      <!-- awning -->
+      <path d="M52 248H301L320 270H36Z" fill="#636C6B"/>
+      <path d="M48 249V281M305 251V280" stroke="#353B3B" stroke-width="3"/>
+      <!-- shop and separate entrance -->
+      <rect x="66" y="275" width="158" height="94" fill="#252C2B"/>
+      <path d="M66 275H224V289H66Z" fill="#B8B19D"/>
+      <path d="M68 278H222M68 283H222" stroke="#6E7168" stroke-width="1"/>
+      <rect x="255" y="268" width="48" height="101" fill="#353B3B"/>
+      <rect x="260" y="273" width="38" height="96" fill="#B8B19D" opacity=".5"/>
+      <rect x="315" y="302" width="18" height="32" fill="#8A9B96"/>
+      <!-- side stair door and window -->
+      <path d="M361 275L395 289V369H361Z" fill="#252C2B"/>
+      <path d="M363 151L392 166V207L363 195Z" fill="#252C2B"/>
+      <!-- sidewalk, curb, road -->
+      <path d="M18 369H422L448 416H0Z" fill="#9A9386"/>
+      <path d="M0 416H448V433H0Z" fill="#AAA394"/>
+      <path d="M0 433H448V490H0Z" fill="#484944"/>
+      <path d="M0 416H448" stroke="#E2D9C6" stroke-width="2"/>
+      <path d="M75 369L53 416M150 369L138 416M225 369V416M300 369L313 416M375 369L400 416" stroke="#817F73" stroke-width="1" opacity=".65"/>
+      <!-- crate inside threshold -->
+      <rect x="78" y="346" width="32" height="23" fill="#6C4932"/>
+      <path d="M78 354H110M88 346V369M100 346V369" stroke="#9A6C48" stroke-width="2"/>
+      <!-- one supported pole -->
+      <path d="M414 99V404" stroke="#87877C" stroke-width="9"/>
+      <path d="M414 110Q370 149 334 178" class="wire"/>
+      <rect x="329" y="169" width="11" height="18" fill="#353B3B"/>
+      <!-- clear zone -->
+      <path d="M121 397H309" class="guide"/>
+      <text x="166" y="391" class="tiny" fill="#F1E3C2">1.20 m PROP-FREE</text>
+    </svg>
+    <path d="M68 592H332" class="dim"/>
+    <text x="137" y="581" class="metric">1.80 m SIDEWALK</text>
+    <path d="M405 568V608" class="dim"/>
+    <text x="345" y="626" class="metric">0.15 m CURB</text>
+    <rect x="20" y="647" width="207" height="61" rx="3" class="call"/>
+    <text x="31" y="667" class="label">SHOP OPENING</text>
+    <text x="31" y="687" class="small">3.00 × 2.40 m clear shutter</text>
+    <text x="31" y="702" class="small">separate 0.90 × 2.10 m door</text>
+    <rect x="241" y="647" width="219" height="61" rx="3" class="call"/>
+    <text x="252" y="667" class="label">ONE SIGN / ONE USE</text>
+    <text x="252" y="687" class="small">3.60 × 0.55 m teal/cream</text>
+    <text x="252" y="702" class="small">PÃO • LEITE • GELO</text>
+    <rect x="20" y="721" width="440" height="58" rx="3" class="call"/>
+    <text x="31" y="742" class="label">COMPOSITION GATE</text>
+    <text x="31" y="762" class="small">Read curb → sidewalk → open shop → upper home; board and crates stay inside.</text>
+  </g>
+
+  <!-- ROOFTOP -->
+  <g transform="translate(1080 112)">
+    <rect width="480" height="800" rx="4" fill="#FBF9F3" stroke="#C9C2B3"/>
+    <text x="20" y="34" class="panel-title">03 / ROOFTOP — WATER + SKYLINE</text>
+    <text x="20" y="57" class="small">Four stair flights reach a protected, occupied terrace.</text>
+    <svg x="16" y="76" width="448" height="490" viewBox="0 0 448 490">
+      <rect width="448" height="490" fill="url(#sky)"/>
+      <circle cx="374" cy="67" r="25" fill="#FFE0B0" opacity=".75"/>
+      <!-- three separated terrace bands -->
+      <path d="M0 210V160H53V125H108V176H155V140H205V205Z" fill="#8FAE9E" opacity=".38"/>
+      <path d="M167 230V173H219V143H269V192H323V128H375V177H448V234Z" fill="#8C867A" opacity=".45"/>
+      <path d="M0 271V220H76V188H135V239H201V203H269V261Z" fill="#C58D55" opacity=".48"/>
+      <path d="M248 276V229H305V184H361V219H411V173H448V279Z" fill="#8FAE9E" opacity=".58"/>
+      <!-- stair headhouse -->
+      <path d="M25 250H135V367H25Z" fill="#8FAE9E"/>
+      <path d="M135 250L174 228V349L135 367Z" fill="#738F83"/>
+      <path d="M18 248L128 248L174 226L66 226Z" fill="#8C867A"/>
+      <rect x="58" y="278" width="46" height="89" fill="#252C2B"/>
+      <text x="33" y="244" class="tiny">STAIR ARRIVAL +6.60 m</text>
+      <!-- roof plane -->
+      <path d="M0 366L181 298L448 354V490H0Z" fill="#8C867A"/>
+      <path d="M0 366L181 298L448 354" stroke="#B7AE9C" stroke-width="3"/>
+      <!-- service envelopes: 0.60 m around each upper diameter -->
+      <path d="M188 214H284V385H188ZM286 214H382V385H286Z" class="guide"/>
+      <text x="195" y="204" class="tiny" fill="#F1E3C2">0.60 m SERVICE ENVELOPES</text>
+      <!-- full level tank plinths -->
+      <path d="M195 353H278V372H195Z" fill="#77766D"/>
+      <path d="M292 363H375V382H292Z" fill="#77766D"/>
+      <!-- two tapered tanks: wider upper diameter, narrower supported base -->
+      <g>
+        <path d="M201 241L205.4 348C205.4 367 267.6 367 267.6 348L272 241Z" fill="url(#tank)"/>
+        <ellipse cx="236.5" cy="241" rx="35.5" ry="12" fill="#347FA9"/>
+        <ellipse cx="236.5" cy="234" rx="24" ry="8" fill="#246C9B"/>
+        <path d="M202.5 271H270.5M204 307H269M205 340H268" stroke="#1D577C" stroke-width="2" opacity=".65"/>
+      </g>
+      <g>
+        <path d="M298 251L302.4 358C302.4 377 364.6 377 364.6 358L369 251Z" fill="url(#tank)"/>
+        <ellipse cx="333.5" cy="251" rx="35.5" ry="12" fill="#347FA9"/>
+        <ellipse cx="333.5" cy="244" rx="24" ry="8" fill="#246C9B"/>
+        <path d="M299.5 281H367.5M301 317H366M302 350H365" stroke="#1D577C" stroke-width="2" opacity=".65"/>
+      </g>
+      <!-- connected feed / overflow -->
+      <path d="M183 364V326H201M272 337H298M369 349H390V402" fill="none" stroke="#B8B19D" stroke-width="4"/>
+      <path d="M183 338H192M183 351H192M390 365H400M390 386H400" stroke="#353B3B" stroke-width="2"/>
+      <!-- parapet front and side -->
+      <path d="M0 413L181 353L448 402V454L181 403L0 468Z" fill="#D7C7A8"/>
+      <path d="M0 413L181 353L448 402" stroke="#F1E3C2" stroke-width="7"/>
+      <path d="M0 468L181 403L448 454" stroke="#B8AB92" stroke-width="2"/>
+      <!-- safe roof route -->
+      <path d="M87 383Q135 405 188 402" class="leader"/>
+    </svg>
+    <path d="M80 582V632" class="dim"/>
+    <text x="96" y="610" class="metric">1.10 m PARAPET</text>
+    <path d="M265 581H355" class="dim"/>
+    <text x="255" y="572" class="metric">Ø1.47 m TOP</text>
+    <rect x="20" y="647" width="207" height="61" rx="3" class="call"/>
+    <text x="31" y="667" class="label">STAIR / ROUTE</text>
+    <text x="31" y="687" class="small">4 × 10 risers · 0.165 m each</text>
+    <text x="31" y="702" class="small">0.30 m treads · 1.20 m clear</text>
+    <rect x="241" y="647" width="219" height="61" rx="3" class="call"/>
+    <text x="252" y="667" class="label">TWO × 1000 L TANKS</text>
+    <text x="252" y="687" class="small">0.80 m high · full level plinth</text>
+    <text x="252" y="702" class="small">Ø1.29 m base · 0.60 m service</text>
+    <rect x="20" y="721" width="440" height="58" rx="3" class="call"/>
+    <text x="31" y="742" class="label">COMPOSITION GATE</text>
+    <text x="31" y="762" class="small">Three separated roof bands; ≥35% sky; tanks read as utilities, never mini-houses.</text>
+  </g>
+
+  <!-- CAMERA / CONTRACT STRIP -->
+  <g transform="translate(40 937)">
+    <rect width="1520" height="137" rx="4" fill="#243331"/>
+    <text x="18" y="27" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13" font-weight="700" fill="#F1E3C2" letter-spacing="1">CANDIDATE LOOP-02 / 1600 × 1000 / 36 mm SENSOR / OWNER REVIEW PENDING</text>
+    <g font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" fill="#F4F0E7">
+      <text x="18" y="53" font-weight="700">SPAWN · 24 mm</text><text x="18" y="72">(0.00, −4.00, 1.67)</text><text x="18" y="89">→ (0.00, 3.00, 1.85)</text>
+      <text x="304" y="53" font-weight="700">ALLEY · 22 mm</text><text x="304" y="72">(0.75, −2.50, 1.65)</text><text x="304" y="89">→ (−2.50, 9.20, 3.05)</text>
+      <text x="590" y="53" font-weight="700">CORNER · 22 mm</text><text x="590" y="72">(8.80, −8.00, 1.52)</text><text x="590" y="89">→ (4.50, −4.40, 2.25)</text>
+      <text x="876" y="53" font-weight="700">ROOFTOP · 22 mm</text><text x="876" y="72">(−2.95, 12.50, 8.65)</text><text x="876" y="89">→ (−4.75, 1.20, 6.55)</text>
+      <text x="1162" y="53" font-weight="700">SKY · 18 mm</text><text x="1162" y="72">(−4.70, 5.40, 7.75)</text><text x="1162" y="89">→ (−4.70, 5.40, 50.00)</text>
+    </g>
+    <path d="M18 105H1502" stroke="#63736C"/>
+    <text x="18" y="124" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" fill="#D7C7A8">SCALE WITNESSES: doors 0.90 × 2.10 · eye +1.65 · storeys 3.30 · curb 0.15 · tanks Ø1.47/1.29 × 0.80 · sign 3.60 × 0.55</text>
+  </g>
+  <text x="40" y="1100" class="small">LOW retains routes, openings, storey rhythm, shop sign, curb, parapets, two tanks, cable sag and skyline bands. Remove microdetail first. Authoring caps: med 100k tris / 90 calls · low 32k / 40.</text>
+</svg>
