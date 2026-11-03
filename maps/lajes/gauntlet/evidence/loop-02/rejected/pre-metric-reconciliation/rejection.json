@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "loop": "loop-02",
+  "status": "superseded_pre_metric_reconciliation",
+  "observed_issues": [
+    "The corner road-approach spawn was outside the declared commercial_corner region bounds.",
+    "The storefront sign, secondary text, rolling opening, curb, sidewalk and tank plinth dimensions did not match the final metric-kit values."
+  ],
+  "corrections": [
+    "Expand commercial_corner to include the road approach and shop threshold.",
+    "Use a teal 3.60 x 0.055 x 0.55 m sign and PÃO • LEITE • GELO secondary text.",
+    "Use a 3.00 m rolling opening, 0.15 m curb, 1.80 m sidewalk and 1.55 m level tank plinths while retaining service clearance."
+  ],
+  "preserved_evidence": ["Five medium captures", "Five low captures", "Six route frames", "Camera/capture/change metadata", "route-sequence.json"]
+}

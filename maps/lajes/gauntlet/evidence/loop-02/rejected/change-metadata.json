@@ -1,0 +1,17 @@
+{
+  "corrected_integration_mismatches": [
+    "Raised the accessible west roof from 5.80 m to 6.60 m and replaced two 17-riser flights with four 10-riser flights at 0.165 m rise, 0.30 m tread and 1.20 m clear width.",
+    "Raised every exposed west parapet from 0.95 m to 1.10 m while retaining the stair-arrival opening.",
+    "Placed both tapered 1000 L tanks on the accessible west roof with level bases and a measured 0.725 m plinth-to-route service clearance.",
+    "Changed the grocery identity to MERCEARIA IRM\u00c3OS REIS and added restrained FRUTAS E MERCADO secondary lettering.",
+    "Re-aimed the sky camera from building context to direct +Z zenith for the polar-distortion test."
+  ],
+  "loop": "loop-02",
+  "loop_01_private_archive": "previews/loop-01/",
+  "loop_01_public_evidence_unchanged": true,
+  "loop_01_rejected_evidence_preserved": "loop-01/rejected/",
+  "loop_02_rejected_attempt": null,
+  "schema_version": 1,
+  "supersedes": "loop-01",
+  "unresolved_dimensional_deviations": []
+}

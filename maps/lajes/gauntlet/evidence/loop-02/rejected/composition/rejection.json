@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "loop": "loop-02",
+  "status": "rejected_composition_iteration",
+  "observed_issues": [
+    "The first player-height corner pose was too close to the rolling shutter and did not keep the grocery frontage useful.",
+    "The flight-02 and flight-04 walkthrough targets looked into surrounding walls instead of the tread contact sequence."
+  ],
+  "remediation": [
+    "Move the declared corner spawn to a collision-clear road approach while preserving exact 1.65 m eye-height camera metadata.",
+    "Pitch the two flight-sequence cameras downward toward the modeled treads."
+  ],
+  "files": ["corner.png", "low-corner.png", "03-flight-02.png", "05-flight-04.png"]
+}

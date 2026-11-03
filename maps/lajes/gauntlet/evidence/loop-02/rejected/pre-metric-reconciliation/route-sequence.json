@@ -1,0 +1,115 @@
+{
+  "evidence_type": "Blender Eevee authored camera-pose sequence; not runtime movement, physics, navmesh or traversal evidence",
+  "frames": [
+    {
+      "bytes": 1969552,
+      "id": "01-ground",
+      "location_m": [
+        0.0,
+        -4.0,
+        1.67
+      ],
+      "path": "previews/route/01-ground.png",
+      "public_evidence": "route/01-ground.png",
+      "route_node": "spawn_alley",
+      "sha256": "fb7b532cee93e1d91b181234b8c8591b8f2d18383bdeedd99dd65e65c0416bb8",
+      "target_m": [
+        0.0,
+        3.0,
+        1.85
+      ]
+    },
+    {
+      "bytes": 1993712,
+      "id": "02-court-passage",
+      "location_m": [
+        -1.72,
+        8.75,
+        1.67
+      ],
+      "path": "previews/route/02-court-passage.png",
+      "public_evidence": "route/02-court-passage.png",
+      "route_node": "court_passage",
+      "sha256": "626674698c5a887073b4ba358dfb09901eca01ac25582519f3594f9cece7b591",
+      "target_m": [
+        -6.15,
+        10.0,
+        1.82
+      ]
+    },
+    {
+      "bytes": 1916392,
+      "id": "03-flight-02",
+      "location_m": [
+        -4.45,
+        11.5,
+        4.125
+      ],
+      "path": "previews/route/03-flight-02.png",
+      "public_evidence": "route/03-flight-02.png",
+      "route_node": "stair_02_base",
+      "sha256": "50ce1f21a2383e1fff4ee8b262d290acaaa223c161c5ad803006d3a692e15740",
+      "target_m": [
+        -4.45,
+        10.5,
+        2.75
+      ]
+    },
+    {
+      "bytes": 1853307,
+      "id": "04-landing-02",
+      "location_m": [
+        -5.25,
+        9.4,
+        4.95
+      ],
+      "path": "previews/route/04-landing-02.png",
+      "public_evidence": "route/04-landing-02.png",
+      "route_node": "landing_02",
+      "sha256": "533df7c569e89e373ab7cdccfcbaeb74e446d3c42f72735307d9758fcec20e2e",
+      "target_m": [
+        -6.15,
+        10.0,
+        3.45
+      ]
+    },
+    {
+      "bytes": 1809685,
+      "id": "05-flight-04",
+      "location_m": [
+        -4.45,
+        11.5,
+        7.425
+      ],
+      "path": "previews/route/05-flight-04.png",
+      "public_evidence": "route/05-flight-04.png",
+      "route_node": "stair_04_base",
+      "sha256": "c85f1f810c52d2e8ca652ac0c5725bcf84815c6665b26bf27f37a72407f356e7",
+      "target_m": [
+        -4.45,
+        10.5,
+        5.9
+      ]
+    },
+    {
+      "bytes": 1754327,
+      "id": "06-roof-arrival",
+      "location_m": [
+        -4.45,
+        7.45,
+        8.25
+      ],
+      "path": "previews/route/06-roof-arrival.png",
+      "public_evidence": "route/06-roof-arrival.png",
+      "route_node": "roof_entry",
+      "sha256": "6508c942119a6a460ed0fbb43cc8b7427dfcdd54dd092facc25e45de6a1bc16f",
+      "target_m": [
+        -3.9,
+        3.9,
+        7.3
+      ]
+    }
+  ],
+  "renderer": "BLENDER_EEVEE",
+  "schema_version": 1
+}

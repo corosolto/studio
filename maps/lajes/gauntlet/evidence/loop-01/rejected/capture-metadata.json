@@ -1,0 +1,79 @@
+{
+  "blender_version": "5.2.0 LTS",
+  "candidate": {
+    "approval": "candidate only; not owner-approved or runtime-promoted",
+    "id": "lajes",
+    "kind": "map",
+    "version": "0.1.0"
+  },
+  "captures": [
+    {
+      "bytes": 1879631,
+      "camera": "spawn",
+      "path": "previews/spawn.png",
+      "public_evidence": "spawn.png",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "03f643a874d6ed532e8245602a2c17528f2a74a1ce2a5c93ba55109fe58d2846"
+    },
+    {
+      "bytes": 1948833,
+      "camera": "alley",
+      "path": "previews/alley.png",
+      "public_evidence": "alley.png",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "a95bbcd30a6605d261ee97887fba48805752045d6d23c230fa6866783445ac18"
+    },
+    {
+      "bytes": 1897992,
+      "camera": "corner",
+      "path": "previews/corner.png",
+      "public_evidence": "corner.png",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "8bdb0cc8baa5f89d927164c7f339079f54e10260eab57203c0357dd499817fa5"
+    },
+    {
+      "bytes": 1681023,
+      "camera": "rooftop",
+      "path": "previews/rooftop.png",
+      "public_evidence": "rooftop.png",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "5335beb89dc4e5d529e36864e4a05adcaf4910dc2a54020569eaaf0c9d535c3b"
+    },
+    {
+      "bytes": 1369187,
+      "camera": "sky",
+      "path": "previews/sky.png",
+      "public_evidence": "sky.png",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "4e48fe998769ba293589f9855c56ee2ca69e195bd91f919540b6f22e581e8973"
+    }
+  ],
+  "engine": "BLENDER_EEVEE",
+  "limitations": [
+    "Fixed-camera renders are visual evidence, not runtime performance or physics certification.",
+    "No rejected first render was generated in this authoring run."
+  ],
+  "loop": "loop-01",
+  "rejected_attempt": null,
+  "resolution_px": [
+    1600,
+    1000
+  ],
+  "schema_version": 1,
+  "seed": 12061103
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "loop": "loop-02",
+  "status": "rejected_first_loop_02_attempt",
+  "observed_issues": [
+    "The court_entry to stair_01_base navigation segment crossed the solid east court boundary; no real passage existed.",
+    "Two exterior crates obstructed the public sidewalk and the 0.30 m-radius corner spawn envelope.",
+    "The unbatched medium GLB exceeded the 90-primitive authoring budget, and the spawn/corner cameras did not match declared player-height spawn poses.",
+    "Matching low/medium fixed-camera evidence, a Blender route sequence, sampled collision-clearance evidence and exported-GLB validation evidence were still missing."
+  ],
+  "required_remediation": [
+    "Model a 1.50 m court opening, route through its center and sample all walk edges against actual collision boxes.",
+    "Keep one crate stack wholly inside the shop threshold and verify the public walkway and corner spawn.",
+    "Batch medium export proxies by collection/material to at most 90 primitives while preserving the editable master.",
+    "Render matching low/medium fixed cameras and an explicitly Blender-only route sequence.",
+    "Validate exported GLB bytes, position accessors and indices and write the results to lods/export-validation.json."
+  ],
+  "preserved_files": ["spawn.png", "alley.png", "corner.png", "rooftop.png", "sky.png", "cameras.json", "capture-metadata.json", "change-metadata.json"]
+}

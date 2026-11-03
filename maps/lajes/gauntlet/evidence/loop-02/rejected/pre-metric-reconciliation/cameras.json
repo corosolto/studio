@@ -1,0 +1,197 @@
+{
+  "cameras": [
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "declared_spawn_id": "spawn",
+      "eye_height_above_spawn_m": 1.65,
+      "id": "spawn",
+      "lens_mm": 24.0,
+      "location_m": [
+        0.0,
+        -4.0,
+        1.6699999570846558
+      ],
+      "low_preview": "previews/low/spawn.png",
+      "object": "CAM_spawn",
+      "preview": "previews/spawn.png",
+      "purpose": "Declared ground spawn eye view; feet Z 0.02 m plus 1.65 m eye height",
+      "rotation_euler_radians": [
+        1.596505045890808,
+        -0.0,
+        0.0
+      ],
+      "rotation_quaternion_wxyz": [
+        0.6979591846466064,
+        0.7161375284194946,
+        0.0,
+        0.0
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        0.0,
+        3.0,
+        1.85
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "declared_spawn_id": null,
+      "eye_height_above_spawn_m": null,
+      "id": "alley",
+      "lens_mm": 22.0,
+      "location_m": [
+        0.75,
+        -2.5,
+        1.649999976158142
+      ],
+      "low_preview": "previews/low/alley.png",
+      "object": "CAM_alley",
+      "preview": "previews/alley.png",
+      "purpose": "Eye-level alley facade and court approach",
+      "rotation_euler_radians": [
+        1.6855820417404175,
+        4.302400924416361e-08,
+        0.27094680070877075
+      ],
+      "rotation_quaternion_wxyz": [
+        0.6592853665351868,
+        0.739663302898407,
+        0.10082226991653442,
+        0.08986605703830719
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        -2.5,
+        9.2,
+        3.05
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "declared_spawn_id": "corner",
+      "eye_height_above_spawn_m": 1.65,
+      "id": "corner",
+      "lens_mm": 22.0,
+      "location_m": [
+        8.800000190734863,
+        -8.0,
+        1.4900000095367432
+      ],
+      "low_preview": "previews/low/corner.png",
+      "object": "CAM_corner",
+      "preview": "previews/corner.png",
+      "purpose": "Declared corner road-approach spawn at 1.65 m eye height; grocery frontage and clear public walkway",
+      "rotation_euler_radians": [
+        1.7054955959320068,
+        -3.0535250772345535e-08,
+        0.8737749457359314
+      ],
+      "rotation_quaternion_wxyz": [
+        0.5961201786994934,
+        0.682355523109436,
+        0.31864890456199646,
+        0.278378427028656
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        4.5,
+        -4.4,
+        2.25
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "declared_spawn_id": null,
+      "eye_height_above_spawn_m": null,
+      "id": "rooftop",
+      "lens_mm": 22.0,
+      "location_m": [
+        -2.950000047683716,
+        12.5,
+        8.649999618530273
+      ],
+      "low_preview": "previews/low/rooftop.png",
+      "object": "CAM_rooftop",
+      "preview": "previews/rooftop.png",
+      "purpose": "Four-flight arrival, 6.60 m roof, parapets and both west water tanks",
+      "rotation_euler_radians": [
+        1.3892892599105835,
+        -2.1075608813703184e-08,
+        2.9836277961730957
+      ],
+      "rotation_quaternion_wxyz": [
+        0.06061764061450958,
+        0.05050509423017502,
+        0.6381168961524963,
+        0.765886127948761
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        -4.75,
+        1.2,
+        6.55
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "declared_spawn_id": null,
+      "eye_height_above_spawn_m": null,
+      "id": "sky",
+      "lens_mm": 18.0,
+      "location_m": [
+        -4.699999809265137,
+        5.400000095367432,
+        7.75
+      ],
+      "low_preview": "previews/low/sky.png",
+      "object": "CAM_sky",
+      "preview": "previews/sky.png",
+      "purpose": "Direct +Z zenith polar-distortion test; camera up vector tracks world Y",
+      "rotation_euler_radians": [
+        3.141592502593994,
+        -0.0,
+        0.0
+      ],
+      "rotation_quaternion_wxyz": [
+        7.549790126404332e-08,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        -4.7,
+        5.4,
+        50.0
+      ]
+    }
+  ],
+  "coordinate_system": "Blender metres, Z up; rotation is XYZ Euler radians and quaternion WXYZ",
+  "fixed_order": [
+    "spawn",
+    "alley",
+    "corner",
+    "rooftop",
+    "sky"
+  ],
+  "resolution_px": [
+    1600,
+    1000
+  ],
+  "schema_version": 1
+}
