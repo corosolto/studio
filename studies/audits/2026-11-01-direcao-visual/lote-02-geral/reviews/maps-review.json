@@ -1,0 +1,1994 @@
+{
+  "schemaVersion": 1,
+  "status": "complete-map-catalog",
+  "reviewer": "independent-asset-review-/root/bc_maps_review",
+  "reviewScope": "Fidelidade à referência 2D. APROVADO não aprova direção artística, integração 3D, desempenho, FPS ou polycount.",
+  "skill": "client/.claude/skills/asset-review/SKILL.md",
+  "spec": "SPEC.md",
+  "method": "Original e cada conceito abertos realmente com view_image; achados descritos por posição proporcional no quadro. Só arquivos locais; nenhuma alteração de assets/manifestos.",
+  "items": [
+    {
+      "id": "B-map-piscina_treta",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Três portas e respectivos grafites",
+        "Vigas do teto e câmera",
+        "Cadeiras/escada originais à esquerda versus adições à direita",
+        "Cores azul/branco e CORO/TRETA"
+      ],
+      "findings": [
+        {
+          "description": "O lado direito recebe três espreguiçadeiras e uma escada de inox que não aparecem na base; a área branca lateral vira deck mobiliado.",
+          "evidence": {
+            "reference": "baseline/maps/piscina_treta.png",
+            "concept": "concepts/maps/B-map-piscina_treta.png",
+            "region": "Terço direito, borda da piscina, x≈0,80–1,00 / y≈0,46–0,64."
+          },
+          "minimumFix": "Remover apenas os móveis/escada inventados e recuperar a superfície lateral e a borda exatas da base."
+        }
+      ],
+      "finishReferenceUtility": "Útil para separar água, cerâmica, metal e reboco; os reflexos são referência de aparência, sem custo de renderer validado.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-piscina_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/piscina_treta.png",
+      "assetSha256": "72d19b17ceba7c31a9e974b7547611009445a3b1adeea8d041587baffe345b54",
+      "referenceSha256": "df9ce80a4a5ac810b450705fa3448dcafd5fc8931b93ef5a29f87c406c173d74",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-piscina_treta",
+        "source": "production-alpha.133-a64e2abe238c",
+        "synthetic": true,
+        "position": [
+          0,
+          2.3,
+          -8
+        ],
+        "lookAt": [
+          0,
+          0.3,
+          8
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-piscina_treta",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Três acessos e grafites correspondentes",
+        "Mesma perspectiva das vigas",
+        "Mobiliário original esquerdo e mobiliário novo direito",
+        "CORO/TRETA e leitura geral da bacia"
+      ],
+      "findings": [
+        {
+          "description": "Duas espreguiçadeiras são acrescentadas no lado direito, onde a base mostra somente a superfície branca lateral.",
+          "evidence": {
+            "reference": "baseline/maps/piscina_treta.png",
+            "concept": "concepts/maps/C-map-piscina_treta.png",
+            "region": "Terço direito junto à borda, x≈0,80–0,96 / y≈0,47–0,56."
+          },
+          "minimumFix": "Apagar as duas espreguiçadeiras e preservar o contorno lateral original, sem completar mobiliário por simetria."
+        }
+      ],
+      "finishReferenceUtility": "Útil para agrupamento de cor, cerâmica e água mais gráfica; não autoriza introduzir esses objetos.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-piscina_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/piscina_treta.png",
+      "assetSha256": "008ce77986e8e742db830cd7ac9dcfd33f0a278dffb48ba394528a103b6de85b",
+      "referenceSha256": "df9ce80a4a5ac810b450705fa3448dcafd5fc8931b93ef5a29f87c406c173d74",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-piscina_treta",
+        "source": "production-alpha.133-a64e2abe238c",
+        "synthetic": true,
+        "position": [
+          0,
+          2.3,
+          -8
+        ],
+        "lookAt": [
+          0,
+          0.3,
+          8
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-quebrada",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Ônibus, caminhão e Kombi nas posições originais",
+        "Faixa de pedestres e eixos das ruas",
+        "Silhuetas dos telhados e fios",
+        "Forma/cor de duas coberturas centrais"
+      ],
+      "findings": [
+        {
+          "description": "Os blocos retangulares ocre da rua viram barreiras Jersey de concreto cinza, com faces inclinadas e vãos na base; muda forma e cor de cobertura.",
+          "evidence": {
+            "reference": "baseline/maps/quebrada.png",
+            "concept": "concepts/maps/B-map-quebrada.png",
+            "region": "Bloco diante do ônibus x≈0,61–0,76 / y≈0,61–0,70 e bloco do meio à esquerda."
+          },
+          "minimumFix": "Manter os volumes retangulares e a cor ocre da base; aplicar apenas roughness, desgaste localizado e contato."
+        }
+      ],
+      "finishReferenceUtility": "Útil para asfalto, calçada, tijolo e veículos; a nova barreira não é uma simples melhoria de material.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-quebrada.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/quebrada.png",
+      "assetSha256": "93dee2d8445bc4a8b6746c6a30f1e2f3237ad36a0cdf5cbce725d5ea21eb25bc",
+      "referenceSha256": "65078d380c279ea3766714f494171121b738a8d8ef0662d48e6594177f22cd4a",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-quebrada",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          3,
+          4,
+          -28
+        ],
+        "lookAt": [
+          0,
+          2,
+          10
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-quebrada",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Ônibus, caminhão e Kombi preservados",
+        "Blocos ocre retangulares, cubos laranja e posições",
+        "Fachadas de tijolo/reboco, postes, fios e lajes",
+        "Faixa de pedestres, calçadas e grafites nas mesmas regiões"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil como referência de superfícies mais agrupadas, mantendo a rua brasileira e as cores das coberturas.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-quebrada.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/quebrada.png",
+      "assetSha256": "32543ffcd0b6f2d1356f07662c087efddb05d7fac39d291d6e2317c113423149",
+      "referenceSha256": "65078d380c279ea3766714f494171121b738a8d8ef0662d48e6594177f22cd4a",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-quebrada",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          3,
+          4,
+          -28
+        ],
+        "lookAt": [
+          0,
+          2,
+          10
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-posto_treta",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Cobertura vermelha e pilares",
+        "Duas ilhas de bomba e seus letreiros",
+        "Fuscas, Kombi e carro preto dianteiro",
+        "Três montes de sacos à direita, pneus, quiosque e jardineiras"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para reboco/concreto, pintura de veículos, contato e desgaste; preserva a composição do posto.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-posto_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/posto_treta.png",
+      "assetSha256": "116534c5d62b19c8d9814469b2d40481cfca2d3671110bd0e3c10c82b149e62a",
+      "referenceSha256": "e8161c2e81cd82317dfdf3433b590e04856b48665801c8fd02a45d1cfad26904",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-posto_treta",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          19,
+          5.5,
+          -23
+        ],
+        "lookAt": [
+          -2,
+          2,
+          1
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-posto_treta",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Cobertura, pilares e acesso à conveniência",
+        "Ilhas de bombas e barreiras baixas",
+        "Fuscas/Kombi/carro preto e pilhas de pneus",
+        "Sacos à direita, quiosque e jardineiras"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para agrupamento de cor e manchas amplas do piso, mantendo a arquitetura e os objetos do posto.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-posto_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/posto_treta.png",
+      "assetSha256": "5bf0b596aa0dd1996804a61144fb5b13f433f51d884334b28e1a23faf23db215",
+      "referenceSha256": "e8161c2e81cd82317dfdf3433b590e04856b48665801c8fd02a45d1cfad26904",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-posto_treta",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          19,
+          5.5,
+          -23
+        ],
+        "lookAt": [
+          -2,
+          2,
+          1
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-ferro_velho",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Placa original e letreiro gerado",
+        "Pilhas de carros e dois círculos brancos",
+        "Carcaças dianteiras e empilhadeira",
+        "Neblina e tonalidade ferrugem/terra"
+      ],
+      "findings": [
+        {
+          "description": "A placa vermelha ao fundo deixa de reproduzir a inscrição FERRO VELHO DO ZÉ: o primeiro nome e os glifos são reescritos. A informação de identidade não foi conservada.",
+          "evidence": {
+            "reference": "baseline/maps/ferro_velho.png",
+            "concept": "concepts/maps/B-map-ferro_velho.png",
+            "region": "Placa vermelha no fundo esquerdo, x≈0,30–0,37 / y≈0,34–0,39."
+          },
+          "minimumFix": "Reaplicar a placa original como decal intacto; não pedir ao gerador para redigitar o letreiro."
+        }
+      ],
+      "finishReferenceUtility": "Útil para sucata, ferrugem e contato. A neblina ainda existe, mas a menor densidade não revela fidelidade dos detalhes ocultos na base.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-ferro_velho.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/ferro_velho.png",
+      "assetSha256": "eca8d8e0f75c934a2314fd7fcaff1c6632f5d46abc44ac2ca75b682fee0b6fa2",
+      "referenceSha256": "3b92dd4bff3c73248f7972e79ed9d00623e92958d6acf03f6499d8729c2579f6",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-ferro_velho",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          18.9,
+          10,
+          -24.849999999999998
+        ],
+        "lookAt": [
+          0,
+          2,
+          0
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "C-map-ferro_velho",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Letreiro vermelho ao fundo",
+        "Pilhas de sucata e carcaças dianteiras",
+        "Círculos brancos e marcos de facção",
+        "Vegetação baixa e neblina"
+      ],
+      "findings": [
+        {
+          "description": "A placa vermelha ao fundo contém letras diferentes da inscrição FERRO VELHO DO ZÉ da base; não preserva o letreiro de identidade.",
+          "evidence": {
+            "reference": "baseline/maps/ferro_velho.png",
+            "concept": "concepts/maps/C-map-ferro_velho.png",
+            "region": "Placa vermelha no fundo esquerdo, x≈0,30–0,37 / y≈0,34–0,39."
+          },
+          "minimumFix": "Compor novamente o decal original na placa, mantendo letras e cores."
+        }
+      ],
+      "finishReferenceUtility": "Útil para massas de cor e ferrugem sem ruído miúdo. Detalhes cobertos pela neblina da base não foram certificados.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-ferro_velho.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/ferro_velho.png",
+      "assetSha256": "2ac69324f17b8709ae77be1b800e0399e1a76d70f60c4aa51b7f5587927c2519",
+      "referenceSha256": "3b92dd4bff3c73248f7972e79ed9d00623e92958d6acf03f6499d8729c2579f6",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-ferro_velho",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          18.9,
+          10,
+          -24.849999999999998
+        ],
+        "lookAt": [
+          0,
+          2,
+          0
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "B-map-praca_poderes",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Torres, cúpulas e bandeira brasileira já existente",
+        "Dois cartazes satíricos laterais",
+        "Ônibus amarelo diagonal e obstáculos",
+        "Faixas azuis das fachadas versus preenchimento bege"
+      ],
+      "findings": [
+        {
+          "description": "As faixas largas azul-acinzentadas das duas fachadas laterais são substituídas por concreto bege quase contínuo; os vãos de cor viram linhas finas.",
+          "evidence": {
+            "reference": "baseline/maps/praca_poderes.png",
+            "concept": "concepts/maps/B-map-praca_poderes.png",
+            "region": "Fachadas grandes esquerda/direita, da borda ao terço central."
+          },
+          "minimumFix": "Restaurar as faixas azuis com a largura original; manter o novo acabamento apenas nos frisos e no concreto claro."
+        }
+      ],
+      "finishReferenceUtility": "Útil para concreto, piso e sombras; a identidade cromática das fachadas precisa ser recuperada.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-praca_poderes.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/praca_poderes.png",
+      "assetSha256": "51c046397e30ed0e83c7cc42fb7fc3e0bca6fc38c73f64c2e958c3074cd48d41",
+      "referenceSha256": "2b1ab0f8441c994cdc0370d5d88c50a010cec6c253149d2020b43782f5a57dbb",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-praca_poderes",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          18,
+          -25
+        ],
+        "lookAt": [
+          0,
+          5,
+          30
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-praca_poderes",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Bandeira, torres e cúpulas",
+        "Cartazes, árvore, palmeiras e postes existentes",
+        "Ônibus diagonal, pneus e caixas",
+        "Bancos/lixeiras novos nas duas laterais"
+      ],
+      "findings": [
+        {
+          "description": "Foram acrescentadas fileiras de bancos de madeira e pequenas lixeiras nas faixas laterais de grama; essas áreas estão vazias na base.",
+          "evidence": {
+            "reference": "baseline/maps/praca_poderes.png",
+            "concept": "concepts/maps/C-map-praca_poderes.png",
+            "region": "Faixas de grama dos dois lados da avenida, x≈0,17–0,40 e 0,63–0,80, metade inferior."
+          },
+          "minimumFix": "Remover os bancos/lixeiras novos e recuperar as faixas vazias; preservar mobiliário somente onde já existe."
+        }
+      ],
+      "finishReferenceUtility": "Útil para concreto, fachadas azuladas e separação de luz; os bancos inventados não fazem parte do aceite.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-praca_poderes.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/praca_poderes.png",
+      "assetSha256": "feee56e90bfb3e47f2f07bdc379a5b8951ca8c9beac2e21407df7fe7b6bf30ac",
+      "referenceSha256": "2b1ab0f8441c994cdc0370d5d88c50a010cec6c253149d2020b43782f5a57dbb",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-praca_poderes",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          18,
+          -25
+        ],
+        "lookAt": [
+          0,
+          5,
+          30
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-loja_h",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Estátua com galinha no alto",
+        "Dois letreiros LOJA H e bandeirolas",
+        "Placa branca dianteira e estacionamento",
+        "Carrinhos atrás do carro branco e ao lado do amarelo"
+      ],
+      "findings": [
+        {
+          "description": "Dois carrinhos de compras visíveis na base foram removidos: o que está atrás do carro branco dianteiro e o que fica junto ao carro amarelo à direita.",
+          "evidence": {
+            "reference": "baseline/maps/loja_h.png",
+            "concept": "concepts/maps/B-map-loja_h.png",
+            "region": "x≈0,46 / y≈0,72 e x≈0,74 / y≈0,65, em proporções do quadro."
+          },
+          "minimumFix": "Restaurar os dois carrinhos nas posições e escalas da base, com o mesmo acabamento dos metais."
+        }
+      ],
+      "finishReferenceUtility": "Útil para estátua patinada, concreto e veículos; não pode servir como catálogo fiel de objetos enquanto omite os carrinhos.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-loja_h.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/loja_h.png",
+      "assetSha256": "3923121ed5230af04bcd1d1b8ea68645b9c95a45f6ea89ec65951bdd58b76ab1",
+      "referenceSha256": "5cfc74413dfc1c07f0ddc2bedce17320368de97ffdf2dace38a0143be978463e",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-loja_h",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          24,
+          5.5,
+          38
+        ],
+        "lookAt": [
+          0,
+          5,
+          -9
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-loja_h",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Estátua, galinha, pedestal e postes",
+        "Dois letreiros LOJA H e faixas de fachada",
+        "Placa branca e carros nas posições correspondentes",
+        "Dois carrinhos preservados nas regiões originais"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para preservar a estátua estilizada e os agrupamentos de cor no estacionamento, sem descaracterizar a sátira.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-loja_h.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/loja_h.png",
+      "assetSha256": "9cb9d21cd48b25810e06610b3814591d9dadd8a2228a85950b6dfca9b50e211c",
+      "referenceSha256": "5cfc74413dfc1c07f0ddc2bedce17320368de97ffdf2dace38a0143be978463e",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-loja_h",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          24,
+          5.5,
+          38
+        ],
+        "lookAt": [
+          0,
+          5,
+          -9
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-upa_24h",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Poste/divisória dianteira e obstrução da placa",
+        "AGUARDE SUA VEZ, TRIAGEM e CONSULTÓRIOS",
+        "Maca, cadeiras e faixas de orientação",
+        "Pequeno objeto preto sobre a curva da faixa laranja"
+      ],
+      "findings": [
+        {
+          "description": "O pequeno objeto/silhueta preto sobre o cotovelo da faixa laranja do piso desaparece; é visível na base junto da primeira divisória verde.",
+          "evidence": {
+            "reference": "baseline/maps/upa_24h.png",
+            "concept": "concepts/maps/B-map-upa_24h.png",
+            "region": "Chão do corredor à esquerda do poste, x≈0,42–0,43 / y≈0,63–0,65."
+          },
+          "minimumFix": "Repor a silhueta/objeto original nessa posição; não limpar o conteúdo do piso durante o passe de materiais."
+        }
+      ],
+      "finishReferenceUtility": "Útil para roughness do piso, reboco, metal da maca e luz motivada pelas luminárias existentes.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-upa_24h.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/upa_24h.png",
+      "assetSha256": "4f4a98bd3fb46c0f9ad13a52e4c6e7e66d6323656e61a5be54557281e92705c1",
+      "referenceSha256": "b3de2afbaf9d910e0f19619dac1da40661809cb6ca4df6f5f642e2dc0592d83d",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-upa_24h",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          2,
+          -12
+        ],
+        "lookAt": [
+          0,
+          1.6,
+          12
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "C-map-upa_24h",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Poste dianteiro, placa e divisória",
+        "Maca, cadeiras, corredor e três letreiros",
+        "Faixas coloridas e grafite CORO",
+        "Objeto preto do piso ausente e grade nova no teto"
+      ],
+      "findings": [
+        {
+          "description": "O pequeno objeto/silhueta preto sobre a curva da faixa laranja do piso some, embora esteja presente na base. O teto ganha uma grade de superfície que só pode ser adotada sem mudar os volumes.",
+          "evidence": {
+            "reference": "baseline/maps/upa_24h.png",
+            "concept": "concepts/maps/C-map-upa_24h.png",
+            "region": "Piso x≈0,42–0,43 / y≈0,63–0,65; teto superior."
+          },
+          "minimumFix": "Restaurar o pequeno objeto preto; tratar a grade do teto somente como detalhe de material caso ela seja usada na implementação."
+        }
+      ],
+      "finishReferenceUtility": "Útil para cor, maca e iluminação do corredor. A grade de teto não demonstra nova geometria nem custo em runtime.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-upa_24h.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/upa_24h.png",
+      "assetSha256": "ef626e85e55c47aa463431b8d46e3da86e58cbd2f41aeffcddcbcc2f1e3aa9e3",
+      "referenceSha256": "b3de2afbaf9d910e0f19619dac1da40661809cb6ca4df6f5f642e2dc0592d83d",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-upa_24h",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          2,
+          -12
+        ],
+        "lookAt": [
+          0,
+          1.6,
+          12
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "B-map-atacadao_treta",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Obstrução cinza superior e silhueta original",
+        "Letreiro PAGUE MENOS e placas de setores",
+        "Bloco central ocre versus cinza",
+        "Grafites CORO, divisórias e pilha de sacos"
+      ],
+      "findings": [
+        {
+          "description": "Um telhado de galpão é inventado acima do limite da obstrução cinza; surgem duas faixas publicitárias novas. O letreiro PAGUE MENOS é substituído e os blocos ocre viram concreto cinza.",
+          "evidence": {
+            "reference": "baseline/maps/atacadao_treta.png",
+            "concept": "concepts/maps/B-map-atacadao_treta.png",
+            "region": "Fundo superior x≈0,17–0,81 / y≈0,33–0,46; bloco central."
+          },
+          "minimumFix": "Recuperar a silhueta/obstrução superior, o letreiro e os blocos ocre da base; remover telhado e anúncios inventados."
+        }
+      ],
+      "finishReferenceUtility": "Útil isoladamente para reboco e piso; não é referência fiel de fachada, paleta ou geometria.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-atacadao_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/atacadao_treta.png",
+      "assetSha256": "b38727933784962b46238ad8eaf81404fd9cd60d9aa501dd5ef738dc1970e372",
+      "referenceSha256": "6f6b70af4138176bd78c1a38a0a93fa5ee6ded90d51500a147d16648c4f1cf6f",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-atacadao_treta",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          2.3,
+          22
+        ],
+        "lookAt": [
+          0,
+          2,
+          -15
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "C-map-atacadao_treta",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Obstrução superior preservada",
+        "Silhuetas e cores das divisórias",
+        "Grafite CORO e sacos no corredor esquerdo",
+        "Quatro placas de setor e subtítulo alterado"
+      ],
+      "findings": [
+        {
+          "description": "O subtítulo do letreiro é reescrito para ATACADÃO DA TRETA, enquanto a base mostra FEIRA DO MÊS NO ATACADÃO sob PAGUE MENOS.",
+          "evidence": {
+            "reference": "baseline/maps/atacadao_treta.png",
+            "concept": "concepts/maps/C-map-atacadao_treta.png",
+            "region": "Letreiro amarelo ao fundo, logo abaixo da obstrução cinza, x≈0,38–0,62 / y≈0,39–0,42."
+          },
+          "minimumFix": "Reaplicar o letreiro original como decal completo, sem recriar o texto."
+        }
+      ],
+      "finishReferenceUtility": "Útil para blocos de cor, grafites e piso; o restante da estrutura visível acompanha a referência.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-atacadao_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/atacadao_treta.png",
+      "assetSha256": "debbac79d256121415ba5684eab388d42c8be28e05d2b88d4eb45e33912d3267",
+      "referenceSha256": "6f6b70af4138176bd78c1a38a0a93fa5ee6ded90d51500a147d16648c4f1cf6f",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-atacadao_treta",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          2.3,
+          22
+        ],
+        "lookAt": [
+          0,
+          2,
+          -15
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "B-map-velho_oeste",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Igreja/campanário, cruz e telhados",
+        "Carroça, fardos e círculo branco central",
+        "Barricada dianteira e recipiente original",
+        "Barril extra junto à barricada"
+      ],
+      "findings": [
+        {
+          "description": "Um segundo barril de madeira aparece encostado ao recipiente dianteiro da esquerda; o recipiente existente também passa a parecer um tambor metálico oxidado.",
+          "evidence": {
+            "reference": "baseline/maps/velho_oeste.png",
+            "concept": "concepts/maps/B-map-velho_oeste.png",
+            "region": "Primeiro plano esquerdo junto da porta e da barricada, x≈0,19–0,29 / y≈0,72–0,85."
+          },
+          "minimumFix": "Remover o segundo barril e manter forma/material do recipiente original; conservar o desgaste no entorno."
+        }
+      ],
+      "finishReferenceUtility": "Útil para telhas, reboco, madeira e solo, mas não para contagem de props.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-velho_oeste.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/velho_oeste.png",
+      "assetSha256": "3ed5f8512eda938376c7ac3637df6010a08046c26d4791d9a44ada9db977824c",
+      "referenceSha256": "11ccf898a7b0826b3ae2849fdd0214dde4d18d2ec58e1cd0b55f321ff784c780",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-velho_oeste",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          8,
+          5,
+          -23
+        ],
+        "lookAt": [
+          0,
+          2,
+          12
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-velho_oeste",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "CANUDOS, igreja e cruz",
+        "Carroça, barricada, fardos e recipiente dianteiro",
+        "Haste da placa branca e objetos ao redor",
+        "Dois novos cilindros/barris no fundo"
+      ],
+      "findings": [
+        {
+          "description": "Dois barris pequenos são acrescentados no fundo ao lado da haste da placa branca; a base mostra a área aberta com caixas retangulares, sem esses cilindros.",
+          "evidence": {
+            "reference": "baseline/maps/velho_oeste.png",
+            "concept": "concepts/maps/C-map-velho_oeste.png",
+            "region": "Fundo central-direito, x≈0,53–0,57 / y≈0,51–0,55."
+          },
+          "minimumFix": "Remover os dois barris e restaurar os volumes retangulares da base sem mobiliar o espaço."
+        }
+      ],
+      "finishReferenceUtility": "Útil para agrupamento pictórico e materiais das casas; o céu muito mais colorido também exige decisão editorial sobre preservação de atmosfera.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-velho_oeste.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/velho_oeste.png",
+      "assetSha256": "5b746b91d8fe66bb648bf52b63de00ad0abe2b96a240e7f1f65f3b893903c67b",
+      "referenceSha256": "11ccf898a7b0826b3ae2849fdd0214dde4d18d2ec58e1cd0b55f321ff784c780",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-velho_oeste",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          8,
+          5,
+          -23
+        ],
+        "lookAt": [
+          0,
+          2,
+          12
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-amazonia",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Palafitas, passarelas e mesmos vãos visíveis",
+        "Canoa central e conjunto de troncos flutuantes",
+        "Barraca/plataforma à esquerda e poste/toco à direita",
+        "Copas, neblina úmida, ave e animal da borda direita"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para madeira molhada, solo, água e folhas com variação média; o quadro não comprova técnica/custo das reflexões.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-amazonia.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/amazonia.png",
+      "assetSha256": "b022993335ff5ff5133b17015af47eaa5f8886ba94bb38796ee8f3f12ec2afd1",
+      "referenceSha256": "5e1b31d48bb33f79b836bf14f98e6d8a9a0d7280ec7bae9ca2ef1da3b5c94824",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-amazonia",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          5,
+          -28
+        ],
+        "lookAt": [
+          0,
+          2,
+          12
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-amazonia",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Passarelas, palafitas, canoa e troncos",
+        "Árvores, neblina e bioma mantidos",
+        "Animal/ave nas regiões originais",
+        "Janelas/porta com emissão laranja nova"
+      ],
+      "findings": [
+        {
+          "description": "As janelas e a porta das palafitas passam a emitir luz laranja intensa, ausente na base; cria fontes de luz e uma ocupação luminosa nova.",
+          "evidence": {
+            "reference": "baseline/maps/amazonia.png",
+            "concept": "concepts/maps/C-map-amazonia.png",
+            "region": "Palafitas à esquerda e casa da borda direita, x≈0,10–0,34 e 0,96–1,00, y≈0,41–0,56."
+          },
+          "minimumFix": "Remover a emissão laranja e restaurar o interior escuro/neutro original; manter a variação de madeira externa."
+        }
+      ],
+      "finishReferenceUtility": "Útil para volumes gráficos, água e silhuetas, mas o novo brilho interior não preserva as fontes originais.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-amazonia.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/amazonia.png",
+      "assetSha256": "3fa6cad069a9e800e7acb0433f0226fffffe97e7c1949350965266b85238d7ab",
+      "referenceSha256": "5e1b31d48bb33f79b836bf14f98e6d8a9a0d7280ec7bae9ca2ef1da3b5c94824",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-amazonia",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          5,
+          -28
+        ],
+        "lookAt": [
+          0,
+          2,
+          12
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-corrego",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Pipas, postes, fios e caixas d’água",
+        "Canal, pilares, escada diagonal e pranchas flutuantes",
+        "Casa oliva/ocre dianteira versus cinza",
+        "Viga marrom versus concreto"
+      ],
+      "findings": [
+        {
+          "description": "A casa dianteira da esquerda perde a cor oliva/ocre e o acabamento dos painéis, tornando-se um volume de reboco/cimento cinza com faixas de madeira exposta. A viga transversal marrom também vira concreto cinza.",
+          "evidence": {
+            "reference": "baseline/maps/corrego.png",
+            "concept": "concepts/maps/B-map-corrego.png",
+            "region": "Casa no terço esquerdo inferior e viga horizontal no centro superior."
+          },
+          "minimumFix": "Preservar os painéis, o marrom/ocre/oliva e o material da viga da base; usar roughness/normal e desgaste sem trocar sua classe de superfície."
+        }
+      ],
+      "finishReferenceUtility": "Útil para água e contato, mas troca materiais e cores de identidade em grandes áreas.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-corrego.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/corrego.png",
+      "assetSha256": "6661e91d9b72f90f3d12144c772ffbca93c20824b0cce6be0893249a55271528",
+      "referenceSha256": "f05e2003804418eece8cc1d77ee91a9297300c2f3dd79f93f0e98b43a49ae54d",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-corrego",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          6,
+          -28
+        ],
+        "lookAt": [
+          0,
+          2,
+          12
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-corrego",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Geometria aparente do canal, passarelas e casas",
+        "Pipas, fios e caixas d’água",
+        "Grafites da casa direita e placa branca esquerda",
+        "Céu cinza difuso versus dourado direcional"
+      ],
+      "findings": [
+        {
+          "description": "O céu cinza e a luz difusa da base viram um céu dourado com luz solar forte e sombras longas, mudando a condição de iluminação em vez de apenas melhorar seus materiais.",
+          "evidence": {
+            "reference": "baseline/maps/corrego.png",
+            "concept": "concepts/maps/C-map-corrego.png",
+            "region": "Céu em toda metade superior; sombras projetadas sobre água/pilares no centro inferior."
+          },
+          "minimumFix": "Preservar a luz encoberta neutra e a atmosfera cinza; manter o acabamento pintado em madeira/painéis e água."
+        }
+      ],
+      "finishReferenceUtility": "Útil para materiais gráficos e leitura dos volumes, porém requer retirar a mudança de momento/clima para comparação fiel.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-corrego.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/corrego.png",
+      "assetSha256": "ac9fac953acaa70c3f928fab0368ae05eb562cb51c81cdd89ccb34147d7f6a0b",
+      "referenceSha256": "f05e2003804418eece8cc1d77ee91a9297300c2f3dd79f93f0e98b43a49ae54d",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-corrego",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          6,
+          -28
+        ],
+        "lookAt": [
+          0,
+          2,
+          12
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-lajes",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Varais/roupas, placas e fios de pipa",
+        "Lajes planas e casas de tijolo ao fundo",
+        "Cobertura corrugada dianteira",
+        "Aberturas escuras da fachada esquerda versus painéis bege"
+      ],
+      "findings": [
+        {
+          "description": "As aberturas pretas altas na fachada do primeiro plano esquerdo viram painéis bege fechados. A melhoria de superfície altera a leitura dos vãos.",
+          "evidence": {
+            "reference": "baseline/maps/lajes.png",
+            "concept": "concepts/maps/B-map-lajes.png",
+            "region": "Fachada cortada pela borda esquerda, x≈0,00–0,13 / y≈0,32–0,76."
+          },
+          "minimumFix": "Restaurar os vãos pretos com a mesma posição e dimensão; trabalhar o reboco apenas no entorno."
+        }
+      ],
+      "finishReferenceUtility": "Útil para reboco/tijolo, metal corrugado e contato, mas os vãos não podem ser preenchidos.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-lajes.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/lajes.png",
+      "assetSha256": "e0337bd9b0c137022c208623182523708d23c87c39c0a8bfbff7fa6fe3f5829c",
+      "referenceSha256": "391b4e7be9cbb4b2969c5e7e57ed00fcd593b3952fbcb3aebaa39bfe88f44d07",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-lajes",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          14,
+          8,
+          -16
+        ],
+        "lookAt": [
+          0,
+          3,
+          5
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-lajes",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Vãos pretos da fachada esquerda",
+        "Varais/roupas e placas brancas",
+        "Lajes, pequenas muretas e vasos",
+        "Telhado corrugado, fios e pipas nas posições correspondentes"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para materiais pintados e gradação de planos, mantendo a identidade das lajes brasileiras.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-lajes.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/lajes.png",
+      "assetSha256": "13f7bc84b567a4b9e6e62a54e03a3bb02ea7d07837cd0057304029eab189aa69",
+      "referenceSha256": "391b4e7be9cbb4b2969c5e7e57ed00fcd593b3952fbcb3aebaa39bfe88f44d07",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-lajes",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          14,
+          8,
+          -16
+        ],
+        "lookAt": [
+          0,
+          3,
+          5
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-penitenciaria",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Bloco central, escada e grades",
+        "Letreiros de pavilhão e munição",
+        "Três tambores dianteiros",
+        "Coberturas pequenas, fios e torres da muralha"
+      ],
+      "findings": [
+        {
+          "description": "O letreiro do bloco central não conserva os glifos e o numeral da inscrição PAVILHÃO da base. As tampas laranja dos três tambores dianteiros recebem superfícies azul-metálicas em dois deles.",
+          "evidence": {
+            "reference": "baseline/maps/penitenciaria.png",
+            "concept": "concepts/maps/B-map-penitenciaria.png",
+            "region": "Placa do bloco central x≈0,61–0,67 / y≈0,55–0,59; tambores cortados pela borda inferior."
+          },
+          "minimumFix": "Reaplicar a placa original e manter as tampas laranja, usando desgaste localizado sem substituir a cor-base."
+        }
+      ],
+      "finishReferenceUtility": "Útil para concreto e tijolo; não copiar o texto recriado nem a troca de cor das tampas.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-penitenciaria.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/penitenciaria.png",
+      "assetSha256": "0d14ef0c27aa7311c3d487b2386f545a4d70b59bc8a73be181e6d859da72f583",
+      "referenceSha256": "94212308675a29cab4fa87c2987e4d6eabfd484b227e209148c817a6d48c1a7b",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-penitenciaria",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          15,
+          8,
+          -23
+        ],
+        "lookAt": [
+          0,
+          2,
+          8
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "C-map-penitenciaria",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Bloco, janelas gradeadas e escada",
+        "Caixas, pequenas coberturas e três tambores",
+        "Letreiro do pavilhão e caixa esquerda",
+        "Muralha, fios e fontes de luz existentes"
+      ],
+      "findings": [
+        {
+          "description": "A placa de PAVILHÃO do bloco central e a inscrição de munição na caixa à esquerda são reescritas com glifos/numeral diferentes. A tipografia não preserva a informação da base.",
+          "evidence": {
+            "reference": "baseline/maps/penitenciaria.png",
+            "concept": "concepts/maps/C-map-penitenciaria.png",
+            "region": "Placa x≈0,61–0,67 / y≈0,55–0,59; caixa à esquerda x≈0,25–0,29 / y≈0,61–0,67."
+          },
+          "minimumFix": "Restaurar os decals originais de pavilhão e munição nas mesmas superfícies."
+        }
+      ],
+      "finishReferenceUtility": "Útil para concreto, tijolo e desgaste amplo; exige preservar os decals textuais antes de servir como referência de identidade.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-penitenciaria.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/penitenciaria.png",
+      "assetSha256": "080b9a824342f274e819ff9631273a9b37c84f1bd83c431b7ec694c40c47c0bc",
+      "referenceSha256": "94212308675a29cab4fa87c2987e4d6eabfd484b227e209148c817a6d48c1a7b",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-penitenciaria",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          15,
+          8,
+          -23
+        ],
+        "lookAt": [
+          0,
+          2,
+          8
+        ],
+        "fov": 65
+      },
+      "inspectionEvidence": "reviews/maps-inspection-crops.png"
+    },
+    {
+      "id": "B-map-obras_prefeitura",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Guindaste/sucata suspensa e skyline",
+        "Plataforma, escada e andaimes verdes",
+        "Tubos, cones e entulho",
+        "Painéis azuis versus bege/cinza"
+      ],
+      "findings": [
+        {
+          "description": "Os painéis azuis de obra são convertidos em concreto bege/cinza, sobretudo a barreira dianteira à direita. Os tubos claros passam a parecer metal escuro enferrujado.",
+          "evidence": {
+            "reference": "baseline/maps/obras_prefeitura.png",
+            "concept": "concepts/maps/B-map-obras_prefeitura.png",
+            "region": "Barreira x≈0,63–0,78 / y≈0,65–0,85; tubos à esquerda e à direita da escada."
+          },
+          "minimumFix": "Manter o azul dos painéis e o cinza claro dos tubos; aplicar relevo/roughness/desgaste sem trocar a cor e a classe de material."
+        }
+      ],
+      "finishReferenceUtility": "Útil para concreto, entulho e solo; a paleta precisa ser restaurada.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-obras_prefeitura.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/obras_prefeitura.png",
+      "assetSha256": "0d8b076331cbdc98810fdc6f5bd2935e34c4d906e91140db216c595f737b003c",
+      "referenceSha256": "74b4c28fcc0bb4f5102660ac0c6e63d134ec0f5e8ff0c485cf1c19ec0cda55b6",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-obras_prefeitura",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          18,
+          9,
+          -24
+        ],
+        "lookAt": [
+          0,
+          3,
+          8
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-obras_prefeitura",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Guindaste e sucata suspensa",
+        "Plataforma/escada e três barras superiores",
+        "Andaimes verdes, tubos e entulho",
+        "Barreira dianteira direita e faixa de alerta"
+      ],
+      "findings": [
+        {
+          "description": "A barreira de obra dianteira à direita perde o azul e vira concreto bege, embora mantenha o grafite e a faixa de alerta.",
+          "evidence": {
+            "reference": "baseline/maps/obras_prefeitura.png",
+            "concept": "concepts/maps/C-map-obras_prefeitura.png",
+            "region": "Painel diagonal x≈0,63–0,78 / y≈0,65–0,85."
+          },
+          "minimumFix": "Restaurar o azul dessa face e aplicar apenas o acabamento novo sobre a mesma cor-base."
+        }
+      ],
+      "finishReferenceUtility": "Útil para formas, entulho, andaimes e materiais agrupados; uma correção local de cor resolve o desvio mais visível.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-obras_prefeitura.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/obras_prefeitura.png",
+      "assetSha256": "9fde24ceb26937318b40d6cafcf78dd18c4d188d717c91b994c77af061cb396a",
+      "referenceSha256": "74b4c28fcc0bb4f5102660ac0c6e63d134ec0f5e8ff0c485cf1c19ec0cda55b6",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-obras_prefeitura",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          18,
+          9,
+          -24
+        ],
+        "lookAt": [
+          0,
+          3,
+          8
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-parque_treta",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Roda-gigante e carrossel",
+        "Barraca, banco e palmeiras",
+        "Prédio roxo/torre azul versus madeira/cinza",
+        "Piso amarelo versus vermelho"
+      ],
+      "findings": [
+        {
+          "description": "O prédio roxo com abertura preta no primeiro plano esquerdo vira fachada de madeira fechada; a torre azul fica cinza e o piso amarelo central vira tijolo vermelho. A paleta/abertura de identidade é trocada.",
+          "evidence": {
+            "reference": "baseline/maps/parque_treta.png",
+            "concept": "concepts/maps/B-map-parque_treta.png",
+            "region": "Prédio/torre no terço esquerdo e praça central ao redor do carrossel."
+          },
+          "minimumFix": "Restaurar roxo, azul, amarelo e a abertura preta original; conservar somente a variação superficial e o contato."
+        }
+      ],
+      "finishReferenceUtility": "Útil para ferragem e madeira, mas não para paleta ou leitura da entrada.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-parque_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/parque_treta.png",
+      "assetSha256": "72181aa2108d1f94eee3043085079bbacb40a6725b290bdbe385ed07851473d5",
+      "referenceSha256": "554d9116071f1e37d727e45ad9516047915b0c94a7acdb9e84f038651e62c39a",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-parque_treta",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          19,
+          7,
+          -24
+        ],
+        "lookAt": [
+          0,
+          2,
+          8
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "C-map-parque_treta",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Roda-gigante e carrossel no mesmo enquadramento",
+        "Prédio roxo, abertura preta e torre azul",
+        "Piso amarelo, áreas verdes e blocos de cobertura",
+        "Barraca, banco, palmeiras e letreiro ao fundo"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para acabamento agrupado, mantendo a paleta roxo/azul/amarelo e as atrações reconhecíveis.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-parque_treta.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/parque_treta.png",
+      "assetSha256": "ad51531e3aace7645bd365a12587d3bb82ae1acfe493a72d9a6d8fcd891b190f",
+      "referenceSha256": "554d9116071f1e37d727e45ad9516047915b0c94a7acdb9e84f038651e62c39a",
+      "manifestHashMatches": true,
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-parque_treta",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          19,
+          7,
+          -24
+        ],
+        "lookAt": [
+          0,
+          2,
+          8
+        ],
+        "fov": 65
+      }
+    },
+    {
+      "id": "B-map-mansao",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Três carros vermelho/preto/azul nas posições originais",
+        "Pergolado, piscina dianteira, pedras de caminho e dois postes de luz",
+        "Duas coberturas e pilares no terraço",
+        "Placa branca superior presente na base e ausente em B",
+        "Palmeiras, vasos, maciços e relevo de fundo"
+      ],
+      "findings": [
+        {
+          "description": "A placa branca ondulada/suspensa sob a cobertura superior direita desaparece. A base mostra esse retângulo entre os dois pilares do pavimento superior.",
+          "evidence": {
+            "reference": "baseline/maps/mansao.png",
+            "concept": "concepts/maps/B-map-mansao.png",
+            "region": "Pavimento superior à direita do eixo central, x≈0,587–0,607 / y≈0,368–0,394."
+          },
+          "minimumFix": "Restaurar a placa branca com o mesmo formato, escala e posição sob a cobertura; conservar o passe de materiais no restante."
+        }
+      ],
+      "finishReferenceUtility": "Útil para grama, pedra/reboco, madeira e água, mas não para inventário fiel enquanto omite a placa.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-mansao.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/mansao.png",
+      "assetSha256": "4918756bee73e2cf96880d888b53e9832d4b23c598383e40629b201d6da13278",
+      "referenceSha256": "33636889ddd5dc210f1bdda151cc39651ca76872fb5d301e77cf4f24becd8b9f",
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-mansao",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          6,
+          30
+        ],
+        "lookAt": [
+          0,
+          3,
+          0
+        ],
+        "fov": 65
+      },
+      "manifestHashMatches": true
+    },
+    {
+      "id": "C-map-mansao",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Três carros vermelho/preto/azul e acesso central",
+        "Pergolado, piscina dianteira e quatro pedras do caminho",
+        "Dois postes de luz, banco, vasos e maciços",
+        "Duas coberturas e placa branca preservada no terraço",
+        "Palmeiras e silhuetas de relevo ao fundo"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para materiais agrupados, grama, água e volumes de pedra, preservando os elementos e a identidade cromática visíveis.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-mansao.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/mansao.png",
+      "assetSha256": "3916cc8ade0ab7a080bb839001673b6345d93dc2bdcfa8d46a97d5b91736fb08",
+      "referenceSha256": "33636889ddd5dc210f1bdda151cc39651ca76872fb5d301e77cf4f24becd8b9f",
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-mansao",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          6,
+          30
+        ],
+        "lookAt": [
+          0,
+          3,
+          0
+        ],
+        "fov": 65
+      },
+      "manifestHashMatches": true
+    },
+    {
+      "id": "B-map-campomorro",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Campo, círculo central, linhas e goleiras",
+        "Quatro círculos brancos e respectivas placas/marcos",
+        "Cercas, portais e coberturas retangulares",
+        "Arquibancada central, caixas/contêineres e pequena banca listrada",
+        "Fusca lateral, vegetação baixa, fachadas e murais ao fundo"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para terra batida, metal das cercas, madeira e contato, mantendo a leitura do campo de bairro.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-campomorro.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/campomorro.png",
+      "assetSha256": "f70be9a430bae0131b6b934ad9ab4ea6ca62174e62269b61a9bc57851085657a",
+      "referenceSha256": "7ee8abadb3923f0ef26a101d8e7bfdca08004b2f918a13b8ea5862fee9d8b3ac",
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-campomorro",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          17,
+          8,
+          -22
+        ],
+        "lookAt": [
+          0,
+          2,
+          8
+        ],
+        "fov": 65
+      },
+      "manifestHashMatches": true
+    },
+    {
+      "id": "C-map-campomorro",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Campo, círculo central, linhas e goleiras",
+        "Quatro círculos brancos e respectivas placas/marcos",
+        "Cercas e portais dianteiros nas posições da base",
+        "Arquibancada, caixas/contêineres e banca listrada",
+        "Fusca, vegetação, murais e silhueta urbana do fundo"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para agrupamento de cor do barro, madeira e metal, com o entorno brasileiro e os marcos espaciais conservados.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-campomorro.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/campomorro.png",
+      "assetSha256": "88046538b6db7d95f8c74e6de03cd96cd44675d8059cf1b0c022c1ea2aa28d7b",
+      "referenceSha256": "7ee8abadb3923f0ef26a101d8e7bfdca08004b2f918a13b8ea5862fee9d8b3ac",
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-campomorro",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          17,
+          8,
+          -22
+        ],
+        "lookAt": [
+          0,
+          2,
+          8
+        ],
+        "fov": 65
+      },
+      "manifestHashMatches": true
+    },
+    {
+      "id": "B-map-escadao",
+      "category": "maps",
+      "reviewStatus": "REPROVADO",
+      "verdict": "REPROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Escadarias centrais e laterais, lajes e alinhamento dos prédios",
+        "Abrigo dianteiro com cobertura corrugada e paredes originais",
+        "Caixa-d’água azul, antena e teto sob ela",
+        "Placa branca central, fios, vasos e grafites visíveis",
+        "Paleta de tijolo/reboco e vãos das fachadas"
+      ],
+      "findings": [
+        {
+          "description": "As paredes laranja/de alvenaria do abrigo dianteiro esquerdo são substituídas por tábuas de madeira. O teto azul sob a caixa-d’água dianteira direita vira chapa ondulada marrom/enferrujada, trocando materiais e cores existentes.",
+          "evidence": {
+            "reference": "baseline/maps/map-escadao.png",
+            "concept": "concepts/maps/B-map-escadao.png",
+            "region": "Abrigo coberto no primeiro plano esquerdo, x≈0,27–0,42 / y≈0,76–1,00; teto sob a caixa-d’água, x≈0,58–0,72 / y≈0,79–1,00."
+          },
+          "minimumFix": "Restaurar as paredes de alvenaria laranja e o teto azul da base; manter o novo acabamento somente como variação de roughness/normal e desgaste localizado nos materiais originais."
+        }
+      ],
+      "finishReferenceUtility": "Útil para reboco, concreto e contato, mas não para copiar materiais dos dois elementos dianteiros.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/B-map-escadao.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/map-escadao.png",
+      "assetSha256": "78678e0964e3c08e6c70308f5002b6231c6a060d9f7a04c0c3275cb891c405f4",
+      "referenceSha256": "4c64176ddcd3945b044f8a10d79cb249b6cba8f2dcadd92786e8ccbd61667968",
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-escadao",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          16,
+          34
+        ],
+        "lookAt": [
+          0,
+          5,
+          0
+        ],
+        "fov": 65
+      },
+      "manifestHashMatches": true
+    },
+    {
+      "id": "C-map-escadao",
+      "category": "maps",
+      "reviewStatus": "APROVADO",
+      "verdict": "APROVADO",
+      "reviewScope": "2D-reference-fidelity",
+      "checkedPixels": true,
+      "checked": [
+        "Escadarias centrais e laterais e lajes sem novos telhados",
+        "Abrigo dianteiro com cobertura corrugada e paredes laranja preservadas",
+        "Caixa-d’água, antena e teto azul preservados",
+        "Placa branca, fios, vasos e grafites visíveis",
+        "Silhueta dos prédios, posições dos vãos e paleta brasileira original"
+      ],
+      "findings": [],
+      "finishReferenceUtility": "Útil para reboco/tijolo e separação de planos, preservando a estrutura aérea, o abrigo e o teto azul da base.",
+      "engineValidation": "NOT_TESTED_2D_CONCEPT",
+      "assetPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/maps/C-map-escadao.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/map-escadao.png",
+      "assetSha256": "17af7921fcd773e1ec4c60b313749b3eb6d3b075c5766ad86e46456e4ca64fdc",
+      "referenceSha256": "4c64176ddcd3945b044f8a10d79cb249b6cba8f2dcadd92786e8ccbd61667968",
+      "assetSize": [
+        1376,
+        768
+      ],
+      "referenceSize": [
+        3072,
+        1728
+      ],
+      "capture": {
+        "id": "map-escadao",
+        "source": "production",
+        "synthetic": true,
+        "position": [
+          0,
+          16,
+          34
+        ],
+        "lookAt": [
+          0,
+          5,
+          0
+        ],
+        "fov": 65
+      },
+      "manifestHashMatches": true
+    }
+  ],
+  "reviewedAt": "2026-11-01T02:39:09.817945+00:00",
+  "generationStatusAtFinalCheck": "in-progress",
+  "expectedMapCount": 18,
+  "reviewedMapCount": 18,
+  "reviewedConceptCount": 36,
+  "remainingExpectedMaps": [],
+  "remainingScope": "Revisão de fidelidade 2D dos 18 mapas concluída. A geração de outras categorias pode continuar; integração e prova no renderer permanecem fora deste escopo.",
+  "nonClaims": [
+    "Nenhuma preferência editorial B/C escolhida pelo crítico.",
+    "Nenhum asset 3D integrado, FPS medido, polycount/textura/pivô aferido ou técnica/custo de reflexão demonstrado.",
+    "Leitura avaliada neste quadro estático; sem jogo humano, teste de alvo à distância ou prova no renderer.",
+    "Capturas sintéticas/staged conforme capture-manifest; fonte pública não equivale a evidência de qualidade em partida humana.",
+    "Ausência de veto visual novo aparente não constitui auditoria de direitos autorais."
+  ],
+  "inspectionCrops": "reviews/maps-inspection-crops.png",
+  "unreviewedMapConceptsPresentAtFinalCheck": [],
+  "summary": {
+    "REPROVADO": 25,
+    "APROVADO": 11
+  },
+  "catalogCoverageComplete": true,
+  "finalHashVerification": {
+    "checkedConceptIds": [
+      "B-map-piscina_treta",
+      "C-map-piscina_treta",
+      "B-map-quebrada",
+      "C-map-quebrada",
+      "B-map-posto_treta",
+      "C-map-posto_treta",
+      "B-map-ferro_velho",
+      "C-map-ferro_velho",
+      "B-map-praca_poderes",
+      "C-map-praca_poderes",
+      "B-map-loja_h",
+      "C-map-loja_h",
+      "B-map-upa_24h",
+      "C-map-upa_24h",
+      "B-map-atacadao_treta",
+      "C-map-atacadao_treta",
+      "B-map-velho_oeste",
+      "C-map-velho_oeste",
+      "B-map-amazonia",
+      "C-map-amazonia",
+      "B-map-corrego",
+      "C-map-corrego",
+      "B-map-lajes",
+      "C-map-lajes",
+      "B-map-penitenciaria",
+      "C-map-penitenciaria",
+      "B-map-obras_prefeitura",
+      "C-map-obras_prefeitura",
+      "B-map-parque_treta",
+      "C-map-parque_treta",
+      "B-map-mansao",
+      "C-map-mansao",
+      "B-map-campomorro",
+      "C-map-campomorro",
+      "B-map-escadao",
+      "C-map-escadao"
+    ],
+    "allConceptAndReferenceHashesMatch": true,
+    "uniqueFiles": 54
+  }
+}

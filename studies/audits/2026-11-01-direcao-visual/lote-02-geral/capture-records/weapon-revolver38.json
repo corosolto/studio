@@ -1,0 +1,31 @@
+{
+  "id": "weapon-revolver38",
+  "name": "Revólver .38 — revólver",
+  "category": "weapons",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-revolver38.png",
+  "weapon": "revolver38",
+  "family": "Revólver",
+  "map": "quebrada",
+  "position": [
+    3,
+    1.62,
+    -28
+  ],
+  "rotation": [
+    0,
+    3.141592653589793,
+    0,
+    "YXZ"
+  ],
+  "fov": 70,
+  "vmFov": 54.999999999999986,
+  "presentation": "authored",
+  "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "source": "production",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=revolver38&personagem=esquerdomacho",
+  "synthetic": true,
+  "capturedAt": "2026-11-01T02:32:39.010Z",
+  "inspected": true,
+  "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+}

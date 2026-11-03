@@ -1,0 +1,25 @@
+{
+  "id": "jav-city",
+  "name": "Javaporcos — cidade / preview",
+  "category": "javaporco",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-city.png",
+  "map": "invasao_javaporcos",
+  "position": [
+    21,
+    15,
+    31
+  ],
+  "lookAt": [
+    0,
+    3,
+    0
+  ],
+  "fov": 65,
+  "source": "local-preview",
+  "url": "http://localhost:4321/?debug=1&auto=E%2Cesquerdomacho%2CT&map=invasao_javaporcos&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "main": "http://localhost:4321/js/main.js?v=2.1.0-alpha.130-3eff8f38d028",
+  "synthetic": true,
+  "stagedBoars": [],
+  "capturedAt": "2026-11-01T02:23:00.939Z",
+  "inspected": true
+}

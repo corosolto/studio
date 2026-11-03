@@ -1,0 +1,75 @@
+{
+  "capturedAt": "2026-11-01T01:44:32.651Z",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=lajes&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "map": "lajes",
+  "renderer": "WebGL2",
+  "viewport": [
+    1536,
+    864
+  ],
+  "pixelRatio": 1,
+  "synthetic": true,
+  "staging": "Game update frozen; HUD and other actors hidden; existing punk bot shown for character view; no source/assets modified.",
+  "views": [
+    {
+      "id": "01-mundo",
+      "position": [
+        23,
+        15,
+        30
+      ],
+      "lookAt": [
+        0,
+        2,
+        0
+      ],
+      "fov": 65,
+      "viewmodel": false
+    },
+    {
+      "id": "02-primeira-pessoa",
+      "position": [
+        8,
+        4.75,
+        9
+      ],
+      "lookAt": [
+        -3,
+        3.8,
+        -10
+      ],
+      "fov": 65,
+      "viewmodel": true,
+      "weapon": "pistol"
+    },
+    {
+      "id": "03-personagem",
+      "position": [
+        12.1,
+        4.35,
+        4.5
+      ],
+      "lookAt": [
+        9.28,
+        4.12,
+        0.89
+      ],
+      "fov": 40,
+      "viewmodel": false,
+      "botIndex": 5,
+      "botPosition": [
+        9.277732789599698,
+        3.1,
+        0.8921933765088459
+      ],
+      "botRotation": [
+        0,
+        2.770322168300012,
+        0,
+        "XYZ"
+      ],
+      "botWeapon": "mosin"
+    }
+  ]
+}

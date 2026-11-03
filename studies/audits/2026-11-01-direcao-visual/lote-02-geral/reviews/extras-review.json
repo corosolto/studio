@@ -1,0 +1,918 @@
+{
+  "objective": "Revisar 26 conceitos B/C: 3 bases do Javaporco e 10 famílias de arma, preservando arma/contagem/cenário e linguagem B/C.",
+  "definitionOfDone": "26 vereditos após inspeção de pixels da base e conceito, com divergência, evidência e conserto barato em cada reprovação.",
+  "reviewer": "bc_characters_review",
+  "skill": "client/.claude/skills/asset-review/SKILL.md",
+  "spec": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/SPEC.md",
+  "updatedAt": "2026-11-01T02:44:41.569595+00:00",
+  "status": "complete",
+  "branch": "feat/fps-paid-viewmodels-aaa",
+  "head": "86c388b56",
+  "expectedCount": 26,
+  "reviewedCount": 26,
+  "availableAtCheckpoint": 26,
+  "counts": {
+    "APROVADO": 13,
+    "REPROVADO": 13
+  },
+  "results": [
+    {
+      "id": "B-jav-city",
+      "capture": "jav-city",
+      "category": "javaporco",
+      "style": "B",
+      "name": "Javaporcos — cidade / preview",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Mesma vista aérea da cidade, cruzamento e quadras; volumes, telhados, postes/fios, carros e borda de mata mantêm posições reconhecíveis.",
+        "Igreja/torre branca à direita, prédio central com caixa d’água azul, clínica à esquerda e faixas do cruzamento permanecem no mesmo enquadramento.",
+        "Anéis/efeitos e animais visíveis na rua são da captura de preview; não foram confundidos com os quatro inimigos encenados de outra referência."
+      ],
+      "finishUsefulness": "Reboco e telhas ganham variação/contato, mantendo a paleta terracota/verde e a cidade brasileira cercada de mata.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/B-jav-city.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-city.png",
+      "conceptSha256": "cda7b8e969aaaecfac5c127355570db0606ff0f34b0b62d9bc4ed2ba51932409",
+      "referenceSha256": "68c2ab6cbe2527c9a00529cc970f6dad3349eb781c985426a1b9e7ac4d13d24f",
+      "source": "local-preview",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Referência do preview local, não captura de produção nem prova de multiplayer humano."
+      ],
+      "engineAssessment": "Somente aparência 2D: não mede meshes, texturas, UV, pivôs, colisão, animação, desempenho, navegação ou comportamento no Three.js."
+    },
+    {
+      "id": "C-jav-city",
+      "capture": "jav-city",
+      "category": "javaporco",
+      "style": "C",
+      "name": "Javaporcos — cidade / preview",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Mesma vista aérea da cidade, cruzamento e quadras; volumes, telhados, postes/fios, carros e borda de mata mantêm posições reconhecíveis.",
+        "Igreja/torre branca à direita, prédio central com caixa d’água azul, clínica à esquerda e faixas do cruzamento permanecem no mesmo enquadramento.",
+        "Anéis/efeitos e animais visíveis na rua são da captura de preview; não foram confundidos com os quatro inimigos encenados de outra referência."
+      ],
+      "finishUsefulness": "Agrupamento da mata/telhados e cores mais chapadas preserva estrutura, rotas aparentes e contexto local.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/C-jav-city.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-city.png",
+      "conceptSha256": "3c1b07d437d07aee368e8780c3520e18d9795d36c905d24836c2f9e221a4e837",
+      "referenceSha256": "68c2ab6cbe2527c9a00529cc970f6dad3349eb781c985426a1b9e7ac4d13d24f",
+      "source": "local-preview",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Referência do preview local, não captura de produção nem prova de multiplayer humano."
+      ],
+      "engineAssessment": "Somente aparência 2D: não mede meshes, texturas, UV, pivôs, colisão, animação, desempenho, navegação ou comportamento no Three.js."
+    },
+    {
+      "id": "B-jav-pasto",
+      "capture": "jav-pasto",
+      "category": "javaporco",
+      "style": "B",
+      "name": "Javaporcos — borda da mata",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Mesma clareira gramada no primeiro plano e mesma borda densa de troncos, copas e arbustos.",
+        "O caminho de terra à direita, linhas de troncos e silhuetas principais da vegetação permanecem; nenhum javaporco foi acrescentado nesta cena vazia.",
+        "Bioma de mata e luz de fim de dia mantidos; não vira favela, deserto ou floresta de outra composição."
+      ],
+      "finishUsefulness": "Casca, folhas e gramado recebem contraste e variação de luz/roughness; a faixa de luz no primeiro plano é mudança de acabamento/iluminação, sem novo obstáculo inequívoco.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/B-jav-pasto.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-pasto.png",
+      "conceptSha256": "487fc75828b5648ea26da79c6356d64c3e15161f5165447123fbd8282c0368ac",
+      "referenceSha256": "c5e2b87e69c542e8e6eed54a043a48809525db0f5cdfefa272d19738b21f7373",
+      "source": "local-preview",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Referência do preview local, não captura de produção nem prova de multiplayer humano."
+      ],
+      "engineAssessment": "Somente aparência 2D: não mede meshes, texturas, UV, pivôs, colisão, animação, desempenho, navegação ou comportamento no Three.js."
+    },
+    {
+      "id": "C-jav-pasto",
+      "capture": "jav-pasto",
+      "category": "javaporco",
+      "style": "C",
+      "name": "Javaporcos — borda da mata",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Mesma clareira gramada no primeiro plano e mesma borda densa de troncos, copas e arbustos.",
+        "O caminho de terra à direita, linhas de troncos e silhuetas principais da vegetação permanecem; nenhum javaporco foi acrescentado nesta cena vazia.",
+        "Bioma de mata e luz de fim de dia mantidos; não vira favela, deserto ou floresta de outra composição."
+      ],
+      "finishUsefulness": "Planos de cor mais amplos e mancha clara de luz no gramado preservam a clareira e a mata; a mancha não foi tratada como evidência de terreno/rota nova.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/C-jav-pasto.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-pasto.png",
+      "conceptSha256": "d62b6cf6ba75c7996bb62217eee2fc6b2174f839660d324f6f2e07a73b3d2ab3",
+      "referenceSha256": "c5e2b87e69c542e8e6eed54a043a48809525db0f5cdfefa272d19738b21f7373",
+      "source": "local-preview",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Referência do preview local, não captura de produção nem prova de multiplayer humano."
+      ],
+      "engineAssessment": "Somente aparência 2D: não mede meshes, texturas, UV, pivôs, colisão, animação, desempenho, navegação ou comportamento no Three.js."
+    },
+    {
+      "id": "B-jav-enemies",
+      "capture": "jav-enemies",
+      "category": "javaporco",
+      "style": "B",
+      "name": "Javaporcos — quatro tipos no cenário (encenado)",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Exatamente quatro javaporcos visíveis no alinhamento frontal, com ordem/tamanho jovem, adulto, matriarca e aríete preservados.",
+        "Pernas, focinhos, presas e pelagem mantêm a forma animal de referência; sem armadura, espécie ou membro novo observado.",
+        "Mesma rua, cruzamento/faixas, carros, prédio com caixa d’água e Mercadinho São Luiz; manchas vermelhas de chão já existem na base, sem novo gore observado."
+      ],
+      "finishUsefulness": "Pelagem, asfalto e fachadas ganham textura/contato útil, mas a tipografia de placas foi redesenhada incorretamente.",
+      "failures": [
+        {
+          "observed": "A placa verde superior da Farmácia São José foi substituída por letras inventadas. O trecho SÃO JOSÉ ainda é identificável na referência e deixa de ser preservado em B e C; a placa lateral também sofre corrupção.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/B-jav-enemies.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-enemies.png",
+            "region": "placa superior da farmácia ao fundo, x≈408–486,y≈260–286 do PNG de conceito 1376×768; placa lateral imediatamente abaixo/à direita",
+            "inspectionCrop": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/extras-jav-signage-evidence.png"
+          },
+          "origin": "corrupção nova no conceito; poste e luz que ocultam parte de FARMÁCIA já estão na base",
+          "cheapestFix": "Recompor o decal/texto Farmácia São José diretamente da referência (incluindo a placa lateral), mantendo oclusões e perspectiva; reaplicar somente acabamento/desgaste sem gerar novas letras."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/B-jav-enemies.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-enemies.png",
+      "conceptSha256": "1aaf5471c5d5eba000f369e4e6d9e1151a1ef9e56364cfa522f8f5b94085a477",
+      "referenceSha256": "bd0d6b1dd21f9fc3e43bcb33423e2460e3b8b5670336cd0097f9c345cfa596bd",
+      "source": "local-preview",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Referência do preview local, não captura de produção nem prova de multiplayer humano.",
+        "A cena dos quatro tipos é uma encenação estática, não encontro de onda ativa."
+      ],
+      "engineAssessment": "Somente aparência 2D: não mede meshes, texturas, UV, pivôs, colisão, animação, desempenho, navegação ou comportamento no Three.js."
+    },
+    {
+      "id": "C-jav-enemies",
+      "capture": "jav-enemies",
+      "category": "javaporco",
+      "style": "C",
+      "name": "Javaporcos — quatro tipos no cenário (encenado)",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Exatamente quatro javaporcos visíveis no alinhamento frontal, com ordem/tamanho jovem, adulto, matriarca e aríete preservados.",
+        "Pernas, focinhos, presas e pelagem mantêm a forma animal de referência; sem armadura, espécie ou membro novo observado.",
+        "Mesma rua, cruzamento/faixas, carros, prédio com caixa d’água e Mercadinho São Luiz; manchas vermelhas de chão já existem na base, sem novo gore observado."
+      ],
+      "finishUsefulness": "Massas animais e ambiente permanecem coerentes com a base; placa da farmácia deixa de preservar o texto original.",
+      "failures": [
+        {
+          "observed": "A placa verde superior da Farmácia São José foi substituída por letras inventadas. O trecho SÃO JOSÉ ainda é identificável na referência e deixa de ser preservado em B e C; a placa lateral também sofre corrupção.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/C-jav-enemies.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-enemies.png",
+            "region": "placa superior da farmácia ao fundo, x≈408–486,y≈260–286 do PNG de conceito 1376×768; placa lateral imediatamente abaixo/à direita",
+            "inspectionCrop": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/extras-jav-signage-evidence.png"
+          },
+          "origin": "corrupção nova no conceito; poste e luz que ocultam parte de FARMÁCIA já estão na base",
+          "cheapestFix": "Recompor o decal/texto Farmácia São José diretamente da referência (incluindo a placa lateral), mantendo oclusões e perspectiva; reaplicar somente acabamento/desgaste sem gerar novas letras."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/javaporco/C-jav-enemies.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-enemies.png",
+      "conceptSha256": "f93e404ae26acb5781f19b9bce8c353364adce00585085dad6c3babb7a08fd29",
+      "referenceSha256": "bd0d6b1dd21f9fc3e43bcb33423e2460e3b8b5670336cd0097f9c345cfa596bd",
+      "source": "local-preview",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Referência do preview local, não captura de produção nem prova de multiplayer humano.",
+        "A cena dos quatro tipos é uma encenação estática, não encontro de onda ativa."
+      ],
+      "engineAssessment": "Somente aparência 2D: não mede meshes, texturas, UV, pivôs, colisão, animação, desempenho, navegação ou comportamento no Three.js."
+    },
+    {
+      "id": "B-weapon-ak",
+      "capture": "weapon-ak",
+      "category": "weapons",
+      "style": "B",
+      "name": "AK-47 — fuzil de assalto",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "AK continua com guarda-mão de madeira, receptor metálico escuro, carregador curvo e mesmas miras sem luneta ou acessório novo.",
+        "Posição de primeira pessoa, mão de apoio sob a madeira e mão traseira no punho mantidas; nenhuma segunda arma criada.",
+        "Ônibus, Kombi, coberturas, cruzamento, postes e fachadas conservam a estrutura principal da Quebrada."
+      ],
+      "finishUsefulness": "Madeira, aço e tecido ganham separação de roughness/desgaste; manga vermelha e estrelas claras da luva permanecem.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-ak.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-ak.png",
+      "conceptSha256": "03cac3eb59b0f5ecd5a0f114c7438285ab6dbda3277b65a65520dc67d298a09b",
+      "referenceSha256": "6a3556207123e892186bd034121d869c43c5053967c06444b6fb039ae2810434",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-ak",
+      "capture": "weapon-ak",
+      "category": "weapons",
+      "style": "C",
+      "name": "AK-47 — fuzil de assalto",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "AK continua com guarda-mão de madeira, receptor metálico escuro, carregador curvo e mesmas miras sem luneta ou acessório novo.",
+        "Posição de primeira pessoa, mão de apoio sob a madeira e mão traseira no punho mantidas; nenhuma segunda arma criada.",
+        "Ônibus, Kombi, coberturas, cruzamento, postes e fachadas conservam a estrutura principal da Quebrada."
+      ],
+      "finishUsefulness": "Arma e guarda-mão conservam forma e materiais, com planos de cor mais gráficos; a manga sofre troca indevida por pele.",
+      "failures": [
+        {
+          "observed": "O antebraço de apoio, coberto por manga vermelha na base, passa a pele exposta alaranjada entre o punho da luva e a manga curta no canto inferior. Isso muda a roupa/skin; não é só iluminação.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-ak.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-ak.png",
+            "region": "primeiro plano, antebraço esquerdo/de apoio em x≈816–947,y≈642–767 do conceito 1376×768"
+          },
+          "origin": "troca nova de tecido por pele; a base tem antebraço vermelho contínuo",
+          "cheapestFix": "Repor a manga vermelha integral e seu punho no mesmo contorno/pose da base; preservar arma, luva estampada e acabamento C."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-ak.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-ak.png",
+      "conceptSha256": "13b16b86b810790d9fd1906b658367e9c3088eabfa7dc4fbd317ccbd43c5d6d7",
+      "referenceSha256": "6a3556207123e892186bd034121d869c43c5053967c06444b6fb039ae2810434",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-pistol",
+      "capture": "weapon-pistol",
+      "category": "weapons",
+      "style": "B",
+      "name": "PT-38 — pistola",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Pistola escura compacta, ferrolho, miras abertas e empunhadura com duas mãos preservados.",
+        "Luvas vermelhas com estrelas claras e escala/posição da arma continuam reconhecíveis."
+      ],
+      "finishUsefulness": "Ferrolho/luvas têm material útil, mas a cobertura do cenário foi convertida em banco e há placa nova.",
+      "failures": [
+        {
+          "observed": "A cobertura retangular marrom à frente do ônibus foi substituída por banco de ripas com assento/pés. Uma placa vertical SOMA também aparece acima/atrás do ônibus, ausente na base.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-pistol.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-pistol.png",
+            "region": "banco no centro-direita x≈882–1068,y≈405–455; nova placa SOMA x≈966–1021,y≈319–350 no conceito 1376×768"
+          },
+          "origin": "novos objetos/semântica no conceito; a base mostra cobertura lisa e placa clara sem esse letreiro nessa posição",
+          "cheapestFix": "Restaurar a cobertura marrom lisa com a silhueta original e remover o letreiro novo; manter o acabamento da pistola e das luvas."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-pistol.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-pistol.png",
+      "conceptSha256": "f6e11354cf078504710b35f6a400263d4e71b7d2b01c95e67e6b909da4c3f873",
+      "referenceSha256": "2c64ac3cad367c4c53365528984ae142a6b5cb92a38bc23023d12cd8365beec9",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-pistol",
+      "capture": "weapon-pistol",
+      "category": "weapons",
+      "style": "C",
+      "name": "PT-38 — pistola",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Pistola escura compacta, ferrolho, miras abertas e empunhadura com duas mãos preservados.",
+        "Luvas vermelhas com estrelas claras e escala/posição da arma continuam reconhecíveis."
+      ],
+      "finishUsefulness": "Mantém o desenho da pistola, luvas, ônibus, rua e coberturas lisas; acabamento metálico mais suave sem novo acessório observado.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-pistol.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-pistol.png",
+      "conceptSha256": "cc60e47370e43fe671c38b229871b7fd3561d1a49e9494cb83f4d91d0d4963d8",
+      "referenceSha256": "2c64ac3cad367c4c53365528984ae142a6b5cb92a38bc23023d12cd8365beec9",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-revolver38",
+      "capture": "weapon-revolver38",
+      "category": "weapons",
+      "style": "B",
+      "name": "Revólver .38 — revólver",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Revólver prateado com tambor, cano curto/médio, mira traseira escura e punho marrom mantém família e enquadramento.",
+        "Luvas vermelhas estampadas e gesto de duas mãos permanecem; não surgem luneta, silenciador ou segunda arma."
+      ],
+      "finishUsefulness": "Metal e punho são úteis como referência, porém a cobertura do mapa recebe outra forma/material.",
+      "failures": [
+        {
+          "observed": "As coberturas marrons lisas à frente do ônibus e no centro distante viram barreiras Jersey cinza de concreto, com base alargada e faces inclinadas. Isso troca forma e cor do obstáculo.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-revolver38.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-revolver38.png",
+            "region": "cobertura à frente do ônibus x≈878–1072,y≈403–453 e cobertura central x≈600–704,y≈391–419 no conceito 1376×768"
+          },
+          "origin": "nova reinterpretação de geometria/material; prismas marrons na base",
+          "cheapestFix": "Repor os prismas retos marrons da referência e limitar desgaste/material à sua superfície, sem base alargada ou faces Jersey."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-revolver38.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-revolver38.png",
+      "conceptSha256": "48ff879aaa66050e48cccecb6ae08ef985160fd90382c3da48d4e0e74af26bbb",
+      "referenceSha256": "e13b72f62cf67525bc594ad7f805498f40bb5bbbc9477cde01977046a3ea3031",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-revolver38",
+      "capture": "weapon-revolver38",
+      "category": "weapons",
+      "style": "C",
+      "name": "Revólver .38 — revólver",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Revólver prateado com tambor, cano curto/médio, mira traseira escura e punho marrom mantém família e enquadramento.",
+        "Luvas vermelhas estampadas e gesto de duas mãos permanecem; não surgem luneta, silenciador ou segunda arma."
+      ],
+      "finishUsefulness": "Metal, detalhes quentes e planos de cor continuam na família revólver; o cenário adiciona e substitui obstáculos.",
+      "failures": [
+        {
+          "observed": "Uma caixa de madeira com diagonal foi acrescentada ao passeio esquerdo, que estava livre. A cobertura da frente do ônibus ganha construção de ripas, e o pequeno prisma laranja ao lado vira barril cilíndrico.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-revolver38.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-revolver38.png",
+            "region": "caixa nova no passeio x≈254–344,y≈403–459; barril x≈834–872,y≈406–453 e cobertura de madeira x≈876–1069,y≈404–453 no conceito 1376×768"
+          },
+          "origin": "invenção/substituição nova; base sem caixa nesse passeio e com prisma laranja",
+          "cheapestFix": "Remover a caixa nova e restaurar o prisma laranja e as coberturas lisas no mesmo contorno da base; manter a arma e seu acabamento."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-revolver38.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-revolver38.png",
+      "conceptSha256": "b327d5b097fc042aaa84744a64c6fe3969f97287f35ed5bc824bd1f0e1e59139",
+      "referenceSha256": "e13b72f62cf67525bc594ad7f805498f40bb5bbbc9477cde01977046a3ea3031",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-mp5",
+      "capture": "weapon-mp5",
+      "category": "weapons",
+      "style": "B",
+      "name": "MP5 — submetralhadora",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "MP5 conserva corpo escuro compacto, mira frontal em anel, mira traseira e carregador inferior; sem óptica ou silenciador inventado.",
+        "Mesmo enquadramento de primeira pessoa, apoio da mão e manga vermelha."
+      ],
+      "finishUsefulness": "Aço gasto e tecido rendem separação útil, mas a luva estampada foi redesenhada como luva tática lisa.",
+      "failures": [
+        {
+          "observed": "As estrelas claras grandes visíveis na luva de apoio da base desapareceram; B e C mostram luva vermelha lisa com costuras/punho tático. A manga vermelha permanece, mas a skin da mão mudou.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-mp5.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-mp5.png",
+            "region": "mão de apoio/punho em x≈835–961,y≈490–670 do conceito 1376×768; comparar estampa branca da mesma região da base"
+          },
+          "origin": "apagamento novo de estampa; estrelas são visíveis na captura original",
+          "cheapestFix": "Restaurar as estrelas claras nas mesmas faces visíveis da luva, conservando a paleta vermelha, pose e volumes originais; usar textura em vez de redesenhar luva lisa."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-mp5.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-mp5.png",
+      "conceptSha256": "793ec64934f67a5854f78be6884b77c87bbf51f2ecf51bdf5891f7010550dd7b",
+      "referenceSha256": "937d8e20ac9cac8c9a023bc6db44e2bbe4898f3685ad501d17a30fe7b1404023",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-mp5",
+      "capture": "weapon-mp5",
+      "category": "weapons",
+      "style": "C",
+      "name": "MP5 — submetralhadora",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "MP5 conserva corpo escuro compacto, mira frontal em anel, mira traseira e carregador inferior; sem óptica ou silenciador inventado.",
+        "Mesmo enquadramento de primeira pessoa, apoio da mão e manga vermelha."
+      ],
+      "finishUsefulness": "Arma preserva estrutura com planos mais amplos, mas também perde a estampa clara da luva.",
+      "failures": [
+        {
+          "observed": "As estrelas claras grandes visíveis na luva de apoio da base desapareceram; B e C mostram luva vermelha lisa com costuras/punho tático. A manga vermelha permanece, mas a skin da mão mudou.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-mp5.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-mp5.png",
+            "region": "mão de apoio/punho em x≈835–961,y≈490–670 do conceito 1376×768; comparar estampa branca da mesma região da base"
+          },
+          "origin": "apagamento novo de estampa; estrelas são visíveis na captura original",
+          "cheapestFix": "Restaurar as estrelas claras nas mesmas faces visíveis da luva, conservando a paleta vermelha, pose e volumes originais; usar textura em vez de redesenhar luva lisa."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-mp5.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-mp5.png",
+      "conceptSha256": "4260baad5ef8991e3d2a329bc024f38801fa1e3fdea8711708ef4abc9592a64e",
+      "referenceSha256": "937d8e20ac9cac8c9a023bc6db44e2bbe4898f3685ad501d17a30fe7b1404023",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-shotgun",
+      "capture": "weapon-shotgun",
+      "category": "weapons",
+      "style": "B",
+      "name": "M3 — escopeta",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Escopeta escura mantém trilho superior, duas miras abertas, tubos/guarda-mão e receptor comprido; não vira outra família de arma.",
+        "Mesma posição das duas mãos, luvas vermelhas com estrelas claras e mangas vermelhas.",
+        "Ônibus, Kombi, blocos/coberturas, faixa de pedestres, postes/fios e prédios continuam no mesmo local."
+      ],
+      "finishUsefulness": "Aço escuro, desgaste de bordas e tecido se distinguem sem acessório ou objeto novo observado.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-shotgun.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-shotgun.png",
+      "conceptSha256": "b962e25bac58c47cf23d72f0206173e21f53cd795a7df68bafa86b97a20af0d3",
+      "referenceSha256": "1f7dce63b19bc06d69d68e3e8f8704d6c77438e7cfab3e60b386a70a9e69b9b3",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-shotgun",
+      "capture": "weapon-shotgun",
+      "category": "weapons",
+      "style": "C",
+      "name": "M3 — escopeta",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Escopeta escura mantém trilho superior, duas miras abertas, tubos/guarda-mão e receptor comprido; não vira outra família de arma.",
+        "Mesma posição das duas mãos, luvas vermelhas com estrelas claras e mangas vermelhas.",
+        "Ônibus, Kombi, blocos/coberturas, faixa de pedestres, postes/fios e prédios continuam no mesmo local."
+      ],
+      "finishUsefulness": "Superfícies metálicas mais gráficas e reflexos quentes preservam contorno, roupa e cenário.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-shotgun.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-shotgun.png",
+      "conceptSha256": "ffe82a6a9a1816da0991fcbcbdd4411da9477eb1e0fd109c152480acc420ef67",
+      "referenceSha256": "1f7dce63b19bc06d69d68e3e8f8704d6c77438e7cfab3e60b386a70a9e69b9b3",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-awp",
+      "capture": "weapon-awp",
+      "category": "weapons",
+      "style": "B",
+      "name": "AWP — sniper de ferrolho",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "A coronha/chassi verde, luneta grande com torres, receptor/ferrolho e cano comprido continuam reconhecíveis na mesma pose.",
+        "Mãos, estrelas das luvas e mangas vermelhas permanecem; ônibus, Kombi, coberturas e postes continuam nas mesmas posições."
+      ],
+      "finishUsefulness": "O metal ganha reflexos/arestas e a coronha verde continua identificável; a pintura do ônibus perde a cor de referência.",
+      "failures": [
+        {
+          "observed": "A faixa vermelha frontal e lateral do ônibus foi apagada: o veículo vermelho/branco da base vira cinza/branco muito sujo.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-awp.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-awp.png",
+            "region": "ônibus ao fundo, x≈835–985,y≈345–407 no conceito 1376×768",
+            "inspectionCrop": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/extras-final-evidence.png"
+          },
+          "origin": "perda nova de cor do cenário; não é limitação da captura",
+          "cheapestFix": "Restaurar a faixa vermelha e a divisão de pintura do ônibus a partir da base; manter desgaste sem encobrir a identidade cromática."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-awp.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-awp.png",
+      "conceptSha256": "7c9fbfed869a11bb4815f0f1ccef98ba676ded130026286ad52a9ee89ffd3fb7",
+      "referenceSha256": "7e04de49139b6724b8a74a7d06355f93a6d63d6d7de7add480180fba14412c06",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-awp",
+      "capture": "weapon-awp",
+      "category": "weapons",
+      "style": "C",
+      "name": "AWP — sniper de ferrolho",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Coronha/chassi verde, receptor escuro, cano e luneta grande com torres preservam a silhueta e a família da AWP.",
+        "Luvas vermelhas com estrelas e mangas vermelhas continuam na mesma pose.",
+        "Ônibus com faixa vermelha, Kombi, coberturas, fachadas e postes/fios permanecem no mesmo enquadramento."
+      ],
+      "finishUsefulness": "Planos quentes/frios mais amplos deixam madeira/polímero verde, metal e tecido legíveis sem novo acessório.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-awp.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-awp.png",
+      "conceptSha256": "2482cdfe08335d7786fba68c1a1372d7235550bc8c0624ac027b2488ec657f78",
+      "referenceSha256": "7e04de49139b6724b8a74a7d06355f93a6d63d6d7de7add480180fba14412c06",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-svd",
+      "capture": "weapon-svd",
+      "category": "weapons",
+      "style": "B",
+      "name": "SVD — DMR semiautomático",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Guarda-mão/coronha de madeira, apoio escuro de bochecha, receptor/carregador escuros e luneta mantêm a família e a pose da SVD.",
+        "Mangas e luvas vermelhas com estrelas permanecem; não foi acrescentada outra arma ou óptica."
+      ],
+      "finishUsefulness": "Madeira e aço se separam bem no viewmodel; o fundo recebeu desenhos ausentes na base.",
+      "failures": [
+        {
+          "observed": "Foi acrescentado um desenho branco de caveira/cabeça na parede alta de tijolos à direita; a mesma região da base tem tijolos sem esse desenho. Também surge marca escura na parede alta à esquerda.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-svd.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-svd.png",
+            "region": "caveira no alto à direita, x≈1307–1351,y≈313–350; marca à esquerda, x≈270–309,y≈318–360 do conceito 1376×768",
+            "inspectionCrop": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/extras-final-evidence.png"
+          },
+          "origin": "decal/grafite novo no conceito, não defeito herdado",
+          "cheapestFix": "Repor os trechos de tijolo da referência nessas regiões e manter somente grafites já existentes."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-svd.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-svd.png",
+      "conceptSha256": "108f7d7ae4b7ee61672450f1f487c79f66bd4a515ae5591eb3b6541d0dff8306",
+      "referenceSha256": "88dc04a88606428e443174a3b1fd52db46ce1d445cce900354f562ba738c0209",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-svd",
+      "capture": "weapon-svd",
+      "category": "weapons",
+      "style": "C",
+      "name": "SVD — DMR semiautomático",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Madeira do guarda-mão/coronha, apoio de bochecha, receptor/carregador e luneta continuam no mesmo desenho e lugar.",
+        "Mãos, estrelas brancas e mangas vermelhas preservadas.",
+        "Ônibus, Kombi, blocos de cobertura, fachadas e postes/fios continuam na cena; não se observou novo decal equivalente ao de B."
+      ],
+      "finishUsefulness": "Madeira, metal e tecido recebem pinceladas/reflexos mais agrupados com boa separação do fundo.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-svd.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-svd.png",
+      "conceptSha256": "f3ab3065c014fe46e76519a78bf42b38ec54a07ccd3eb46ebea5caf1af5a41b3",
+      "referenceSha256": "88dc04a88606428e443174a3b1fd52db46ce1d445cce900354f562ba738c0209",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-lmg",
+      "capture": "weapon-lmg",
+      "category": "weapons",
+      "style": "B",
+      "name": "Metralha — metralhadora leve",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Receptor/guarda-mão areia, cano escuro, alça superior e munição em fita continuam identificando a mesma metralhadora.",
+        "Mesma pose de apoio e manga vermelha; a fita visível permanece, sem caixa nova de munição. A quantidade exata de elos não foi medida."
+      ],
+      "finishUsefulness": "Perfurações e separação metal/polímero ajudam a leitura, porém a luva perde sua marca gráfica.",
+      "failures": [
+        {
+          "observed": "As grandes estrelas claras da luva de apoio desaparecem; a mão vira uma luva vermelha lisa com costuras. A base tem várias pontas brancas visíveis nessa mesma mão.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-lmg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-lmg.png",
+            "region": "luva sob o guarda-mão, x≈1035–1155,y≈584–685 do conceito 1376×768",
+            "inspectionCrop": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/extras-final-evidence.png"
+          },
+          "origin": "remoção nova de detalhe da skin; estrelas são visíveis na referência",
+          "cheapestFix": "Reaplicar a textura/decais de estrelas da luva original, preservando o vermelho e a mesma cobertura dos dedos."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-lmg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-lmg.png",
+      "conceptSha256": "e618d4864893d5b7e1858471000f1d9528c8aa2f5f3f12a53587baecef659b66",
+      "referenceSha256": "9eb00f199ec45f059cd9006e524e4da989bbd98e92180bb0bafdb5796ee20fc6",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-lmg",
+      "capture": "weapon-lmg",
+      "category": "weapons",
+      "style": "C",
+      "name": "Metralha — metralhadora leve",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Receptor/guarda-mão e alça areia, cano escuro e fita de munição mantêm a família da metralhadora sem óptica/caixa novas.",
+        "Luvas vermelhas com marcas claras e mangas vermelhas continuam; mesma pose de apoio. A quantidade exata de elos da fita não foi medida.",
+        "Cena mantém ônibus com faixa vermelha, Kombi, coberturas e fachadas no mesmo enquadramento."
+      ],
+      "finishUsefulness": "Planos de cor e contorno fino separam a arma do fundo. A espessura do contorno deve ser tratada como consistência editorial com o restante de C, sem escolher a direção pelo dono.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-lmg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-lmg.png",
+      "conceptSha256": "78d690d3636c26a45e303d1d6d9d32e0949cf37a93b45587233f2d1139ff5f7f",
+      "referenceSha256": "9eb00f199ec45f059cd9006e524e4da989bbd98e92180bb0bafdb5796ee20fc6",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-carbine",
+      "capture": "weapon-carbine",
+      "category": "weapons",
+      "style": "B",
+      "name": "Carabina — ação por alavanca",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Receptor cinza/prata, guarda-mão de madeira, cano/tubo inferior estreitos e miras abertas mantêm a carabina da base.",
+        "Mãos, estrelas e mangas vermelhas preservadas; nenhum acessório óptico novo."
+      ],
+      "finishUsefulness": "Madeira e aço ganham textura/reflexo, mas a fachada deixa de conservar material e volume da captura.",
+      "failures": [
+        {
+          "observed": "A fachada longa de tijolos aparentes à esquerda foi convertida em reboco cinza e ganhou um toldo corrugado projetado sobre portas. A base tem tijolo exposto nessa extensão e não tem esse toldo projetado.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-carbine.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-carbine.png",
+            "region": "fachada à esquerda, especialmente novo toldo x≈0–245,y≈339–367 do conceito 1376×768; reboco ocupa a faixa superior e inferior dessa mesma fachada",
+            "inspectionCrop": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/extras-final-evidence.png"
+          },
+          "origin": "troca nova de material e introdução de volume no cenário",
+          "cheapestFix": "Retomar tijolos e recortes de reboco da referência e remover o toldo novo; preservar os cartazes/grafites originais."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-carbine.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-carbine.png",
+      "conceptSha256": "30a64ad774b3ecc301bb0a8acedbb71cf845bb26a3ecd86ed581178da1af154b",
+      "referenceSha256": "bf56a81ca3b9d6c4dbff22502947c603c54ef05c0c6d9ba745c8dc5fd856ad5c",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-carbine",
+      "capture": "weapon-carbine",
+      "category": "weapons",
+      "style": "C",
+      "name": "Carabina — ação por alavanca",
+      "verdict": "REPROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "A carabina mantém receptor metálico, madeira do guarda-mão, tubos/cano longos e miras abertas; não vira outro tipo de arma.",
+        "Pose das mãos e estrelas nas luvas permanecem; alteração se concentra na estampa da manga."
+      ],
+      "finishUsefulness": "Metal e madeira ficam legíveis em planos pintados; a roupa recebeu uma estampa que não existe na captura.",
+      "failures": [
+        {
+          "observed": "A manga vermelha lisa do antebraço foi redesenhada com uma estampa grande de arabescos/ondas vermelhos escuros. Na base, as variações são iluminação e dobras, sem esse motivo decorativo.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-carbine.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-carbine.png",
+            "region": "antebraço de apoio, x≈741–968,y≈599–767 do conceito 1376×768",
+            "inspectionCrop": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/extras-final-evidence.png"
+          },
+          "origin": "estampa nova da skin, não textura herdada",
+          "cheapestFix": "Remover os arabescos e manter tecido vermelho liso com dobras/sombreamento; conservar as estrelas apenas nas regiões da luva que já as têm."
+        }
+      ],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-carbine.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-carbine.png",
+      "conceptSha256": "f9b3314c10184f1b4d5067fda550669b8c38b8e83e88a311d8318cdf1053299a",
+      "referenceSha256": "bf56a81ca3b9d6c4dbff22502947c603c54ef05c0c6d9ba745c8dc5fd856ad5c",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "B-weapon-knife",
+      "capture": "weapon-knife",
+      "category": "weapons",
+      "style": "B",
+      "name": "Faca — corpo a corpo",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Mesma faca de lâmina reta metálica apontada para cima/esquerda, cabo escuro e pequena guarda; não se transforma em outra arma.",
+        "Mesma mão direita segurando o cabo e esquerda livre, com luvas vermelhas estreladas e mangas vermelhas.",
+        "Câmera, Kombi, ônibus, blocos de cobertura, prédios e postes/fios preservam a composição da captura."
+      ],
+      "finishUsefulness": "Borda da lâmina, costuras e tecido ficam mais críveis. A luz fica mais dourada/contrastada no cenário; isso requer reprodução no renderer, mas não prova por si uma mudança de layout ou design.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/B-weapon-knife.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-knife.png",
+      "conceptSha256": "8e9e3410fb1d27d0dc262864e0acec4055e79d60d3d1537b9e544eb526708c2f",
+      "referenceSha256": "8fa8eab9005fc61b1e62e1ad341e5be3d1dc5a618fd0aa36725f035df6b7af54",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    },
+    {
+      "id": "C-weapon-knife",
+      "capture": "weapon-knife",
+      "category": "weapons",
+      "style": "C",
+      "name": "Faca — corpo a corpo",
+      "verdict": "APROVADO",
+      "pixelsInspected": true,
+      "checks": [
+        "Lâmina reta metálica, cabo escuro e pequena guarda conservam a faca e a orientação da captura.",
+        "Duas mãos nas mesmas poses, luvas com estrelas claras e mangas vermelhas preservadas.",
+        "Ônibus, Kombi, coberturas, prédios e postes/fios permanecem no mesmo enquadramento."
+      ],
+      "finishUsefulness": "Reflexos quentes e planos pintados simplificam metal/tecido sem novo desenho de arma ou roupa.",
+      "failures": [],
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/weapons/C-weapon-knife.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-knife.png",
+      "conceptSha256": "91a514abb7aec412b5c570b204c812f77e9adbecd3f8c9babb8e56671e62641b",
+      "referenceSha256": "8fa8eab9005fc61b1e62e1ad341e5be3d1dc5a618fd0aa36725f035df6b7af54",
+      "source": "production",
+      "synthetic": true,
+      "scope": "fidelidade de conceito 2D; não valida implementação/renderização nem escolhe direção editorial",
+      "inheritedLimitations": [
+        "Uma captura estática de primeira pessoa com bloom=0; não comprova animação, recarga, contatos ou alinhamento durante gameplay.",
+        "A mão parcialmente oculta e os elementos cortados pela borda devem ser comparados à captura, sem inventar defeito fora da imagem."
+      ],
+      "engineAssessment": "Somente aparência 2D; não mede meshes, texturas, UV, rig, animação, colisão, tiro/alvo, custo no renderer ou ergonomia durante partida."
+    }
+  ],
+  "pendingIds": [],
+  "method": "Base e conceitos completos vistos com view_image; recortes comparáveis de farmácia, ônibus, parede, manga/luva e fachada ampliados apenas para inspeção. Vereditos não foram inferidos de prompts. Hashes finais conferidos contra generation-manifest.json.",
+  "acceptedMilestone": "26/26 conceitos inspecionados: 6 Javaporco e 20 de 10 famílias de arma; hashes de conceito/referência verificados em 52/52 entradas.",
+  "unresolvedBlockers": [],
+  "nextStep": "Correções localizadas nos 13 conceitos reprovados; nova revisão somente após novas imagens. Escolha editorial B/C permanece com o dono.",
+  "globalLimits": [
+    "Conceitos 2D, sem validação de asset 3D ou desempenho; aprovação não escolhe padrão B/C pelo dono.",
+    "Armas: uma captura estática de primeira pessoa em produção, com bloom=0; sem prova de animação, recarga, contatos ou alinhamento durante gameplay.",
+    "Javaporco: preview local distinto de produção; quatro tipos são encenados, não onda ativa."
+  ],
+  "hashValidation": {
+    "checks": 52,
+    "matched": 52,
+    "uniqueFiles": 39,
+    "matchesGenerationManifest": true
+  },
+  "countsByCategory": {
+    "javaporco": {
+      "APROVADO": 4,
+      "REPROVADO": 2
+    },
+    "weapons": {
+      "APROVADO": 9,
+      "REPROVADO": 11
+    }
+  },
+  "allManifestHashValidation": {
+    "concepts": 136,
+    "checks": 272,
+    "matched": 272,
+    "uniqueFiles": 204,
+    "failed": 0,
+    "scope": "integridade de arquivos de todo o manifest; revisão visual deste relatório cobre somente 26 extras",
+    "verifiedAt": "2026-11-01T02:44:55.015953+00:00"
+  }
+}

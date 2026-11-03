@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-01T02:45:34.903Z",
+  "status": "passed-for-2D-comparison",
+  "captures": 68,
+  "concepts": 136,
+  "reviewed": 136,
+  "uniquePNGFiles": 204,
+  "totalPNGBytes": 473840120,
+  "conceptDimensions": [
+    "1376x768"
+  ],
+  "errors": [],
+  "limits": [
+    "Artifact coverage and integrity, not gameplay or performance validation.",
+    "APROVADO is reference fidelity only. Owner editorial choice remains pending.",
+    "Rejected concepts are shown as finish references with visible corrections; they are not integration requirements."
+  ]
+}

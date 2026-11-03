@@ -1,0 +1,32 @@
+{
+  "id": "map-posto_treta",
+  "category": "maps",
+  "name": "Posto da Treta",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/posto_treta.png",
+  "map": "posto_treta",
+  "bounds": {
+    "minX": -27.5,
+    "maxX": 27.5,
+    "minZ": -35.5,
+    "maxZ": 35.5
+  },
+  "position": [
+    19,
+    5.5,
+    -23
+  ],
+  "lookAt": [
+    -2,
+    2,
+    1
+  ],
+  "fov": 65,
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=posto_treta&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "source": "production",
+  "synthetic": true,
+  "actorCountHidden": 7,
+  "capturedAt": "2026-11-01T02:11:14.967Z",
+  "inspected": true,
+  "inspection": "Câmera vista: ambiente legível, composição utilizável; Ferro Velho conserva neblina original."
+}

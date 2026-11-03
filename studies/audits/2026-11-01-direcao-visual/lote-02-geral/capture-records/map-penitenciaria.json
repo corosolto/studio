@@ -1,0 +1,32 @@
+{
+  "id": "map-penitenciaria",
+  "category": "maps",
+  "name": "CARANDIRU — oficina",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/penitenciaria.png",
+  "map": "penitenciaria",
+  "bounds": {
+    "minX": -37.1,
+    "maxX": 37.1,
+    "minZ": -47.1,
+    "maxZ": 47.1
+  },
+  "position": [
+    15,
+    8,
+    -23
+  ],
+  "lookAt": [
+    0,
+    2,
+    8
+  ],
+  "fov": 65,
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=penitenciaria&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "source": "production",
+  "synthetic": true,
+  "actorCountHidden": 7,
+  "capturedAt": "2026-11-01T02:17:47.543Z",
+  "inspected": true,
+  "inspection": "Pixels vistos: cenário legível; personagem íntegro nos três ângulos, sem obstrução; pose idle original preservada."
+}

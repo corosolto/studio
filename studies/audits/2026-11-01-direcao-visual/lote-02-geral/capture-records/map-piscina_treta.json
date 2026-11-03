@@ -1,0 +1,22 @@
+{
+  "id": "map-piscina_treta",
+  "category": "maps",
+  "name": "Piscina da Treta",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/piscina_treta.png",
+  "map": "piscina_treta",
+  "position": [
+    0,
+    2.3,
+    -8
+  ],
+  "lookAt": [
+    0,
+    0.3,
+    8
+  ],
+  "fov": 65,
+  "source": "production-alpha.133-a64e2abe238c",
+  "synthetic": true,
+  "inspected": true,
+  "notes": "Camera staged over pool basin for clear environment overview; no gameplay/performance claim."
+}

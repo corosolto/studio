@@ -1,0 +1,165 @@
+SKIP B-map-piscina_treta
+SKIP C-map-piscina_treta
+SKIP B-map-quebrada
+SKIP C-map-quebrada
+SKIP B-map-posto_treta
+SKIP C-map-posto_treta
+SKIP B-map-ferro_velho
+SKIP C-map-ferro_velho
+SKIP B-map-praca_poderes
+SKIP C-map-praca_poderes
+SKIP B-map-loja_h
+SKIP C-map-loja_h
+SKIP B-map-upa_24h
+SKIP C-map-upa_24h
+SKIP B-map-atacadao_treta
+SKIP C-map-atacadao_treta
+SKIP B-map-velho_oeste
+SKIP C-map-velho_oeste
+SKIP B-map-amazonia
+SKIP C-map-amazonia
+SKIP B-map-corrego
+SKIP C-map-corrego
+SKIP B-map-lajes
+SKIP C-map-lajes
+SKIP B-map-penitenciaria
+SKIP C-map-penitenciaria
+SKIP B-skin-canarinho-cyborg
+SKIP C-skin-canarinho-cyborg
+SKIP B-map-obras_prefeitura
+SKIP C-map-obras_prefeitura
+SKIP B-map-parque_treta
+SKIP C-map-parque_treta
+SKIP B-map-mansao
+SKIP C-map-mansao
+SKIP B-char-esquerdomacho
+SKIP C-char-esquerdomacho
+SKIP B-char-doutora
+SKIP C-char-doutora
+SKIP B-map-campomorro
+SKIP C-map-campomorro
+SKIP B-char-caminhoneiro
+SKIP C-char-caminhoneiro
+SKIP B-char-coach
+SKIP C-char-coach
+SKIP B-char-adjim
+SKIP C-char-adjim
+SKIP B-char-punk
+SKIP C-char-punk
+SKIP B-char-mandrake
+SKIP C-char-mandrake
+SKIP B-char-lampiao
+SKIP C-char-lampiao
+SKIP B-char-caipora
+SKIP C-char-caipora
+SKIP B-char-gotinha
+SKIP C-char-gotinha
+SKIP B-char-et
+SKIP C-char-et
+SKIP B-char-canarinho
+SKIP C-char-canarinho
+SKIP B-skin-lula-drip
+SKIP C-skin-lula-drip
+SKIP B-skin-bolsonaro-drip
+SKIP C-skin-bolsonaro-drip
+SKIP B-skin-senador-drip
+SKIP C-skin-senador-drip
+SKIP B-skin-janja
+SKIP C-skin-janja
+SKIP B-skin-michelle-bolsonaro
+SKIP C-skin-michelle-bolsonaro
+SKIP B-skin-lula-cyborg
+SKIP C-skin-lula-cyborg
+SKIP B-skin-bolsonaro-cyborg
+SKIP C-skin-bolsonaro-cyborg
+SKIP B-skin-aljuiz-toga-mandrake
+SKIP C-skin-aljuiz-toga-mandrake
+SKIP B-skin-lula-mandrake
+SKIP C-skin-lula-mandrake
+SKIP B-skin-bolsonaro-mandrake
+SKIP C-skin-bolsonaro-mandrake
+SKIP B-skin-michelle-mandrake
+SKIP C-skin-michelle-mandrake
+SKIP B-skin-zero-um-mandrake
+SKIP C-skin-zero-um-mandrake
+SKIP B-skin-canarinho-drip
+SKIP C-skin-canarinho-drip
+SKIP B-skin-canarinho-mandrake
+SKIP C-skin-canarinho-mandrake
+SKIP B-skin-gotinha-drip
+SKIP C-skin-gotinha-drip
+SKIP B-skin-gotinha-mandrake
+SKIP C-skin-gotinha-mandrake
+SKIP B-skin-gotinha-cyborg
+SKIP C-skin-gotinha-cyborg
+SKIP B-skin-lampiao-cyborg
+SKIP C-skin-lampiao-cyborg
+SKIP B-skin-lobisomem-cyborg
+SKIP C-skin-lobisomem-cyborg
+SKIP B-skin-mariabonita-cyborg
+SKIP C-skin-mariabonita-cyborg
+SKIP B-skin-et-cyborg
+SKIP C-skin-et-cyborg
+SKIP B-skin-mandrake-cyborg
+SKIP C-skin-mandrake-cyborg
+SKIP B-skin-emo-cyborg
+SKIP C-skin-emo-cyborg
+SKIP B-skin-curupira-cyborg
+SKIP C-skin-curupira-cyborg
+START B-map-escadao · Escadão (Morro)
+START C-map-escadao · Escadão (Morro)
+DONE C-map-escadao · 1376464 bytes · [google/gemini-3-pro-image] v1 · 18s · 1376×768 · 1344 KB → /tmp/gen-image/cs-bc-20261101-c-map-escadao.png
+START B-jav-city · Javaporcos — cidade / preview
+DONE B-map-escadao · 1475464 bytes · [google/gemini-3-pro-image] v1 · 21s · 1376×768 · 1440 KB → /tmp/gen-image/cs-bc-20261101-b-map-escadao.png
+START C-jav-city · Javaporcos — cidade / preview
+DONE B-jav-city · 1659728 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1620 KB → /tmp/gen-image/cs-bc-20261101-b-jav-city.png
+START B-jav-pasto · Javaporcos — borda da mata
+DONE C-jav-city · 1542255 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1506 KB → /tmp/gen-image/cs-bc-20261101-c-jav-city.png
+START C-jav-pasto · Javaporcos — borda da mata
+DONE B-jav-pasto · 1751489 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1710 KB → /tmp/gen-image/cs-bc-20261101-b-jav-pasto.png
+START B-jav-enemies · Javaporcos — quatro tipos no cenário (encenado)
+DONE C-jav-pasto · 1657868 bytes · [google/gemini-3-pro-image] v1 · 24s · 1376×768 · 1619 KB → /tmp/gen-image/cs-bc-20261101-c-jav-pasto.png
+START C-jav-enemies · Javaporcos — quatro tipos no cenário (encenado)
+DONE B-jav-enemies · 1701707 bytes · [google/gemini-3-pro-image] v1 · 21s · 1376×768 · 1661 KB → /tmp/gen-image/cs-bc-20261101-b-jav-enemies.png
+START B-weapon-ak · AK-47 — fuzil de assalto
+DONE C-jav-enemies · 1608643 bytes · [google/gemini-3-pro-image] v1 · 20s · 1376×768 · 1570 KB → /tmp/gen-image/cs-bc-20261101-c-jav-enemies.png
+START C-weapon-ak · AK-47 — fuzil de assalto
+DONE B-weapon-ak · 1286035 bytes · [google/gemini-3-pro-image] v1 · 20s · 1376×768 · 1255 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-ak.png
+START B-weapon-pistol · PT-38 — pistola
+DONE C-weapon-ak · 1210631 bytes · [google/gemini-3-pro-image] v1 · 18s · 1376×768 · 1182 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-ak.png
+START C-weapon-pistol · PT-38 — pistola
+DONE B-weapon-pistol · 1373817 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1341 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-pistol.png
+START B-weapon-revolver38 · Revólver .38 — revólver
+DONE C-weapon-pistol · 1185720 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1157 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-pistol.png
+START C-weapon-revolver38 · Revólver .38 — revólver
+DONE B-weapon-revolver38 · 1406752 bytes · [google/gemini-3-pro-image] v1 · 20s · 1376×768 · 1373 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-revolver38.png
+START B-weapon-mp5 · MP5 — submetralhadora
+DONE C-weapon-revolver38 · 1205174 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1176 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-revolver38.png
+START C-weapon-mp5 · MP5 — submetralhadora
+DONE B-weapon-mp5 · 1447845 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1413 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-mp5.png
+START B-weapon-shotgun · M3 — escopeta
+DONE C-weapon-mp5 · 1217720 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1189 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-mp5.png
+START C-weapon-shotgun · M3 — escopeta
+DONE B-weapon-shotgun · 1257678 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1228 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-shotgun.png
+START B-weapon-awp · AWP — sniper de ferrolho
+DONE C-weapon-shotgun · 1232131 bytes · [google/gemini-3-pro-image] v1 · 20s · 1376×768 · 1203 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-shotgun.png
+START C-weapon-awp · AWP — sniper de ferrolho
+DONE B-weapon-awp · 1346860 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1315 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-awp.png
+START B-weapon-svd · SVD — DMR semiautomático
+DONE C-weapon-awp · 1214181 bytes · [google/gemini-3-pro-image] v1 · 21s · 1376×768 · 1185 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-awp.png
+START C-weapon-svd · SVD — DMR semiautomático
+DONE B-weapon-svd · 1347571 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1315 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-svd.png
+START B-weapon-lmg · Metralha — metralhadora leve
+DONE C-weapon-svd · 1210168 bytes · [google/gemini-3-pro-image] v1 · 18s · 1376×768 · 1181 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-svd.png
+START C-weapon-lmg · Metralha — metralhadora leve
+DONE B-weapon-lmg · 1287259 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1257 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-lmg.png
+START B-weapon-carbine · Carabina — ação por alavanca
+DONE C-weapon-lmg · 1249256 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1219 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-lmg.png
+START C-weapon-carbine · Carabina — ação por alavanca
+DONE B-weapon-carbine · 1410597 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1377 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-carbine.png
+START B-weapon-knife · Faca — corpo a corpo
+DONE C-weapon-carbine · 1259803 bytes · [google/gemini-3-pro-image] v1 · 18s · 1376×768 · 1230 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-carbine.png
+START C-weapon-knife · Faca — corpo a corpo
+DONE B-weapon-knife · 1528357 bytes · [google/gemini-3-pro-image] v1 · 19s · 1376×768 · 1492 KB → /tmp/gen-image/cs-bc-20261101-b-weapon-knife.png
+DONE C-weapon-knife · 1235753 bytes · [google/gemini-3-pro-image] v1 · 18s · 1376×768 · 1206 KB → /tmp/gen-image/cs-bc-20261101-c-weapon-knife.png
+Completed current available queue: 136 concepts. Overall coverage and independent review still require checking.

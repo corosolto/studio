@@ -1,0 +1,67 @@
+{
+  "id": "char-caipora",
+  "name": "Caipora",
+  "category": "characters",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-caipora.png",
+  "character": "caipora",
+  "skin": null,
+  "map": "quebrada",
+  "position": [
+    6,
+    0,
+    -16
+  ],
+  "views": [
+    {
+      "angle": "frente",
+      "position": [
+        6,
+        1.1,
+        -11.2
+      ],
+      "lookAt": [
+        6,
+        0.95,
+        -16
+      ],
+      "fov": 38
+    },
+    {
+      "angle": "perfil",
+      "position": [
+        10.8,
+        1.1,
+        -16
+      ],
+      "lookAt": [
+        6,
+        0.95,
+        -16
+      ],
+      "fov": 38
+    },
+    {
+      "angle": "costas",
+      "position": [
+        6.000000000000001,
+        1.1,
+        -20.8
+      ],
+      "lookAt": [
+        6,
+        0.95,
+        -16
+      ],
+      "fov": 38
+    }
+  ],
+  "triptych": true,
+  "pose": "single frozen unarmed idle; same pose and spot in all three views",
+  "skinGeometryVerified": null,
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "source": "production-assets-staged-in-production-map",
+  "synthetic": true,
+  "capturedAt": "2026-11-01T02:19:34.827Z",
+  "inspected": true,
+  "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+}

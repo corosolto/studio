@@ -1,0 +1,19 @@
+{
+  "priority": [
+    "B",
+    "C"
+  ],
+  "bible": {
+    "B": "B — STYLIZED REALISM. A polished realtime game with believable plaster, concrete, tile, wood, painted steel, glass, water, cloth and skin. Separate these materials through roughness, restrained specular response, selective bevel/normal highlights and correctly scaled medium-sized surface detail. Keep calm large surfaces, localized edge wear and contact shading; no uniform dirty noise. Restrained warm key light with readable cool fill where motivated by the source, balanced exposure and clear gameplay shadows. Preserve the original surface colors and each location’s biome, time of day and light sources. An interior remains an interior. Characters remain stylized satirical game characters, with credible fabric folds and metal response, not photoreal human replacements.",
+    "C": "C — POLISHED GRAPHIC CARICATURE. A distinctive stylized realtime game with broad hand-painted color variation, clean sculpted planes, selective soft bevels, deliberate value grouping and tactile materials. Preserve original identity colors, using slightly richer controlled accents from the same palette. Broad gentle wear and contact shadows, no random grunge. Clear gameplay lighting with warm/cool separation where motivated by the source. Preserve biome, architecture and light sources; no automatic sunset or tropical makeover. Characters retain their exact existing satirical proportions, costume and silhouette. Materials should feel authored and consistent across every map, weapon and skin; no illustration overlays or obligatory black ink outlines."
+  },
+  "source": "Owner preference after lote-01; same master language for every category.",
+  "engine": "Three.js r160 / WebGL2 candidate, not implemented",
+  "ownerDecision": {
+    "record": "owner-decision.json",
+    "date": "2026-11-01",
+    "preferred": "B if reproducible in Three.js/WebGL with acceptable user performance; otherwise evaluate C",
+    "implementationAuthorizedNow": false,
+    "evidence": "2D aesthetic preference; neither style has runtime fidelity/performance approval"
+  }
+}

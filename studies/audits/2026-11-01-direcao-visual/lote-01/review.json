@@ -1,0 +1,130 @@
+{
+  "items": [
+    {
+      "id": "A-01-mundo",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "Foi acrescentado um parapeito com arremate verde no telhado do primeiro plano inferior direito. A base mostra uma laje aberta. Isso muda a silhueta e introduz cobertura de jogo, embora a câmera e os volumes principais tenham sido preservados.",
+          "evidence": "concepts/A-01-mundo.png, aproximadamente x=850–1375, y=548–767; comparar baseline/01-mundo.png na mesma região proporcional. Coordenadas na grade comum de 1376×768. O cotovelo verde em x≈942,y≈551 e a parede que segue à direita não existem na base.",
+          "fix": "Restaurar somente o contorno aberto da laje a partir da base, sem parapeito; aplicar a paleta, a roughness e o desgaste sobre as superfícies que já existem."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Aproveitável para areia/terracota/verde discreto, quinas e desgaste contido; excluir a cobertura acrescentada. Materiais e luz são visualmente plausíveis com PBR, bevels seletivos, sol e AO assado. Imagem 2D: não comprova asset 3D, consistência em movimento, orçamento, FPS ou integração."
+    },
+    {
+      "id": "A-02-primeira-pessoa",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "A revisão atual recuperou a composição, mas transformou a bandeira branca da direita e o estandarte azul do fundo em símbolos da União Europeia. A identidade e os emblemas existentes não foram preservados.",
+          "evidence": "concepts/A-02-primeira-pessoa.png, x=1082–1172,y=259–310 e x=559–596,y=295–318. baseline/02-primeira-pessoa.png tem pano branco no primeiro local e emblema único de estrela no segundo. O prompt atual proíbe bandeiras nacionais e manda manter o emblema azul existente. SHA-256 do conceito avaliado: 918c2ab1c491a07dda560dd28b9c79f65719e2d1151b8bd31aae9f6fd1b7b414.",
+          "fix": "Restaurar o pano branco e o emblema da facção por edição localizada dessas duas regiões; manter enquadramento, pistola, vaso e anéis desta revisão."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Aproveitamento restrito ao tratamento de reboco, piso e metal; os símbolos europeus não pertencem à referência de identidade. Planta, pistola, mangas, perspectiva e circulação estão próximas da base nesta revisão. A melhora é conservadora e não prova o salto para 8–9. PBR convencional e sombras são candidatos plausíveis; imagem 2D não comprova implementação, desempenho ou anatomia em movimento."
+    },
+    {
+      "id": "A-03-personagem",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "A mão de apoio permanece aberta e abaixo do rifle, sem segurar a coronha. É um defeito já visível na base que o conceito preservou, não um membro extra inventado. A ficha também exige contato coerente das mãos com a arma.",
+          "evidence": "concepts/A-03-personagem.png, x=795–844,y=391–420; a arma está acima, aproximadamente y=357–382. O mesmo afastamento aparece em baseline/03-personagem.png. Conferido em recorte ampliado x=690,y=335,240×115 na grade de 1376×768.",
+          "fix": "Reposicionar apenas punho e dedos da mão de apoio até a parte inferior da coronha, conservando o rifle, a direção de mira, a pose geral e a silhueta principal."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Cabelo em blocos multicoloridos, jaqueta azul, xadrez vermelho, botas, rifle, contagem de membros e tamanho em tela foram preservados. Acabamento de roupa/cabelo é aproveitável. A troca de superfície das barreiras por tijolo e chapa não autoriza trocar colisões ou geometria. Rosto ocupa poucos pixels; não há prova de expressividade distante, rig, skinning, polígonos, UV ou animação."
+    },
+    {
+      "id": "B-01-mundo",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "Um parapeito de concreto foi acrescentado ao telhado inferior direito, criando uma borda e cobertura ausentes na base.",
+          "evidence": "concepts/B-01-mundo.png, x=849–1375,y=550–767; o encontro de paredes em x≈940,y≈557 substitui a laje aberta de baseline/01-mundo.png.",
+          "fix": "Restaurar a laje aberta e conservar somente o tratamento de concreto, reboco e sombra sobre os volumes originais."
+        },
+        {
+          "observation": "Os estandartes azuis da facção foram trocados por bandeiras do Brasil. A referência cultural ficou explícita, mas o objeto e seu emblema não são os da ficha.",
+          "evidence": "concepts/B-01-mundo.png, aproximadamente x=458–486,y=311–342; x=674–696,y=272–294; x=709–750,y=369–410. Os mesmos locais em baseline/01-mundo.png mostram bandeiras azuis com emblema de estrela.",
+          "fix": "Reaplicar os emblemas e cores originais aos mesmos panos; obter identidade brasileira por arquitetura, paleta e materiais, sem substituir sinais de facção."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Aproveitável para diferenciação de tijolo, reboco, concreto e metal, com sol de fim de tarde e sombras que ainda retêm detalhe. Não incorporar o novo parapeito ou a troca de emblemas. Normal/roughness e AO/lightmap são candidatos; custo de texturas e a leitura de alvos nas sombras precisam de protótipo. Nenhum dado de desempenho ou geometria é medível nesta imagem 2D."
+    },
+    {
+      "id": "B-02-primeira-pessoa",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "Foi acrescentada uma bandeira brasileira num telhado ao fundo, junto à pipa. Não é apenas a recoloração de um estandarte existente: aquele ponto da base não contém bandeira nem seu novo mastro.",
+          "evidence": "concepts/B-02-primeira-pessoa.png, x=799–835,y=234–299. baseline/02-primeira-pessoa.png mostra a pipa e o telhado nessa região, sem bandeira. O estandarte azul original continua em outro local, x≈561–592,y≈297–318.",
+          "fix": "Remover só a bandeira nova e seu mastro, recuperando céu e telhado da referência; manter o restante do acabamento."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Câmera, planta, barreiras, pistola, mangas vermelhas e anéis mantêm boa correspondência visual com a base. Tijolo/reboco/metal têm separação útil; a paleta conversa com B-01 e B-03. Sombras de uma luz solar e texturas convencionais parecem suficientes para perseguir o aspecto, mas a imagem não prova FPS, memória, dedos tridimensionais ou estabilidade de sombras."
+    },
+    {
+      "id": "B-03-personagem",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "A mão de apoio continua aberta, afastada e abaixo da arma. O conceito mantém o problema de pose da base em vez de entregar o apoio coerente solicitado.",
+          "evidence": "concepts/B-03-personagem.png, x=794–844,y=391–421; a coronha está acima, em y≈358–383. Mesmo defeito presente em baseline/03-personagem.png. Conferido em recorte ampliado x=690,y=335,240×115 na grade de 1376×768.",
+          "fix": "Ajustar punho e dedos da mão de apoio à coronha sem mudar modelo de rifle, mira, perna elevada ou enquadramento."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Identidade do punk, cabelo poligonal, roupa, arma, pose geral e escala foram mantidos; tecido, metal e alvenaria ganham materiais distintos. O aspecto é candidato a PBR convencional com iluminação assada seletiva. Não há prova de topologia, pesos, contato durante a animação, custo de texturas ou legibilidade do personagem a maior distância."
+    },
+    {
+      "id": "C-01-mundo",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "Foram acrescentados parapeitos à laje inferior direita e ao volume amarelo do primeiro plano à esquerda do centro. A ficha exige os contornos e coberturas originais.",
+          "evidence": "concepts/C-01-mundo.png, x=847–1375,y=548–767 e x=333–613,y=491–648. baseline/01-mundo.png mostra superfícies planas sem esses aros elevados; o bloco ocre correspondente não tem a borda amarela elevada sobre seu topo.",
+          "fix": "Retirar os aros elevados e conservar os volumes da base; aplicar amarelo, creme e desgaste aos planos existentes."
+        },
+        {
+          "observation": "A vista acrescenta vegetação em telhados que estavam vazios, contrariando a trava de contagem de props.",
+          "evidence": "concepts/C-01-mundo.png, vasos e folhas em x=210–269,y=449–497 e grupo em x=328–398,y=245–278. baseline/01-mundo.png não contém plantas nesses pontos.",
+          "fix": "Apagar apenas os vasos e folhas novos; manter as plantas já presentes na base."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Aproveitável para agrupamento de cores creme/terracota/turquesa/amarelo, variação pintada ampla e céu de nuvens simples. A linguagem se repete em C-02/C-03. Telhas curvas e chapa ondulada não podem ser copiadas como alteração de rotas: testar normal/atlas mantendo os planos e colisões. Pintura não prova mapas PBR, iluminação estável, UV ou custo em WebGL."
+    },
+    {
+      "id": "C-02-primeira-pessoa",
+      "verdict": "APROVADO",
+      "issues": [],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Aprovação restrita ao conceito visual 2D. Conferidos câmera/composição, vaso próximo ao centro, corrimãos, barreiras, passagem da direita, pistola, mangas vermelhas com marcas brancas, anéis azuis e ausência de novos personagens. Não encontrei novo prop ou obstrução relevante nesta vista. Cor e materiais pintados são coerentes com C-01/C-03 e plausíveis como texturas amplas, céu estático e uma luz solar. Não permite medir draw calls, memória, FPS, UV, pivôs, rig ou consistência em movimento; não autoriza integração. Como não há inimigos nesta vista, contraste de alvos e leitura a distância permanecem sem validação."
+    },
+    {
+      "id": "C-03-personagem",
+      "verdict": "REPROVADO",
+      "issues": [
+        {
+          "observation": "A mão de apoio continua aberta e abaixo do rifle. O defeito herdado da base fica até mais legível com os contornos pintados; o apoio solicitado não foi resolvido.",
+          "evidence": "concepts/C-03-personagem.png, x=793–844,y=390–421; arma acima em y≈357–382. Comparação com baseline/03-personagem.png e recorte ampliado x=690,y=335,240×115 na grade de 1376×768.",
+          "fix": "Corrigir apenas punho e dedos da mão de apoio para abraçar a coronha, conservando o desenho do personagem e o gesto geral."
+        },
+        {
+          "observation": "Foi inserida uma cobertura de telhas curvas à esquerda, atrás da barreira laranja. A base mostra uma laje aberta nesse trecho; não é só uma nova cor do mesmo piso.",
+          "evidence": "concepts/C-03-personagem.png, x=0–443,y=394–490. baseline/03-personagem.png tem uma superfície plana aberta junto à borda esquerda, sem a fileira elevada de telhas e seu novo contorno.",
+          "fix": "Restaurar a superfície plana e seu contorno; reservar as telhas para superfícies que já tenham esse tipo de cobertura no mapa original."
+        }
+      ],
+      "usableAsStyleReference": true,
+      "technicalLimits": "Cabelo multicolorido em blocos, jaqueta azul, xadrez vermelho, botas, rifle, pose geral e escala do punk continuam reconhecíveis. Paleta e pintura de superfícies conversam com C-01/C-02; contornos desenhados não provam uma técnica de shader e precisariam sobreviver ao movimento. Não há validação de rig, texturas, colisão, geometria, memória ou FPS."
+    }
+  ]
+}

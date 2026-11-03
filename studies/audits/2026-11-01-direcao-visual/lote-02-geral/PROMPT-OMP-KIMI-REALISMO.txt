@@ -1,0 +1,107 @@
+CORO SOLTO | investigação do realismo B | OMP + Kimi | v2
+
+Investigue como aproximar o CORO SOLTO da direção visual B em Three.js/WebGL, preservando a jogabilidade e o desempenho nos celulares dos nossos usuários. Trabalhe como artista técnico e engenheiro de gráficos. Entregue uma decisão fundamentada e um plano verificável para uma prova futura.
+
+A pergunta central é: quais partes da aparência B conseguimos produzir com assets editáveis e técnicas de renderização compatíveis com o nosso jogo, quais precisam de aproximação no celular e quais continuam sem prova?
+
+DECISÃO DO DONO
+B é a primeira escolha se a aparência puder ser reproduzida com bom desempenho. C é a alternativa caso B não atenda. O dono achou B mais bonito e C mais próximo da aparência de jogo, mas teme que a beleza gerada por IA não seja reproduzível no produto real. Não há benchmark, meta numérica aprovada, escolha de nova engine ou autorização para implementação.
+
+AUTORIZAÇÃO DESTA TAREFA
+Você pode ler código, inspecionar assets e imagens e pesquisar fontes públicas. Pode escrever somente os relatórios desta investigação na pasta de saída indicada abaixo.
+
+Não altere o jogo, assets, configurações, receitas do estudo ou arquivos de outras frentes. Não instale ferramentas, crie worktree, faça commit/PR, execute protótipo/benchmark, inicie processos do jogo, gere novos assets, consuma quota de geração, envie arquivos a terceiros, faça merge, deploy ou publicação. Preserve serviços e sessões de outras tarefas. A investigação termina com a entrega dos relatórios. Qualquer experimento fica como proposta para uma solicitação posterior do dono.
+
+ENDEREÇOS LOCAIS
+- Raiz: /Volumes/Zenith/Projects/game/corosolto/csbrasil
+- Código do jogo: /Volumes/Zenith/Projects/game/corosolto/csbrasil/client
+- Estudo visual: /Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral
+- Continuação do projeto: /Volumes/Zenith/Projects/game/corosolto/corosolto-roadmap/reports/2026-11-01-processo-agentes/CONTINUATION.md
+- Saída própria: /Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/investigacao-omp-kimi/
+
+Use uma subpasta datada dentro da saída própria e preserve relatórios anteriores. Não atualize a continuação compartilhada do projeto: mantenha uma CONTINUATION.md da sua investigação nessa subpasta.
+
+1. ESTABELEÇA O CONTEXTO E A EVIDÊNCIA
+Leia os AGENTS.md aplicáveis e o final da continuação do projeto. No estudo, leia owner-decision.json, SPEC.md, art-bible.json, coverage.json e feasibility-review.json. Localize referências por capture-manifest.json e generation-manifest.json; consulte reviews/ para conhecer desvios de fidelidade.
+
+Registre modelo efetivamente usado, ferramentas disponíveis, branch/HEAD e arquivos locais relevantes já modificados. Inspecione somente o necessário por arquivo e símbolo. O diagnóstico anterior é uma hipótese de partida, sujeita a revisão. A árvore local contém trabalho de outras frentes e pode diferir da produção usada nas capturas; atribua corretamente cada observação.
+
+Não leia .env nem imprima segredos. Para navegador, siga a preferência Ego Lite e os AGENTS.md. Se uma ferramenta ou serviço estiver inacessível, registre o limite e continue as partes independentes. Não instale integrações nem simule acesso que não existe.
+
+2. COMPARE O QUE VEMOS, ANTES DE ESCOLHER TECNOLOGIA
+Olhe as visões gerais B/C para entender a linguagem comum e depois examine os pares base/B destes IDs nos manifestos:
+- map-quebrada: ambiente urbano e materiais opacos;
+- weapon-ak: arma e braços próximos da câmera;
+- map-piscina_treta: azulejo, luz e água;
+- map-amazonia: madeira, vegetação, água e atmosfera;
+- char-punk: roupa, pele, cabelo e silhueta;
+- skin-canarinho-cyborg: materiais e identidade de uma skin em três ângulos.
+
+São conceitos 2D gerados por IA, não assets prontos ou renders medidos. A cobertura completa do estudo está em coverage.json; não trate a seleção desta investigação como todo o acervo.
+
+Para cada diferença importante, aponte arquivo de imagem e região visível. Classifique sua origem provável: cor/exposição, iluminação, material, textura, geometria/silhueta, pose/animação ou alteração de composição. Distingua aparência observável de mecanismo inferido: uma imagem não revela qual algoritmo a produziria em tempo real.
+
+Separe o acabamento aproveitável dos objetos, cores e poses inventados pela IA. Os vereditos existentes medem fidelidade à base e não escolhem a preferência estética do dono. Normal maps não resolvem silhueta, rig ou contato de mãos/pés. Se não conseguir ver pixels, declare isso e não apresente comparação visual como concluída.
+
+3. ENCONTRE AS LACUNAS REAIS NO CÓDIGO
+Verifique a versão vendorizada e o caminho de renderização efetivamente usado, inclusive os perfis móveis e de compatibilidade. O projeto serve ES modules sem build do jogo; respeite seus contratos.
+
+O diagnóstico anterior encontrou PBR, PMREM/IBL, SSAO, sombra de contato, pós, perfis de qualidade, culling e batching. Também encontrou materiais distintos por mapa, parte dos mapas de detalhe derivada do albedo, lightmap numa shell das Lajes e normal/roughness já presentes em Punk e AK. Confira essas constatações antes de recomendar qualquer mudança.
+
+Pontos iniciais de busca: main.js, glcontext.js, game.js (_buildEnv, _applyQuality), bloom.js, look.js, textures.js, characters.js (upgradeCharMaterial), glbchars.js, mapprops.js, shell.js, water.js e os módulos dos mapas selecionados. Confirme os símbolos e linhas atuais.
+
+Para cada proposta, diga: qual diferença visual ela resolve; o que existe e é reutilizável; o que falta; onde se faria a mudança; dependências e riscos; como se verificaria o resultado. Separe trabalho em assets, preparação offline e renderer. Investigue limites documentados da versão atual antes de sugerir upgrade ou mudança de engine.
+
+4. EXPLIQUE O CUSTO E AS CONCESSÕES NO CELULAR
+Monte alternativas concretas para materiais PBR autorados, UVs/escala de textura, detalhe high-to-low, iluminação/AO assados, luz ambiente/reflexos, sombras, compressão para GPU, LOD, geometria visível, transparência e pós.
+
+Diferencie custo de produção, download, memória residente, CPU e GPU por frame. WEBP pequeno não comprova pouco uso de memória na GPU; geometria comprimida para download não comprova menos trabalho de renderização. Classifique riscos e explique o motivo, sem inventar medições.
+
+Dê atenção especial a:
+- reflexão/refração da Piscina e o que muda ao refletir atores em movimento;
+- sombras suaves cobrindo cenários extensos;
+- folhagem/transparência e desenho repetido dos mesmos pixels;
+- muitos personagens/Javaporcos animados, armas, efeitos e sombras simultâneos;
+- resolução interna e encadeamento dos passes;
+- custo de manter assets detalhados em memória e de carregá-los até a primeira partida.
+
+Avalie como manter a mesma direção B com técnicas e níveis de detalhe diferentes por dispositivo. Identifique perdas visuais e possíveis efeitos na leitura competitiva. C também precisa de validação: parecer mais gráfico não comprova menor custo. Não use Nanite, Lumen, path tracing ou recursos exclusivos de outra engine como solução disponível no nosso WebGL.
+
+5. INVESTIGUE O KIMI 3D MAKE SEM CONSUMIR GERAÇÃO
+Fontes oficiais de partida, verificadas nesta conversa em 01/11/2026:
+https://www.kimi.com/en/help/3d-make/3d-make-overview
+https://www.kimi.ai/academy/3d-tutorial
+
+O tutorial descreve modelagem por código, softwares 3D e geração de malhas por serviços externos. Confira a documentação atual e diferencie:
+(a) o modelo Kimi usado via API pelo OMP;
+(b) o produto 3D Make;
+(c) plugins e ferramentas realmente acessíveis na sua sessão;
+(d) os geradores externos eventualmente usados.
+
+Não presuma que os recursos do Kimi Work estejam disponíveis no OMP. Verifique se existe integração pública documentada para a operação desejada. Se depender de interface web ou transferência manual, descreva esse fluxo e a limitação. Ausência de integração confirmada no OMP não prova incapacidade de modelagem do produto. Não use endpoints internos ou tente contornar autenticação.
+
+Com evidência, identifique quais saídas podem ser obtidas: código editável, GLB/glTF, arquivo Blender, CAD/STL, imagem, vídeo ou somente preview. Quando não houver confirmação, escreva "não confirmado". Diferencie exportação para impressão de um asset aproveitável num jogo.
+
+Avalie por categoria: arquitetura/props, materiais/acabamento de modelos existentes, personagens/skins e armas. Considere UVs, mapas PBR, escala, orientação, materiais que sobrevivem à exportação, topologia/LOD, rig/animação quando aplicável, edição posterior, direitos de uso e dependências. Investigue consumo de quota/custos nas fontes oficiais e registre a data; não invente preço nem faça geração para descobrir.
+
+Explique em qual etapa o Kimi 3D poderia reduzir trabalho e qual preparação continuaria necessária antes do Three.js. Respeite o roteamento de geração do projeto. Pesquisar o serviço não autoriza trocar o pipeline. Não trate screenshot bonito, vídeo ou demo desktop como prova de asset integrado ou desempenho no celular.
+
+6. PROPONHA UMA PROVA FUTURA QUE RESOLVA A DECISÃO
+Escolha um recorte pequeno que teste os principais fundamentos de B e justifique a escolha. Separe testes caros específicos, como a água, se isso tornar o resultado mais claro. Defina o que precisa existir no Three.js real e o que seria apenas preparado offline.
+
+O plano deve comparar a mesma câmera, identidade e composição da base/conceito e depois verificar movimento, mudanças de ângulo, personagem/arma e carga representativa. Uma imagem fixa de Blender ou uma cena vazia não basta para aprovar o jogo.
+
+Proponha critérios visuais e técnicos, dispositivos Android/iOS físicos representativos, sessão sustentada, estabilidade do tempo de quadro, quedas perceptíveis, aquecimento, carregamento e memória. Diferencie dados disponíveis de instrumentos/medições ainda necessários e limites de observação do navegador. Metas numéricas e esforço são propostas com premissas, não resultados ou compromissos já aprovados.
+
+Inclua uma proposta pequena para avaliar o Kimi 3D: entrada, saída editável exigida, caminho de exportação/importação, comparação de aparência e inspeção técnica no WebGL. Apenas desenhe o experimento. Não o execute.
+
+ENTREGÁVEIS E PRONTO
+Escreva na sua subpasta:
+- RELATORIO.md: resposta à pergunta central no início; comparação visual concreta; inventário do que já existe; lacunas; avaliação Kimi 3D; fontes oficiais datadas; incertezas. Termine com uma ordem curta de trabalho proposta, dependências e o que cada etapa demonstraria.
+- MATRIZ.csv: caso visual, imagem/região, diferença base/B, técnica candidata, código existente, falta, preparação offline, custo em runtime, concessão móvel, evidência, confiança. Preencha somente o que verificou ou marque explicitamente como hipótese/não medido.
+- PLANO-DE-PROVA.md: desenho do recorte e dos experimentos futuros, critérios propostos, método de medição e condições que justificariam seguir com B, aproximá-lo ou avaliar C.
+- CONTINUATION.md: objetivo completo, decisões, ferramentas/modelo, fontes inspecionadas, branch/HEAD, artefatos produzidos, aceitos/rejeitados, limites e próximo passo. Atualize após cada marco e antes de parar.
+
+Faça uma revisão crítica das conclusões: remova afirmações sustentadas só por marketing, por aparência estática ou pelo diagnóstico anterior. Distinga revisão própria de revisão independente; não declare que houve um segundo revisor se isso não aconteceu.
+
+Está pronto quando houver uma explicação rastreável de cada lacuna importante, propostas concretas compatíveis com o projeto e uma prova futura capaz de resolver a decisão. Ausências de acesso ou evidência ficam explícitas, sem bloquear indevidamente o restante da pesquisa. No final desta tarefa, apresente o que foi verificado, o que permanece hipótese e os caminhos dos relatórios. Não avance para implementação por conta própria.

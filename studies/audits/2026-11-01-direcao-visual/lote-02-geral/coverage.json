@@ -1,0 +1,148 @@
+{
+  "updatedAt": "2026-11-01T02:45:34.903Z",
+  "status": "complete-for-declared-2D-scope",
+  "expected": {
+    "studies": 68,
+    "concepts": 136
+  },
+  "groups": {
+    "maps": {
+      "studies": 18,
+      "expectedConcepts": 36,
+      "generated": 36,
+      "captureIds": [
+        "map-piscina_treta",
+        "map-quebrada",
+        "map-posto_treta",
+        "map-ferro_velho",
+        "map-praca_poderes",
+        "map-loja_h",
+        "map-upa_24h",
+        "map-atacadao_treta",
+        "map-velho_oeste",
+        "map-amazonia",
+        "map-corrego",
+        "map-lajes",
+        "map-penitenciaria",
+        "map-obras_prefeitura",
+        "map-parque_treta",
+        "map-mansao",
+        "map-campomorro",
+        "map-escadao"
+      ],
+      "reviewed": 36
+    },
+    "javaporco": {
+      "studies": 3,
+      "expectedConcepts": 6,
+      "generated": 6,
+      "captureIds": [
+        "jav-city",
+        "jav-pasto",
+        "jav-enemies"
+      ],
+      "reviewed": 6
+    },
+    "weapons": {
+      "studies": 10,
+      "expectedConcepts": 20,
+      "generated": 20,
+      "captureIds": [
+        "weapon-ak",
+        "weapon-pistol",
+        "weapon-revolver38",
+        "weapon-mp5",
+        "weapon-shotgun",
+        "weapon-awp",
+        "weapon-svd",
+        "weapon-lmg",
+        "weapon-carbine",
+        "weapon-knife"
+      ],
+      "reviewed": 20
+    },
+    "characters": {
+      "studies": 12,
+      "expectedConcepts": 24,
+      "generated": 24,
+      "captureIds": [
+        "char-esquerdomacho",
+        "char-doutora",
+        "char-caminhoneiro",
+        "char-coach",
+        "char-adjim",
+        "char-punk",
+        "char-mandrake",
+        "char-lampiao",
+        "char-caipora",
+        "char-gotinha",
+        "char-et",
+        "char-canarinho"
+      ],
+      "reviewed": 24
+    },
+    "skins": {
+      "studies": 25,
+      "expectedConcepts": 50,
+      "generated": 50,
+      "captureIds": [
+        "skin-canarinho-cyborg",
+        "skin-lula-drip",
+        "skin-bolsonaro-drip",
+        "skin-senador-drip",
+        "skin-janja",
+        "skin-michelle-bolsonaro",
+        "skin-lula-cyborg",
+        "skin-bolsonaro-cyborg",
+        "skin-aljuiz-toga-mandrake",
+        "skin-lula-mandrake",
+        "skin-bolsonaro-mandrake",
+        "skin-michelle-mandrake",
+        "skin-zero-um-mandrake",
+        "skin-canarinho-drip",
+        "skin-canarinho-mandrake",
+        "skin-gotinha-drip",
+        "skin-gotinha-mandrake",
+        "skin-gotinha-cyborg",
+        "skin-lampiao-cyborg",
+        "skin-lobisomem-cyborg",
+        "skin-mariabonita-cyborg",
+        "skin-et-cyborg",
+        "skin-mandrake-cyborg",
+        "skin-emo-cyborg",
+        "skin-curupira-cyborg"
+      ],
+      "reviewed": 50
+    }
+  },
+  "catalog": {
+    "characters": 63,
+    "selectedCharacters": 12,
+    "characterSkins": 26,
+    "approvedCharacterSkins": 25,
+    "excludedCharacterSkin": "lula-na-regua (disabled)",
+    "weapons": 26,
+    "weaponFamilies": 10,
+    "weaponSkins": 22,
+    "gloves": 13
+  },
+  "notFullyGenerated": [
+    "51 other base characters",
+    "22 weapon skins",
+    "13 gloves"
+  ],
+  "mapAvailability": {
+    "registered": 18,
+    "playable": 12,
+    "pausedForRework": 6
+  },
+  "evidenceLimits": [
+    "2D concepts, not an implemented upgrade",
+    "Posed synthetic captures, not human gameplay",
+    "No measured performance or 8–9 visual score"
+  ],
+  "actual": {
+    "studies": 68,
+    "concepts": 136
+  }
+}

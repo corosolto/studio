@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-02",
+  "baseline": {
+    "commit": "bc436f5e2",
+    "med": { "maxCalls": 1004, "maxTriangles": 1372326, "ceilingCalls": 1060, "ceilingTriangles": 1380000 },
+    "low": { "maxCalls": 436, "maxTriangles": 588528, "ceilingCalls": null, "ceilingTriangles": null },
+    "notes": "Margem med: 56 calls e 7674 triângulos. Teto low deve ser aprovado antes de novos assets."
+  },
+  "references": [
+    { "id": "rocinha-telhados", "url": "https://commons.wikimedia.org/wiki/File:Favela_da_Rocinha_-_telhados.jpg", "license": "CC BY 2.0", "criteria": ["objetos de laje", "extensões", "antenas", "fibrocimento"] },
+    { "id": "recife-rua", "url": "https://commons.wikimedia.org/wiki/File:Recife_Favela_Detran_street.jpg", "license": "CC0", "criteria": ["cabos em catenária", "terra compactada", "grades", "horizonte no corredor"] },
+    { "id": "rocinha-fios", "url": "https://commons.wikimedia.org/wiki/File:Alicia_Nijdam-rocinha.jpg", "license": "CC BY 2.0", "criteria": ["feixes", "drops", "postes", "utilidades na fachada"] },
+    { "id": "rocinha-densidade", "url": "https://commons.wikimedia.org/wiki/File:1_rocinha_favela_closeup.JPG", "license": "CC BY-SA 4.0", "criteria": ["altura variável", "recuos", "tijolo e reboco"] },
+    { "id": "alemao-camadas", "url": "https://commons.wikimedia.org/wiki/File:View_over_Complexo_do_Alemao_(Favela)_-_From_Igreja_da_Penha_-_Rio_de_Janeiro_-_Brazil_-_02_(17557053655).jpg", "license": "CC BY-SA 2.0", "criteria": ["detalhe próximo", "anel urbano", "morro e haze"] },
+    { "id": "mare-silhueta", "url": "https://commons.wikimedia.org/wiki/File:Complexo_mare.JPG", "license": "public domain", "criteria": ["densidade com pequenas variações", "antenas"] },
+    { "id": "casa-interior", "url": "https://commons.wikimedia.org/wiki/File:Favela_house_Interior,_recife,_Pernambuco,_Brazil.jpg", "license": "CC BY-SA 4.0", "criteria": ["interior real", "luz motivada", "leitura espacial"] },
+    { "id": "damaged-plaster", "url": "https://polyhaven.com/a/damaged_plaster", "license": "CC0", "criteria": ["reboco quebrado", "tijolo exposto", "desgaste localizado"] },
+    { "id": "urban-alley", "url": "https://polyhaven.com/a/urban_alley_01", "license": "CC0", "criteria": ["luz direcional", "sombras de molduras", "asfalto desgastado"] }
+  ],
+  "cameras": ["spawn-norte", "spawn-sul", "overview", "beco-varal", "casa-exterior", "casa-interior", "janela-ataque", "punk-close", "ak-1p-3p", "low"],
+  "firstPlayableHouse": {
+    "selection": "casa central oeste/norte em Lajes",
+    "required": ["porta de entrada", "janela alternativa por mantle", "interior com piso/teto", "rota de saída", "tiro e visada pelos vãos", "câmera e bot completam o percurso"]
+  }
+}

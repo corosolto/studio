@@ -1,0 +1,322 @@
+{
+  "model": "google/gemini-3-pro-image",
+  "status": "reviewed-awaiting-owner-style-selection",
+  "startedAt": "2026-11-01T01:45:11.583Z",
+  "concepts": [
+    {
+      "id": "A-03-personagem",
+      "direction": "Competitivo limpo",
+      "view": "03-personagem",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/A-03-personagem.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/A-03-personagem.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/03-personagem.png",
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/rejected/A-01-mundo-attempt-01.png"
+      ],
+      "bytes": 1345459,
+      "sha256": "92f57463fd1c8500bf92e50bee9aa82bbe11e5f61e87380dc928c9921d06d640",
+      "generatedAt": "2026-11-01T01:46:47.657Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/03-personagem.png",
+          "bytes": 4652465,
+          "sha256": "66d5c96b4a190188fb1416c0b464bf3e21f12bc022b1d7eed9b99626d79c8e37"
+        },
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/rejected/A-01-mundo-attempt-01.png",
+          "bytes": 1516262,
+          "sha256": "30fb9c9b9880a80b64d27516bd150708bd247ee256850e20ce0926017031a662"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "B-01-mundo",
+      "direction": "Realismo estilizado",
+      "view": "01-mundo",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/B-01-mundo.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/B-01-mundo.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/01-mundo.png"
+      ],
+      "bytes": 1549429,
+      "sha256": "8165d00a4047fa1d122d82a28593e7ba701ddbf309a6a6a5c19ac6e9bcddf645",
+      "generatedAt": "2026-11-01T01:47:08.117Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/01-mundo.png",
+          "bytes": 4668027,
+          "sha256": "a4219f9eb06c28c175906bd5f94826e5dd30bd642fabb31aa2bc7876863d429e"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "A-01-mundo",
+      "direction": "Competitivo limpo",
+      "view": "01-mundo",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/A-01-mundo.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/A-01-mundo.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/01-mundo.png"
+      ],
+      "bytes": 1449242,
+      "sha256": "14b3c1d242890c9ed7899d81c323b295ab906f7114ac1738a9b5605b48ba190f",
+      "generatedAt": "2026-11-01T01:48:15.167Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/01-mundo.png",
+          "bytes": 4668027,
+          "sha256": "a4219f9eb06c28c175906bd5f94826e5dd30bd642fabb31aa2bc7876863d429e"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "B-02-primeira-pessoa",
+      "direction": "Realismo estilizado",
+      "view": "02-primeira-pessoa",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/B-02-primeira-pessoa.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/B-02-primeira-pessoa.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png",
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/B-01-mundo.png"
+      ],
+      "bytes": 1459839,
+      "sha256": "5de0f75c35c7fa55014d31e7426e2b8d4a2749f2c122c69c2fdd598b61ca2793",
+      "generatedAt": "2026-11-01T01:48:56.828Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png",
+          "bytes": 4570172,
+          "sha256": "83fae235999f2cec48da7b289f97e84fabd6df54fe04fdf3a91daa01c502de2a"
+        },
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/B-01-mundo.png",
+          "bytes": 1549429,
+          "sha256": "8165d00a4047fa1d122d82a28593e7ba701ddbf309a6a6a5c19ac6e9bcddf645"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "B-03-personagem",
+      "direction": "Realismo estilizado",
+      "view": "03-personagem",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/B-03-personagem.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/B-03-personagem.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/03-personagem.png",
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/B-01-mundo.png"
+      ],
+      "bytes": 1435306,
+      "sha256": "b77d7e9fc70ba3cf91b700279c7a96a80e32438f3b9cca766ef0c2464b5ea797",
+      "generatedAt": "2026-11-01T01:49:17.751Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/03-personagem.png",
+          "bytes": 4652465,
+          "sha256": "66d5c96b4a190188fb1416c0b464bf3e21f12bc022b1d7eed9b99626d79c8e37"
+        },
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/B-01-mundo.png",
+          "bytes": 1549429,
+          "sha256": "8165d00a4047fa1d122d82a28593e7ba701ddbf309a6a6a5c19ac6e9bcddf645"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "C-01-mundo",
+      "direction": "Caricatura elaborada",
+      "view": "01-mundo",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/C-01-mundo.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/C-01-mundo.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/01-mundo.png"
+      ],
+      "bytes": 1595091,
+      "sha256": "035ea8715c981e7e07c5a0b0d367e65fa8644219e7b151cc2638b4d4e6ce3ac5",
+      "generatedAt": "2026-11-01T01:49:38.740Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/01-mundo.png",
+          "bytes": 4668027,
+          "sha256": "a4219f9eb06c28c175906bd5f94826e5dd30bd642fabb31aa2bc7876863d429e"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "C-02-primeira-pessoa",
+      "direction": "Caricatura elaborada",
+      "view": "02-primeira-pessoa",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/C-02-primeira-pessoa.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/C-02-primeira-pessoa.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png",
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/C-01-mundo.png"
+      ],
+      "bytes": 1373772,
+      "sha256": "ef4fb3c1dff996136ec21e56ea1e0c7861ac4858e26f9b2354348f01143903a4",
+      "generatedAt": "2026-11-01T01:49:59.323Z",
+      "review": "APROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png",
+          "bytes": 4570172,
+          "sha256": "83fae235999f2cec48da7b289f97e84fabd6df54fe04fdf3a91daa01c502de2a"
+        },
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/C-01-mundo.png",
+          "bytes": 1595091,
+          "sha256": "035ea8715c981e7e07c5a0b0d367e65fa8644219e7b151cc2638b4d4e6ce3ac5"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "C-03-personagem",
+      "direction": "Caricatura elaborada",
+      "view": "03-personagem",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/C-03-personagem.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/C-03-personagem.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/03-personagem.png",
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/C-01-mundo.png"
+      ],
+      "bytes": 1412130,
+      "sha256": "52091dfe82914bb2cd1945efec7f627414047c5f182c15aef5c3de65794d00c6",
+      "generatedAt": "2026-11-01T01:50:21.506Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/03-personagem.png",
+          "bytes": 4652465,
+          "sha256": "66d5c96b4a190188fb1416c0b464bf3e21f12bc022b1d7eed9b99626d79c8e37"
+        },
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/C-01-mundo.png",
+          "bytes": 1595091,
+          "sha256": "035ea8715c981e7e07c5a0b0d367e65fa8644219e7b151cc2638b4d4e6ce3ac5"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    },
+    {
+      "id": "A-02-primeira-pessoa",
+      "direction": "Competitivo limpo",
+      "view": "02-primeira-pessoa",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/A-02-primeira-pessoa.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/A-02-primeira-pessoa.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png"
+      ],
+      "bytes": 1378429,
+      "sha256": "918c2ab1c491a07dda560dd28b9c79f65719e2d1151b8bd31aae9f6fd1b7b414",
+      "generatedAt": "2026-11-01T01:51:35.861Z",
+      "review": "REPROVADO",
+      "type": "2D-concept-not-engine-render",
+      "referenceEvidence": [
+        {
+          "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png",
+          "bytes": 4570172,
+          "sha256": "83fae235999f2cec48da7b289f97e84fabd6df54fe04fdf3a91daa01c502de2a"
+        }
+      ],
+      "width": 1376,
+      "height": 768,
+      "reviewEvidence": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/review.json"
+    }
+  ],
+  "rejected": [
+    {
+      "id": "A-01-mundo",
+      "direction": "Competitivo limpo",
+      "view": "01-mundo",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/rejected/A-01-mundo-attempt-01.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/A-01-mundo.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/01-mundo.png"
+      ],
+      "bytes": 1516262,
+      "sha256": "30fb9c9b9880a80b64d27516bd150708bd247ee256850e20ce0926017031a662",
+      "generatedAt": "2026-11-01T01:45:32.071Z",
+      "review": "pending",
+      "type": "2D-concept-not-engine-render",
+      "reason": "Added foreground green railings not present in baseline."
+    },
+    {
+      "id": "A-02-primeira-pessoa",
+      "direction": "Competitivo limpo",
+      "view": "02-primeira-pessoa",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/rejected/A-02-primeira-pessoa-attempt-01.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/A-02-primeira-pessoa.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png",
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/rejected/A-01-mundo-attempt-01.png"
+      ],
+      "bytes": 1396274,
+      "sha256": "2c5f72f6b3d8e80df99906b728114aefc11de30d8b82b80a0140f11ad04a72de",
+      "generatedAt": "2026-11-01T01:46:26.400Z",
+      "review": "pending",
+      "type": "2D-concept-not-engine-render",
+      "reason": "Inserted an unrequested punk character into the empty POV."
+    },
+    {
+      "id": "B-02-primeira-pessoa-inflight",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/rejected/B-02-primeira-pessoa-inflight-attempt-01.png",
+      "reason": "Finished request preserved when orchestrator was stopped to remove character descriptions from empty views; not reviewed as selected output.",
+      "bytes": 1482394
+    },
+    {
+      "id": "A-02-primeira-pessoa",
+      "direction": "Competitivo limpo",
+      "view": "02-primeira-pessoa",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/rejected/A-02-primeira-pessoa-attempt-02.png",
+      "prompt": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/prompts/A-02-primeira-pessoa.txt",
+      "references": [
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/baseline/02-primeira-pessoa.png",
+        "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-01/concepts/A-01-mundo.png"
+      ],
+      "bytes": 1668778,
+      "sha256": "ea9c66db1d2235f5447b8dbbe426112ba8097deed6caff13868c714aace97861",
+      "generatedAt": "2026-11-01T01:48:35.717Z",
+      "review": "pending",
+      "type": "2D-concept-not-engine-render",
+      "reason": "Independent review: replacement scene, new stairs/roofs and Portugal identity; rejected before bounded single-reference repair."
+    }
+  ],
+  "totalRecordedRequests": 13,
+  "cost": "Provider billing was not captured by the existing CLI; no monetary estimate asserted."
+}

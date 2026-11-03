@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-11-01T06:26:13.911186+00:00",
+  "decisionDate": "2026-11-01",
+  "source": "Explicit owner feedback in this chat after viewing the B/C gallery",
+  "status": "study-preserved-implementation-on-hold",
+  "ownerAssessment": {
+    "B": "Realismo visualmente mais bonito; primeira escolha condicionada à reprodução no jogo e ao desempenho para o usuário.",
+    "C": "Acabamento gráfico lembra mais jogo; alternativa se B não for viável com desempenho aceitável.",
+    "both": "O dono considera ambos muito à frente do visual atual.",
+    "uncertainty": "O dono receia que a beleza das imagens geradas por IA não possa ser reproduzida no jogo real."
+  },
+  "decision": {
+    "preferred": "B",
+    "preferredIf": "A aparência desejada puder ser reproduzida em Three.js/WebGL com bom desempenho nos dispositivos dos usuários.",
+    "fallback": "C",
+    "fallbackIf": "B não atender à viabilidade visual e ao desempenho; C também exige validação real.",
+    "selectionIsConditional": true,
+    "implementationAuthorizedNow": false,
+    "engineMigrationDecision": null,
+    "performanceTargets": "Ainda não definidos ou medidos; não inventar metas ou declarar aprovação."
+  },
+  "preservedStudy": {
+    "root": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral",
+    "gallery": "galeria.html",
+    "overview": [
+      "visao-geral-B.png",
+      "visao-geral-C.png"
+    ],
+    "captureManifest": "capture-manifest.json",
+    "generationManifest": "generation-manifest.json",
+    "coverage": "coverage.json",
+    "validation": "validation.json",
+    "reviews": "reviews/",
+    "images": {
+      "bases": 68,
+      "concepts": 136
+    },
+    "evidenceLimit": "Conceitos 2D de IA, não assets 3D prontos, implementação, gameplay em movimento ou prova de desempenho."
+  },
+  "executionBoundary": "Somente preservar estudo e decisão. Não iniciar implementação, protótipo, geração adicional, alteração de assets, migração de engine, PR, merge, deploy ou publicação por esta decisão.",
+  "futureResumeOnlyAfterOwnerRequests": "Uma amostra real em Three.js/WebGL poderá avaliar fidelidade, movimento e desempenho em desktop/celular antes de ampliar a direção ao jogo."
+}

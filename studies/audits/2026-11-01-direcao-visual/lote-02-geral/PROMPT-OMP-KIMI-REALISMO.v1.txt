@@ -1,0 +1,41 @@
+Investigue a frente de realismo B do CORO SOLTO como artista técnico e engenheiro de gráficos para Three.js/WebGL, com atenção especial ao celular. Esta tarefa é pesquisa e diagnóstico. A decisão do dono é B se conseguirmos reproduzir a aparência com bom desempenho; C é a alternativa. Não há autorização para implementar agora.
+
+CONTEXTO E FONTES LOCAIS
+Raiz: /Volumes/Zenith/Projects/game/corosolto/csbrasil
+Jogo: /Volumes/Zenith/Projects/game/corosolto/csbrasil/client
+Estudo: /Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral
+Continuação: /Volumes/Zenith/Projects/game/corosolto/corosolto-roadmap/reports/2026-11-01-processo-agentes/CONTINUATION.md
+
+Leia as instruções AGENTS.md aplicáveis, o final da continuação e, no estudo, owner-decision.json, SPEC.md, art-bible.json, feasibility-review.json e coverage.json. Use capture-manifest.json, generation-manifest.json e reviews/ para localizar imagens, câmeras e desvios. Faça buscas dirigidas, preservando contexto e resultados em um relatório próprio. Não leia todo o repo sem necessidade.
+
+O estudo contém conceitos 2D de IA, não modelos 3D prontos. A cobertura é 18 mapas, três estudos Javaporco, dez famílias de arma, 12/63 personagens e 25 skins. Há desvios de fidelidade sinalizados. O dono gostou muito de B, mas receia que não consigamos reproduzi-lo no jogo real.
+
+ESCOPO AUTORIZADO
+Ler código e assets, abrir imagens de referência, pesquisar documentação pública e escrever relatórios somente em:
+/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/investigacao-omp-kimi/
+Preserve arquivos já existentes nessa pasta usando nomes novos para sua execução.
+Não altere jogo, assets, configurações, catálogo ou documentação alheia; não crie worktree, commit/PR, instalação, protótipo, geração paga, upload de arquivos a terceiros, merge, deploy ou publicação. Não inicie benchmarks ou processos do jogo nesta etapa. A árvore local tem trabalho de outras frentes: registre branch/HEAD/estado e não o confunda com a produção usada nas capturas. Não imprima segredos nem leia .env para esta pesquisa. Nunca invente resultados se faltar acesso a uma ferramenta.
+
+INVESTIGAÇÃO
+1. Olhe em pixels os pares base/B da Piscina, Quebrada (AK), Amazônia, Punk e uma skin cyborg, usando os manifestos. Separe mudanças de iluminação, material, textura, geometria, pose e composição. Diga onde a IA inventou ou alterou conteúdo. Se seu modelo não conseguir ver as imagens, registre essa limitação; ler os nomes não vale como inspeção visual.
+
+2. Confira a implementação atual por símbolo e arquivo. PBR, PMREM/IBL, SSAO, sombra de contato, pós, perfis de qualidade, culling e batching já foram encontrados. Há caminhos de material distintos por mapa, mapas de detalhe derivados do albedo e um caminho de lightmap na shell das Lajes. Punk e AK já têm normal/roughness. Verifique o estado atual antes de recomendar; trate feasibility-review.json como diagnóstico anterior, não verdade eterna. Explique o que realmente falta para aproximar B.
+
+3. Para cada ganho visual relevante, proponha uma técnica compatível com o Three.js vendorizado e WebGL usado pelo projeto. Diferencie preparação offline de custo por frame. Compare materiais PBR autorados, iluminação/AO assados, detalhe high-to-low, UVs, compressão KTX2/Basis, LOD, draw calls, shaders, transparência e pós. Identifique também o que depende de novos assets ou animação. Não use recursos exclusivos de Unreal como solução para o navegador.
+
+4. Examine os riscos de celular: reflexo/refração da Piscina, sombras suaves, vegetação/overdraw, texturas residentes na GPU, muitos atores animados e resolução dos passes. Explique como preservar a direção B nos perfis leves. C não tem desempenho comprovado só por parecer mais gráfico. Proponha critérios e aparelhos representativos para uma prova futura, rotulados como proposta, sem inventar FPS, memória medida, nota visual ou percentual de fidelidade.
+
+5. Investigue especificamente Kimi 3D Make. Fontes oficiais de partida:
+https://www.kimi.com/en/help/3d-make/3d-make-overview
+https://www.kimi.ai/academy/3d-tutorial
+O tutorial distingue modelagem por código, softwares 3D e geração de malha por serviços externos. Confirme as capacidades atuais com fontes e datas. Diferencie modelo Kimi via API no OMP, produto 3D Make e ferramentas/plugins efetivamente acessíveis na sua sessão. Verifique se há uma integração documentada utilizável pelo OMP; não presuma acesso aos plugins do Kimi Work só por usar o modelo Kimi. Caso dependa de interface web/manual, descreva o handoff. Não use endpoints internos ou tente contornar login.
+
+Avalie, com evidência, o que sai do serviço: código de cena editável, GLB/glTF, arquivos Blender, CAD/STL, imagens ou vídeo. Não trate formatos não confirmados como disponíveis. Investigue materiais/texturas, UVs, topologia, escala, rig/animação, exportabilidade, otimização, licença de uso e consumo de quota/custos. Compare utilidade para arquitetura/props, personagens/skins, armas e acabamento de assets existentes. Um render bonito ou vídeo não comprova asset pronto para jogo nem performance WebGL. Proponha um teste futuro pequeno do Kimi 3D, sem executá-lo ou consumir quota agora. Respeite o roteamento de geração definido pelo projeto; pesquisar uma alternativa não autoriza substituir o pipeline.
+
+ENTREGÁVEIS
+- RELATORIO.md: conclusão sobre B, evidências locais com arquivo:símbolo/linha, fontes oficiais datadas, ferramentas/modelo usados, limitações e perguntas realmente pendentes.
+- MATRIZ.csv: elemento visual | diferença base/B | técnica | o que já existe | falta | custo relativo no celular e motivo | concessão possível | evidência | grau de confiança. Marque estimativas e não medido.
+- PLANO-DE-PROVA.md: escopo proposto de uma amostra representativa, câmeras comparáveis, testes de movimento, Android/iOS físicos, carga representativa e sessão sustentada; critérios visuais/técnicos a acordar; esforço em faixas com premissas. Somente plano, sem execução.
+- CONTINUATION.md dentro da pasta de saída: objetivo, decisões, o que foi verificado, rejeitado ou ficou sem prova, arquivos de saída, branch/HEAD inspecionados e próximo passo condicionado ao pedido do dono.
+
+Conclua dizendo quais partes de B parecem reproduzíveis, quais exigem aproximação e quais seguem sem prova. Diferencie melhorar assets, mudar renderer e mudar engine. Entregue uma investigação concreta, sem prometer 8–9 ou dar o próximo passo de implementação por conta própria.

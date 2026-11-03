@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-11-01T01:53:31.680Z",
+  "scope": "Artifact delivery and comparison UI, not engine acceptance",
+  "conceptFiles": 9,
+  "allOutputHashesMatch": true,
+  "decodedImageCountInGallery": 21,
+  "failedImages": 0,
+  "viewTabsPassed": [
+    "01-mundo",
+    "02-primeira-pessoa",
+    "03-personagem"
+  ],
+  "overlayValuesPassed": [
+    0,
+    50,
+    100
+  ],
+  "gameCodeModified": false,
+  "enginePerformanceMeasured": false,
+  "independentReview": {
+    "count": 9,
+    "approved": [
+      "C-02-primeira-pessoa"
+    ],
+    "rejected": [
+      "A-01-mundo",
+      "A-02-primeira-pessoa",
+      "A-03-personagem",
+      "B-01-mundo",
+      "B-02-primeira-pessoa",
+      "B-03-personagem",
+      "C-01-mundo",
+      "C-03-personagem"
+    ],
+    "scope": "2D visual fidelity; no engine acceptance"
+  }
+}

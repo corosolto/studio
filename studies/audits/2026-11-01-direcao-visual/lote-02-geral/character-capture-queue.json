@@ -1,0 +1,249 @@
+[
+  {
+    "id": "char-esquerdomacho",
+    "category": "characters",
+    "character": "esquerdomacho",
+    "name": "Esquerdomacho"
+  },
+  {
+    "id": "char-doutora",
+    "category": "characters",
+    "character": "doutora",
+    "name": "Doutora do SUS"
+  },
+  {
+    "id": "char-caminhoneiro",
+    "category": "characters",
+    "character": "caminhoneiro",
+    "name": "Caminhoneiro"
+  },
+  {
+    "id": "char-coach",
+    "category": "characters",
+    "character": "coach",
+    "name": "Coach Quântico"
+  },
+  {
+    "id": "char-adjim",
+    "category": "characters",
+    "character": "adjim",
+    "name": "Adjim"
+  },
+  {
+    "id": "char-punk",
+    "category": "characters",
+    "character": "punk",
+    "name": "Punk"
+  },
+  {
+    "id": "char-mandrake",
+    "category": "characters",
+    "character": "mandrake",
+    "name": "Mandrake"
+  },
+  {
+    "id": "char-lampiao",
+    "category": "characters",
+    "character": "lampiao",
+    "name": "Lampião"
+  },
+  {
+    "id": "char-caipora",
+    "category": "characters",
+    "character": "caipora",
+    "name": "Caipora"
+  },
+  {
+    "id": "char-gotinha",
+    "category": "characters",
+    "character": "gotinha",
+    "name": "Zé da Gotinha"
+  },
+  {
+    "id": "char-et",
+    "category": "characters",
+    "character": "et",
+    "name": "ET de Varginha"
+  },
+  {
+    "id": "char-canarinho",
+    "category": "characters",
+    "character": "canarinho",
+    "name": "Canarinho Pistola"
+  },
+  {
+    "id": "skin-lula-drip",
+    "category": "skins",
+    "character": "barbudo",
+    "skin": "lula-drip",
+    "name": "Barbudo do Drip"
+  },
+  {
+    "id": "skin-bolsonaro-drip",
+    "category": "skins",
+    "character": "capitao",
+    "skin": "bolsonaro-drip",
+    "name": "Capitão do Drip"
+  },
+  {
+    "id": "skin-senador-drip",
+    "category": "skins",
+    "character": "senador",
+    "skin": "senador-drip",
+    "name": "Senador do Drip"
+  },
+  {
+    "id": "skin-janja",
+    "category": "skins",
+    "character": "dama",
+    "skin": "janja",
+    "name": "Janjoca"
+  },
+  {
+    "id": "skin-michelle-bolsonaro",
+    "category": "skins",
+    "character": "julia-zanatta",
+    "skin": "michelle-bolsonaro",
+    "name": "Mixelle"
+  },
+  {
+    "id": "skin-lula-cyborg",
+    "category": "skins",
+    "character": "barbudo",
+    "skin": "lula-cyborg",
+    "name": "Barbudo Cyborg"
+  },
+  {
+    "id": "skin-bolsonaro-cyborg",
+    "category": "skins",
+    "character": "capitao",
+    "skin": "bolsonaro-cyborg",
+    "name": "Capitão Cyborg"
+  },
+  {
+    "id": "skin-aljuiz-toga-mandrake",
+    "category": "skins",
+    "character": "juiz",
+    "skin": "aljuiz-toga-mandrake",
+    "name": "Juiz da Toga Mandrake"
+  },
+  {
+    "id": "skin-lula-mandrake",
+    "category": "skins",
+    "character": "barbudo",
+    "skin": "lula-mandrake",
+    "name": "Barbudo Mandrake"
+  },
+  {
+    "id": "skin-bolsonaro-mandrake",
+    "category": "skins",
+    "character": "capitao",
+    "skin": "bolsonaro-mandrake",
+    "name": "Capitão Mandrake"
+  },
+  {
+    "id": "skin-michelle-mandrake",
+    "category": "skins",
+    "character": "julia-zanatta",
+    "skin": "michelle-mandrake",
+    "name": "Mixelle Mandrake"
+  },
+  {
+    "id": "skin-zero-um-mandrake",
+    "category": "skins",
+    "character": "senador",
+    "skin": "zero-um-mandrake",
+    "name": "Senador Mandrake"
+  },
+  {
+    "id": "skin-canarinho-drip",
+    "category": "skins",
+    "character": "canarinho",
+    "skin": "canarinho-drip",
+    "name": "Canarinho Pistola Drip"
+  },
+  {
+    "id": "skin-canarinho-mandrake",
+    "category": "skins",
+    "character": "canarinho",
+    "skin": "canarinho-mandrake",
+    "name": "Canarinho Pistola Mandrake"
+  },
+  {
+    "id": "skin-canarinho-cyborg",
+    "category": "skins",
+    "character": "canarinho",
+    "skin": "canarinho-cyborg",
+    "name": "Canarinho Pistola Cyborg"
+  },
+  {
+    "id": "skin-gotinha-drip",
+    "category": "skins",
+    "character": "gotinha",
+    "skin": "gotinha-drip",
+    "name": "Zé da Gotinha Drip"
+  },
+  {
+    "id": "skin-gotinha-mandrake",
+    "category": "skins",
+    "character": "gotinha",
+    "skin": "gotinha-mandrake",
+    "name": "Zé da Gotinha Mandrake"
+  },
+  {
+    "id": "skin-gotinha-cyborg",
+    "category": "skins",
+    "character": "gotinha",
+    "skin": "gotinha-cyborg",
+    "name": "Zé da Gotinha Cyborg"
+  },
+  {
+    "id": "skin-lampiao-cyborg",
+    "category": "skins",
+    "character": "lampiao",
+    "skin": "lampiao-cyborg",
+    "name": "Lampião Cyborg"
+  },
+  {
+    "id": "skin-lobisomem-cyborg",
+    "category": "skins",
+    "character": "lobisomem",
+    "skin": "lobisomem-cyborg",
+    "name": "Lobisomem Cyborg"
+  },
+  {
+    "id": "skin-mariabonita-cyborg",
+    "category": "skins",
+    "character": "mariabonita",
+    "skin": "mariabonita-cyborg",
+    "name": "Maria Bonita Cyborg"
+  },
+  {
+    "id": "skin-et-cyborg",
+    "category": "skins",
+    "character": "et",
+    "skin": "et-cyborg",
+    "name": "ET Cyborg"
+  },
+  {
+    "id": "skin-mandrake-cyborg",
+    "category": "skins",
+    "character": "mandrake",
+    "skin": "mandrake-cyborg",
+    "name": "Mandrake Cyborg"
+  },
+  {
+    "id": "skin-emo-cyborg",
+    "category": "skins",
+    "character": "emo",
+    "skin": "emo-cyborg",
+    "name": "Emo Cyborg"
+  },
+  {
+    "id": "skin-curupira-cyborg",
+    "category": "skins",
+    "character": "curupira",
+    "skin": "curupira-cyborg",
+    "name": "Curupira Cyborg"
+  }
+]

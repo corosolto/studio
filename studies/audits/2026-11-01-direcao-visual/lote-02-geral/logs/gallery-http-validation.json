@@ -1,0 +1,1232 @@
+{
+  "at": "2026-11-01T06:07:59.712Z",
+  "url": "http://127.0.0.1:8139/galeria.html",
+  "images": 204,
+  "failures": [],
+  "results": [
+    {
+      "path": "baseline/maps/piscina_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4539872
+    },
+    {
+      "path": "concepts/maps/B-map-piscina_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1583713
+    },
+    {
+      "path": "baseline/maps/praca_poderes.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4533533
+    },
+    {
+      "path": "concepts/maps/C-map-praca_poderes.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1453555
+    },
+    {
+      "path": "concepts/maps/C-map-piscina_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1478961
+    },
+    {
+      "path": "baseline/maps/loja_h.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4449930
+    },
+    {
+      "path": "concepts/maps/C-map-loja_h.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1267771
+    },
+    {
+      "path": "concepts/maps/B-map-loja_h.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1378824
+    },
+    {
+      "path": "concepts/maps/B-map-quebrada.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1307333
+    },
+    {
+      "path": "baseline/maps/quebrada.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4359752
+    },
+    {
+      "path": "concepts/maps/C-map-quebrada.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1257850
+    },
+    {
+      "path": "baseline/maps/posto_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4485896
+    },
+    {
+      "path": "baseline/maps/ferro_velho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4160016
+    },
+    {
+      "path": "concepts/maps/B-map-posto_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1319495
+    },
+    {
+      "path": "concepts/maps/C-map-posto_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1302642
+    },
+    {
+      "path": "concepts/maps/B-map-ferro_velho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1376256
+    },
+    {
+      "path": "concepts/maps/C-map-escadao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1376464
+    },
+    {
+      "path": "concepts/maps/C-map-ferro_velho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1238167
+    },
+    {
+      "path": "concepts/maps/B-map-escadao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1475464
+    },
+    {
+      "path": "baseline/maps/map-escadao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4479285
+    },
+    {
+      "path": "baseline/maps/upa_24h.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4233505
+    },
+    {
+      "path": "concepts/maps/C-map-upa_24h.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1283431
+    },
+    {
+      "path": "concepts/maps/B-map-upa_24h.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1331562
+    },
+    {
+      "path": "baseline/maps/atacadao_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4278945
+    },
+    {
+      "path": "concepts/maps/B-map-atacadao_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1346431
+    },
+    {
+      "path": "concepts/maps/C-map-atacadao_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1261041
+    },
+    {
+      "path": "baseline/maps/velho_oeste.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4455140
+    },
+    {
+      "path": "concepts/maps/B-map-velho_oeste.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1376514
+    },
+    {
+      "path": "baseline/maps/amazonia.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4407732
+    },
+    {
+      "path": "concepts/maps/B-map-amazonia.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1464248
+    },
+    {
+      "path": "concepts/maps/C-map-velho_oeste.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1249263
+    },
+    {
+      "path": "concepts/maps/B-map-corrego.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1358835
+    },
+    {
+      "path": "concepts/maps/C-map-amazonia.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1315434
+    },
+    {
+      "path": "concepts/maps/C-map-corrego.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1314441
+    },
+    {
+      "path": "baseline/maps/lajes.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4765506
+    },
+    {
+      "path": "baseline/maps/corrego.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4326384
+    },
+    {
+      "path": "concepts/maps/C-map-lajes.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1416428
+    },
+    {
+      "path": "concepts/maps/B-map-lajes.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1509906
+    },
+    {
+      "path": "baseline/maps/penitenciaria.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4439600
+    },
+    {
+      "path": "concepts/maps/B-map-penitenciaria.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1266687
+    },
+    {
+      "path": "concepts/maps/C-map-penitenciaria.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1334051
+    },
+    {
+      "path": "baseline/maps/obras_prefeitura.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4646964
+    },
+    {
+      "path": "concepts/maps/B-map-obras_prefeitura.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1520852
+    },
+    {
+      "path": "concepts/maps/C-map-obras_prefeitura.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1361485
+    },
+    {
+      "path": "baseline/maps/parque_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4817838
+    },
+    {
+      "path": "concepts/maps/B-map-parque_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1601913
+    },
+    {
+      "path": "concepts/maps/C-map-parque_treta.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1472476
+    },
+    {
+      "path": "baseline/maps/mansao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4592769
+    },
+    {
+      "path": "concepts/maps/B-map-mansao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1441596
+    },
+    {
+      "path": "concepts/maps/C-map-mansao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1318836
+    },
+    {
+      "path": "baseline/javaporco/jav-city.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 5506932
+    },
+    {
+      "path": "concepts/maps/C-map-campomorro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1371340
+    },
+    {
+      "path": "concepts/maps/B-map-campomorro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1360757
+    },
+    {
+      "path": "baseline/maps/campomorro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4612487
+    },
+    {
+      "path": "concepts/javaporco/B-jav-city.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1659728
+    },
+    {
+      "path": "concepts/javaporco/C-jav-city.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1542255
+    },
+    {
+      "path": "baseline/javaporco/jav-pasto.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 6415821
+    },
+    {
+      "path": "concepts/javaporco/C-jav-pasto.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1657868
+    },
+    {
+      "path": "concepts/javaporco/B-jav-pasto.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1751489
+    },
+    {
+      "path": "baseline/javaporco/jav-enemies.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 5693570
+    },
+    {
+      "path": "concepts/javaporco/C-jav-enemies.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1608643
+    },
+    {
+      "path": "concepts/javaporco/B-jav-enemies.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1701707
+    },
+    {
+      "path": "baseline/weapons/weapon-ak.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2756304
+    },
+    {
+      "path": "concepts/weapons/B-weapon-ak.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1286035
+    },
+    {
+      "path": "concepts/weapons/C-weapon-ak.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1210631
+    },
+    {
+      "path": "baseline/weapons/weapon-pistol.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2517170
+    },
+    {
+      "path": "concepts/weapons/B-weapon-pistol.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1373817
+    },
+    {
+      "path": "concepts/weapons/C-weapon-pistol.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1185720
+    },
+    {
+      "path": "baseline/weapons/weapon-revolver38.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2490713
+    },
+    {
+      "path": "concepts/weapons/B-weapon-revolver38.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1406752
+    },
+    {
+      "path": "concepts/weapons/C-weapon-revolver38.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1205174
+    },
+    {
+      "path": "baseline/weapons/weapon-mp5.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2500452
+    },
+    {
+      "path": "concepts/weapons/B-weapon-mp5.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1447845
+    },
+    {
+      "path": "concepts/weapons/C-weapon-mp5.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1217720
+    },
+    {
+      "path": "baseline/weapons/weapon-shotgun.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2589387
+    },
+    {
+      "path": "concepts/weapons/C-weapon-shotgun.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1232131
+    },
+    {
+      "path": "concepts/weapons/B-weapon-shotgun.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1257678
+    },
+    {
+      "path": "baseline/weapons/weapon-awp.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2582590
+    },
+    {
+      "path": "concepts/weapons/B-weapon-awp.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1346860
+    },
+    {
+      "path": "concepts/weapons/C-weapon-awp.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1214181
+    },
+    {
+      "path": "concepts/weapons/B-weapon-svd.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1347571
+    },
+    {
+      "path": "baseline/weapons/weapon-svd.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2638299
+    },
+    {
+      "path": "concepts/weapons/C-weapon-svd.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1210168
+    },
+    {
+      "path": "baseline/weapons/weapon-lmg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2621871
+    },
+    {
+      "path": "concepts/weapons/B-weapon-lmg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1287259
+    },
+    {
+      "path": "concepts/maps/B-map-praca_poderes.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1503811
+    },
+    {
+      "path": "baseline/weapons/weapon-carbine.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2589786
+    },
+    {
+      "path": "concepts/weapons/C-weapon-lmg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1249256
+    },
+    {
+      "path": "concepts/weapons/B-weapon-carbine.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1410597
+    },
+    {
+      "path": "concepts/weapons/C-weapon-carbine.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1259803
+    },
+    {
+      "path": "baseline/weapons/weapon-knife.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 2632940
+    },
+    {
+      "path": "concepts/weapons/B-weapon-knife.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1528357
+    },
+    {
+      "path": "concepts/weapons/C-weapon-knife.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1235753
+    },
+    {
+      "path": "baseline/characters/char-esquerdomacho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4404779
+    },
+    {
+      "path": "concepts/characters/B-char-esquerdomacho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1442358
+    },
+    {
+      "path": "concepts/characters/C-char-esquerdomacho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1302969
+    },
+    {
+      "path": "baseline/characters/char-doutora.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4367824
+    },
+    {
+      "path": "concepts/characters/B-char-doutora.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1557741
+    },
+    {
+      "path": "baseline/characters/char-caminhoneiro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4463430
+    },
+    {
+      "path": "concepts/characters/C-char-doutora.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1273624
+    },
+    {
+      "path": "concepts/characters/B-char-caminhoneiro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1311249
+    },
+    {
+      "path": "baseline/characters/char-coach.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4375806
+    },
+    {
+      "path": "concepts/characters/C-char-caminhoneiro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1365636
+    },
+    {
+      "path": "concepts/characters/B-char-coach.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1436197
+    },
+    {
+      "path": "baseline/characters/char-adjim.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4534196
+    },
+    {
+      "path": "concepts/characters/B-char-adjim.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1383288
+    },
+    {
+      "path": "concepts/characters/C-char-coach.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1323790
+    },
+    {
+      "path": "baseline/characters/char-punk.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4501669
+    },
+    {
+      "path": "concepts/characters/C-char-adjim.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1262430
+    },
+    {
+      "path": "concepts/characters/B-char-punk.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1276833
+    },
+    {
+      "path": "concepts/characters/C-char-punk.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1257951
+    },
+    {
+      "path": "concepts/characters/B-char-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1289723
+    },
+    {
+      "path": "baseline/characters/char-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4451706
+    },
+    {
+      "path": "concepts/characters/C-char-lampiao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1297974
+    },
+    {
+      "path": "baseline/characters/char-lampiao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4440072
+    },
+    {
+      "path": "concepts/characters/B-char-lampiao.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1480972
+    },
+    {
+      "path": "baseline/characters/char-caipora.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4506109
+    },
+    {
+      "path": "concepts/characters/C-char-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1364032
+    },
+    {
+      "path": "concepts/characters/B-char-caipora.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1334194
+    },
+    {
+      "path": "concepts/characters/C-char-caipora.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1329126
+    },
+    {
+      "path": "baseline/characters/char-gotinha.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4301993
+    },
+    {
+      "path": "concepts/characters/B-char-gotinha.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1247187
+    },
+    {
+      "path": "concepts/characters/C-char-gotinha.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1336984
+    },
+    {
+      "path": "baseline/characters/char-et.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4346738
+    },
+    {
+      "path": "concepts/characters/C-char-et.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1220955
+    },
+    {
+      "path": "concepts/characters/B-char-et.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1351401
+    },
+    {
+      "path": "baseline/characters/char-canarinho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4438401
+    },
+    {
+      "path": "concepts/characters/B-char-canarinho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1377914
+    },
+    {
+      "path": "concepts/characters/C-char-canarinho.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1215660
+    },
+    {
+      "path": "concepts/skins/C-skin-canarinho-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1387991
+    },
+    {
+      "path": "baseline/skins/skin-canarinho-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4553491
+    },
+    {
+      "path": "concepts/skins/B-skin-lula-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1330354
+    },
+    {
+      "path": "concepts/skins/B-skin-canarinho-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1553992
+    },
+    {
+      "path": "baseline/skins/skin-lula-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4417128
+    },
+    {
+      "path": "concepts/skins/C-skin-lula-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1352813
+    },
+    {
+      "path": "baseline/skins/skin-bolsonaro-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4449965
+    },
+    {
+      "path": "concepts/skins/B-skin-bolsonaro-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1348023
+    },
+    {
+      "path": "concepts/skins/C-skin-bolsonaro-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1224046
+    },
+    {
+      "path": "baseline/skins/skin-senador-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4413270
+    },
+    {
+      "path": "concepts/skins/B-skin-senador-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1505575
+    },
+    {
+      "path": "concepts/skins/C-skin-senador-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1209979
+    },
+    {
+      "path": "concepts/skins/B-skin-janja.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1507709
+    },
+    {
+      "path": "baseline/skins/skin-janja.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4378986
+    },
+    {
+      "path": "concepts/skins/C-skin-janja.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1243967
+    },
+    {
+      "path": "concepts/skins/B-skin-michelle-bolsonaro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1312821
+    },
+    {
+      "path": "baseline/skins/skin-michelle-bolsonaro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4414261
+    },
+    {
+      "path": "concepts/skins/C-skin-michelle-bolsonaro.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1327275
+    },
+    {
+      "path": "baseline/skins/skin-lula-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4515326
+    },
+    {
+      "path": "concepts/skins/B-skin-lula-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1362162
+    },
+    {
+      "path": "concepts/skins/C-skin-lula-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1278369
+    },
+    {
+      "path": "baseline/skins/skin-bolsonaro-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4454991
+    },
+    {
+      "path": "concepts/skins/B-skin-bolsonaro-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1464324
+    },
+    {
+      "path": "concepts/skins/C-skin-bolsonaro-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1222084
+    },
+    {
+      "path": "baseline/skins/skin-aljuiz-toga-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4441102
+    },
+    {
+      "path": "concepts/skins/B-skin-aljuiz-toga-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1249568
+    },
+    {
+      "path": "concepts/skins/C-skin-aljuiz-toga-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1364886
+    },
+    {
+      "path": "concepts/skins/B-skin-lula-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1504938
+    },
+    {
+      "path": "baseline/skins/skin-lula-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4411030
+    },
+    {
+      "path": "baseline/skins/skin-bolsonaro-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4508558
+    },
+    {
+      "path": "concepts/skins/C-skin-lula-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1366660
+    },
+    {
+      "path": "concepts/skins/B-skin-bolsonaro-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1472985
+    },
+    {
+      "path": "baseline/skins/skin-michelle-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4409271
+    },
+    {
+      "path": "concepts/skins/C-skin-bolsonaro-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1371618
+    },
+    {
+      "path": "concepts/skins/B-skin-michelle-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1329170
+    },
+    {
+      "path": "concepts/skins/C-skin-michelle-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1220873
+    },
+    {
+      "path": "baseline/skins/skin-zero-um-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4469770
+    },
+    {
+      "path": "concepts/skins/B-skin-zero-um-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1323922
+    },
+    {
+      "path": "concepts/skins/C-skin-zero-um-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1311603
+    },
+    {
+      "path": "baseline/skins/skin-canarinho-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4488302
+    },
+    {
+      "path": "concepts/skins/B-skin-canarinho-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1322663
+    },
+    {
+      "path": "concepts/skins/C-skin-canarinho-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1209432
+    },
+    {
+      "path": "baseline/skins/skin-canarinho-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4513372
+    },
+    {
+      "path": "concepts/skins/B-skin-canarinho-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1390193
+    },
+    {
+      "path": "baseline/skins/skin-gotinha-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4378317
+    },
+    {
+      "path": "concepts/skins/C-skin-canarinho-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1355743
+    },
+    {
+      "path": "concepts/skins/B-skin-gotinha-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1363199
+    },
+    {
+      "path": "concepts/skins/C-skin-gotinha-drip.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1244008
+    },
+    {
+      "path": "baseline/skins/skin-gotinha-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4448951
+    },
+    {
+      "path": "baseline/skins/skin-gotinha-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4416978
+    },
+    {
+      "path": "concepts/skins/C-skin-gotinha-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1378407
+    },
+    {
+      "path": "concepts/skins/B-skin-gotinha-mandrake.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1493587
+    },
+    {
+      "path": "concepts/skins/C-skin-gotinha-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1238357
+    },
+    {
+      "path": "concepts/skins/B-skin-gotinha-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1487426
+    },
+    {
+      "path": "baseline/skins/skin-lampiao-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4482858
+    },
+    {
+      "path": "concepts/skins/B-skin-lampiao-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1531695
+    },
+    {
+      "path": "concepts/skins/C-skin-lampiao-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1249320
+    },
+    {
+      "path": "baseline/skins/skin-lobisomem-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4496411
+    },
+    {
+      "path": "concepts/skins/B-skin-lobisomem-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1523482
+    },
+    {
+      "path": "concepts/skins/C-skin-lobisomem-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1222560
+    },
+    {
+      "path": "baseline/skins/skin-mariabonita-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4597878
+    },
+    {
+      "path": "concepts/skins/B-skin-mariabonita-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1399535
+    },
+    {
+      "path": "concepts/skins/C-skin-mariabonita-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1389851
+    },
+    {
+      "path": "baseline/skins/skin-et-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4399278
+    },
+    {
+      "path": "concepts/skins/B-skin-et-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1323947
+    },
+    {
+      "path": "concepts/skins/C-skin-et-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1227697
+    },
+    {
+      "path": "baseline/skins/skin-mandrake-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4429660
+    },
+    {
+      "path": "concepts/skins/C-skin-mandrake-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1248647
+    },
+    {
+      "path": "concepts/skins/B-skin-mandrake-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1576347
+    },
+    {
+      "path": "baseline/skins/skin-emo-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4408968
+    },
+    {
+      "path": "concepts/skins/B-skin-emo-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1365990
+    },
+    {
+      "path": "baseline/skins/skin-curupira-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 4480042
+    },
+    {
+      "path": "concepts/skins/C-skin-emo-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1268227
+    },
+    {
+      "path": "concepts/skins/C-skin-curupira-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1304354
+    },
+    {
+      "path": "concepts/skins/B-skin-curupira-cyborg.png",
+      "status": 200,
+      "type": "image/png",
+      "bytes": 1472851
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-11-01T02:04:00.198Z",
+  "source": "https://www.csbrasil.online/api/map-plays",
+  "status": 200,
+  "data": {
+    "plays": {
+      "awp_map": 1445,
+      "fy_ferrovelho": 110,
+      "fy_havan": 268,
+      "fy_pool_day": 296,
+      "fy_quebrada": 254,
+      "praca_poderes": 832,
+      "ferro_velho": 488,
+      "loja_h": 1457,
+      "piscina_treta": 4254,
+      "quebrada": 589,
+      "obras_prefeitura": 117,
+      "posto_treta": 622,
+      "upa_24h": 237,
+      "atacadao_treta": 226,
+      "penitenciaria": 172,
+      "parque_treta": 91,
+      "velho_oeste": 225,
+      "corrego": 205,
+      "amazonia": 222,
+      "escadao": 264,
+      "lajes": 182,
+      "mansao": 47,
+      "campomorro": 6
+    }
+  }
+}

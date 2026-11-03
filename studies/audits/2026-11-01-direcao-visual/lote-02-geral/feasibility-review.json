@@ -1,0 +1,95 @@
+{
+  "at": "2026-11-01T06:30:23.324305+00:00",
+  "scope": "Read-only technical assessment requested by owner; no game edits, asset changes, implementation, prototype, benchmark or deployment authorized or performed.",
+  "sourceState": {
+    "branch": "feat/fps-paid-viewmodels-aaa",
+    "head": "86c388b560e43e92cac13cd2675a86a69b715641",
+    "hasPreexistingChanges": true,
+    "note": "Local checkout includes other active visual work; do not equate its code with the production-alpha.133 captures or verified production behavior.",
+    "fileSha256": {
+      "public/js/main.js": "416eb6799d65692a2010f575945f5374c52eb55d77820f4b5346e79e1afd36b7",
+      "public/js/game.js": "58e8f4e9c2071b5701d6813274bd5d9d9162e430abd558cc087315c08d5cbcb6",
+      "public/js/glcontext.js": "b68fa4ae8b2e8384ee8724bf0b536ff9b42766646894bcd94168ccd302313956",
+      "public/js/look.js": "4aa5fefb8136856e4f9f389f5e908a57f87a84927749ac125632cb9b7e07fe4c",
+      "public/js/bloom.js": "468b6f8913f135d9de6faa23ce97d26660a9cb7166490ede49006668bea46032",
+      "public/js/textures.js": "da78a68e5c3d296050874ee04e157682a6f4aa0892aa64508c0221c119aa94c0",
+      "public/js/characters.js": "b9e59d7df0d5b996543cb42dd1108323a75cc10818d2f2193363e1eb8724296d",
+      "public/js/glbchars.js": "92b0f72ff7f4a09010a9da6fd1f0ea17a6bf9c2bfcdee23d111fc5520093d543",
+      "public/js/mapprops.js": "79421332974db98d85e7d1588baa897ca193c2f8cb8c1a448abc39ad16c7917d",
+      "public/js/map_piscina.js": "971dc137842caef4731127e8c0bf07eb8f45ce8eab153294ed458fe52ebf7d79",
+      "public/js/map_quebrada.js": "c512607fec5fe835808d96856289794fe7105865ebc24c4c39ef3ce718f9d979",
+      "public/js/map_lajes.js": "e0952d3b0982dc8418a9dfe520dc1194e13769733b6273fed64253f192955f2d",
+      "public/js/shell.js": "ec658d159d11670c70d0bbabf749cae897ddf1fa3d8a3b702b133f8634e6dc32",
+      "public/js/water.js": "24b41553ed1146b4593429b6132bb11ac17c759f11db922f4a5a5aaed9c87c85"
+    }
+  },
+  "imagesInspected": [
+    "concepts/maps/B-map-piscina_treta.png",
+    "concepts/maps/B-map-amazonia.png",
+    "concepts/characters/B-char-punk.png",
+    "concepts/weapons/B-weapon-ak.png"
+  ],
+  "observedCapabilities": [
+    {
+      "source": "public/js/game.js:_buildEnv",
+      "finding": "Procedural HDR environment converted through PMREM to scene.environment exists."
+    },
+    {
+      "source": "public/js/bloom.js:enableLightBloom",
+      "finding": "Composer includes conditional half-resolution SSAO, character mask, viewmodel render, bloom, tone composite and conditional AA; low has a no-post tone path."
+    },
+    {
+      "source": "public/js/textures.js:normalFromCanvas/roughFromCanvas/loadPbrSet",
+      "finding": "Some detail maps are derived from albedo; separate authored PBR texture loading also exists."
+    },
+    {
+      "source": "public/js/map_piscina.js:buildPiscina",
+      "finding": "General material factory uses Lambert; water uses transparent Physical material. B pool reflects detailed surrounding architecture beyond a simple sky environment."
+    },
+    {
+      "source": "public/js/map_quebrada.js:buildQuebrada",
+      "finding": "Standard materials with optional detail maps exist. The material path is not uniform across maps."
+    },
+    {
+      "source": "public/js/shell.js:loadShell; public/js/map_lajes.js",
+      "finding": "A lightmap/second-UV path already exists for a Lajes shell; this is not proof of consistent baking across maps."
+    },
+    {
+      "source": "public/js/characters.js:upgradeCharMaterial; public/js/glbchars.js",
+      "finding": "Character materials preserve existing normal and roughness maps and add custom readability/region effects. PBR is present, not absent."
+    },
+    {
+      "source": "public/models/characters/punk.glb; public/models/weapons/ak.glb",
+      "finding": "GLB JSON and embedded WebP metadata inspected. Both include base color, normal and roughness-metal textures. Improving B is not simply switching PBR on."
+    },
+    {
+      "source": "public/js/mapprops.js",
+      "finding": "Prop culling, batching and spatial instancing paths already exist; do not propose reimplementing them as missing."
+    },
+    {
+      "source": "public/js/game.js:_applyQuality",
+      "finding": "Quality changes pixel ratio (high up to2, medium1, low0.75) and shadows. Actual device performance was not measured."
+    },
+    {
+      "source": "public/js/glbchars.js; public/js/mapprops.js",
+      "finding": "The inspected live loaders are GLTFLoader instances without KTX2 registration; vendored loader API support alone does not establish an active GPU-compressed texture pipeline."
+    }
+  ],
+  "recommendedFutureWorkIfResumed": [
+    "Use B as an art direction with authored material recipes, consistent texture scale and color management; selectively migrate visible Lambert surfaces to Standard rather than enabling complex Physical features everywhere.",
+    "Prepare meaningful base color/normal/roughness/metal/AO maps offline, selective silhouette bevels and high-to-low detail baking. A normal map cannot change silhouette, rig or pose.",
+    "Extend existing static lightmap/AO/vertex/probe workflow as appropriate; retain restrained dynamic lighting for moving actors. Static bakes trade memory and authoring effort for runtime work and must not double-light materials.",
+    "Treat the pool reflection/refraction/caustic combination as a separate high-risk task. Approximate environment reflection is cheaper than correct dynamic reflected geometry at all angles.",
+    "Control vegetation/hair transparency, overdraw, shadows and visible detail with LOD, spatial culling/batching and simplified distant assets while preserving layout and competitive visibility.",
+    "Evaluate KTX2/Basis GPU compression with hardware-appropriate transcoding and dimension budgets; WebP download savings alone do not establish GPU-memory savings.",
+    "Preserve the B palette/material identity across mobile quality levels while reducing resolution, effects, reflection detail and distant geometry. C is not intrinsically guaranteed cheaper.",
+    "Only after owner requests resumption, validate a real sample with matched cameras plus motion, representative actors/VFX, physical Android/iOS devices and sustained sessions, frame-time stability, memory and load time."
+  ],
+  "relativeRiskNotBenchmark": {
+    "moderate": "Credible opaque material finish and static lighting; asset preparation and texture memory remain material costs.",
+    "high": "Correct dynamic water reflections/refractions, very soft dynamic shadows over large areas, dense layered foliage/transparency, volumetric rays and many moving high-detail characters together.",
+    "unproven": "How close to B the whole game can get at acceptable performance on the users' phones. No percentage fidelity, quality score, FPS or schedule promise is supported."
+  },
+  "sources": "logs/threejs-feasibility-sources.json",
+  "ownerDecisionUnchanged": "owner-decision.json; B if feasible/performance acceptable, C fallback; no execution now."
+}

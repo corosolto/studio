@@ -1,0 +1,113 @@
+{
+  "source": "Public map selection counters, aliases aggregated; not verified unique human completed matches.",
+  "maps": [
+    {
+      "id": "piscina_treta",
+      "name": "Piscina da Treta",
+      "picks": 4550,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "praca_poderes",
+      "name": "Praça dos Três Poderes",
+      "picks": 2277,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "loja_h",
+      "name": "Loja H (Estacionamento)",
+      "picks": 1725,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "quebrada",
+      "name": "Quebrada (Rua do Baile)",
+      "picks": 843,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "posto_treta",
+      "name": "Posto da Treta",
+      "picks": 622,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "ferro_velho",
+      "name": "Ferro Velho do Zé",
+      "picks": 598,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "escadao",
+      "name": "Escadão (Morro)",
+      "picks": 264,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "upa_24h",
+      "name": "UPA 24h da Treta",
+      "picks": 237,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "atacadao_treta",
+      "name": "Atacadão da Treta",
+      "picks": 226,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "velho_oeste",
+      "name": "Sertão da Treta",
+      "picks": 225,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "amazonia",
+      "name": "Treta na Amazônia",
+      "picks": 222,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "corrego",
+      "name": "Córrego (Favela de SP)",
+      "picks": 205,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "lajes",
+      "name": "Lajes (Comunidade)",
+      "picks": 182,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "penitenciaria",
+      "name": "CARANDIRU",
+      "picks": 172,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "obras_prefeitura",
+      "name": "Obras da Prefeitura",
+      "picks": 117,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "parque_treta",
+      "name": "Parque da Treta",
+      "picks": 91,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "mansao",
+      "name": "Mansão do Joá",
+      "picks": 47,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    },
+    {
+      "id": "campomorro",
+      "name": "Campinho do Morro",
+      "picks": 6,
+      "status": "base-inspected-B-C-generated-and-reviewed"
+    }
+  ]
+}

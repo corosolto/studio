@@ -1,0 +1,32 @@
+{
+  "id": "map-amazonia",
+  "category": "maps",
+  "name": "Treta na Amazônia",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/amazonia.png",
+  "map": "amazonia",
+  "bounds": {
+    "minX": -31.2,
+    "maxX": 31.2,
+    "minZ": -43.2,
+    "maxZ": 43.2
+  },
+  "position": [
+    0,
+    5,
+    -28
+  ],
+  "lookAt": [
+    0,
+    2,
+    12
+  ],
+  "fov": 65,
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=amazonia&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "source": "production",
+  "synthetic": true,
+  "actorCountHidden": 7,
+  "capturedAt": "2026-11-01T02:16:12.950Z",
+  "inspected": true,
+  "inspection": "Imagem examinada: arquitetura identificável, volumes e ambientação originais preservados."
+}

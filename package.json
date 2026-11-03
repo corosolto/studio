@@ -1,0 +1,24 @@
+{
+  "name": "coro-solto-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pipeline de produção de mapas, personagens e skins do CORO SOLTO.",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "check": "node tools/studio-check.mjs",
+    "check:asset-gen": "node tools/checks/gen-asset-pbr-check.mjs",
+    "check:pistol-source": "node tools/checks/pistol-hires-pilot-check.mjs",
+    "smoke:pack": "node tools/smoke-pack.mjs",
+    "pack:validate": "node tools/validate-pack.mjs"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.4.1",
+    "@gltf-transform/extensions": "^4.4.1",
+    "@gltf-transform/functions": "^4.4.1",
+    "ajv": "^8.17.1",
+    "meshoptimizer": "^1.2.0",
+    "sharp": "^0.35.4",
+    "three": "^0.160.1"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "map-parque_treta",
+  "category": "maps",
+  "name": "Parque da Treta — oficina",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/parque_treta.png",
+  "map": "parque_treta",
+  "bounds": {
+    "minX": -31.2,
+    "maxX": 31.2,
+    "minZ": -41.2,
+    "maxZ": 41.2
+  },
+  "position": [
+    19,
+    7,
+    -24
+  ],
+  "lookAt": [
+    0,
+    2,
+    8
+  ],
+  "fov": 65,
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=parque_treta&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "source": "production",
+  "synthetic": true,
+  "actorCountHidden": 7,
+  "capturedAt": "2026-11-01T02:18:08.944Z",
+  "inspected": true,
+  "inspection": "Pixels vistos: cenário legível; personagem íntegro nos três ângulos, sem obstrução; pose idle original preservada."
+}

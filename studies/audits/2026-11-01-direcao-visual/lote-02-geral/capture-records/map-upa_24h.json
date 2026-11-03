@@ -1,0 +1,32 @@
+{
+  "id": "map-upa_24h",
+  "category": "maps",
+  "name": "UPA 24h",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/upa_24h.png",
+  "map": "upa_24h",
+  "bounds": {
+    "minX": -29,
+    "maxX": 29,
+    "minZ": -35,
+    "maxZ": 35
+  },
+  "position": [
+    0,
+    2,
+    -12
+  ],
+  "lookAt": [
+    0,
+    1.6,
+    12
+  ],
+  "fov": 65,
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=upa_24h&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "source": "production",
+  "synthetic": true,
+  "actorCountHidden": 7,
+  "capturedAt": "2026-11-01T02:13:22.261Z",
+  "inspected": true,
+  "inspection": "Composição vista e legível, fonte preservada; UPA mantém obstrução fina existente."
+}

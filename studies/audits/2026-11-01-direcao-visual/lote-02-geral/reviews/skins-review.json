@@ -1,0 +1,1502 @@
+{
+  "objective": "Revisar independentemente 50 conceitos B/C de 25 skins contra os tripticos reais, preservando identidade, roupa, pose, local e três ângulos.",
+  "definitionOfDone": "50 vereditos após ver pixels de base e conceito; evidência localizada e conserto mínimo por reprovação; cobertura ausente explícita; sem escolher direção editorial.",
+  "reviewer": "bc_skins_review",
+  "skill": "client/.claude/skills/asset-review/SKILL.md",
+  "spec": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/SPEC.md",
+  "status": "complete",
+  "branch": "feat/fps-paid-viewmodels-aaa",
+  "head": "86c388b56",
+  "expectedCount": 50,
+  "method": "Base e B/C vistos individualmente com view_image. Coordenadas referem-se aos conceitos 1376×768. Aprovação é fidelidade de conceito 2D.",
+  "baselineNotes": [
+    "Três câmeras diferentes mostram a mesma pose na Quebrada. Fundos diferentes entre painéis são da captura.",
+    "Cão, pombo, barraca, cabos, postes, quadra e blocos de rua já aparecem na base; não são adições da geração quando conservados.",
+    "Aprovação não cobre licença/nomenclatura histórica do elenco; o exame verifica se o conceito redesenhou a identidade presente na referência. Não foi feita auditoria jurídica.",
+    "Curupira Cyborg apresenta pés invertidos/pontudos e aparente falta de contato já na base; registrado como limitação herdada, não invenção B/C."
+  ],
+  "results": [
+    {
+      "id": "B-skin-canarinho-cyborg",
+      "capture": "skin-canarinho-cyborg",
+      "name": "Canarinho Pistola Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-canarinho-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-cyborg.png",
+      "conceptSha256": "3c93f379cfeae1b1041d8f391c8c188d61017a0f888c678666149664f6714bb4",
+      "referenceSha256": "6f4424fa21bafaec20db45a87edb3f2214225127472f6cec471d8ffbe928d6a0",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça amarela, bico rosa/laranja, olho verde mecânico, peitoral 24, faixas verde/amarelo, pernas metálicas e cauda conservados.",
+        "Frente, perfil e costas mantêm braços, joelhos flexionados e contatos dos pés; cenário e objetos principais no mesmo lugar."
+      ],
+      "finishUsefulness": "Separação de materiais e volumes pode orientar acabamento; exige prova no renderer e revisão do dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma nas mãos já é da captura; não atribuir à geração.",
+        "Enquadramento grande do personagem não prova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-canarinho-cyborg",
+      "capture": "skin-canarinho-cyborg",
+      "name": "Canarinho Pistola Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-canarinho-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-cyborg.png",
+      "conceptSha256": "90fa5644f9ff398be390da6002b07e9457284743919262727051ab603d4872c6",
+      "referenceSha256": "6f4424fa21bafaec20db45a87edb3f2214225127472f6cec471d8ffbe928d6a0",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça amarela, bico rosa/laranja, olho verde mecânico, peitoral 24, faixas verde/amarelo, pernas metálicas e cauda conservados.",
+        "Frente, perfil e costas mantêm braços, joelhos flexionados e contatos dos pés; cenário e objetos principais no mesmo lugar."
+      ],
+      "finishUsefulness": "Separação de materiais e volumes pode orientar acabamento; exige prova no renderer e revisão do dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma nas mãos já é da captura; não atribuir à geração.",
+        "Enquadramento grande do personagem não prova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-lula-drip",
+      "capture": "skin-lula-drip",
+      "name": "Barbudo do Drip",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lula-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-drip.png",
+      "conceptSha256": "30a045e2ccd020394a893e1f686fce4e4e487a4696d6b18aa7c14a46d43f48c5",
+      "referenceSha256": "fd295af711baeeeaaed3bf987ff7217626f8a33765f899e1670a25861b94556e",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo cinza longo com tranças dianteiras e cauda posterior, barba, grill dourado, jaqueta vinho, camiseta branca, calça escura e tênis branco/vermelho conservados.",
+        "Mãos vazias diante do corpo, pernas flexionadas e mesma localização no cenário nas três vistas."
+      ],
+      "finishUsefulness": "Separação de materiais e volumes pode orientar acabamento; exige prova no renderer e revisão do dono.",
+      "failures": [
+        {
+          "requirement": "Preservar rosto e acessórios; não redesenhar a skin.",
+          "observed": "Óculos de armação dourada foram acrescentados sobre os olhos na frente e no perfil. A referência mostra olhos e sobrancelhas descobertos.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lula-drip.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-drip.png",
+            "region": "frente x≈194–251, y≈237–268; perfil x≈635–660, y≈244–267"
+          },
+          "origin": "invenção no conceito, ausente na base",
+          "cheapestFix": "Remover somente armação e lentes nas duas vistas e restaurar olhos/sobrancelhas da base, conservando cabelo, roupa e acabamento."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma nas mãos já é da captura; não atribuir à geração.",
+        "Enquadramento grande do personagem não prova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-lula-drip",
+      "capture": "skin-lula-drip",
+      "name": "Barbudo do Drip",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-lula-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-drip.png",
+      "conceptSha256": "21dc5f7428acf0fc7fcd2420c8ef869a356fdf62575e6ffcc9b48030286b85eb",
+      "referenceSha256": "fd295af711baeeeaaed3bf987ff7217626f8a33765f899e1670a25861b94556e",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo cinza longo com tranças dianteiras e cauda posterior, barba, grill dourado, jaqueta vinho, camiseta branca, calça escura e tênis branco/vermelho conservados.",
+        "Mãos vazias diante do corpo, pernas flexionadas e mesma localização no cenário nas três vistas."
+      ],
+      "finishUsefulness": "Separação de materiais e volumes pode orientar acabamento; exige prova no renderer e revisão do dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma nas mãos já é da captura; não atribuir à geração.",
+        "Enquadramento grande do personagem não prova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-bolsonaro-drip",
+      "capture": "skin-bolsonaro-drip",
+      "name": "Capitão do Drip",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-bolsonaro-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-drip.png",
+      "conceptSha256": "39edcd34811ef4d35127c70588cfc9ed0f07267757743d54547bfa649b6584e6",
+      "referenceSha256": "8896a9933f0e3ec2388ba70a48049c3abfdc29bed6107d7b7bab96550745c5ad",
+      "pixelsInspected": true,
+      "checks": [
+        "Jaqueta universitária azul com mangas verdes, camiseta branca, correntes douradas, calça cargo bege e tênis verde/branco mantidos.",
+        "Cabelo curto escuro, mãos vazias, joelhos flexionados e três vistas coerentes da mesma pose no mesmo cenário."
+      ],
+      "finishUsefulness": "Tecidos, tênis e metais distinguíveis; superfícies podem orientar acabamento sem provar custo no renderer.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-bolsonaro-drip",
+      "capture": "skin-bolsonaro-drip",
+      "name": "Capitão do Drip",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-bolsonaro-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-drip.png",
+      "conceptSha256": "b8631f710615861d9848b918373c097fd20fee3ff19307465746637a0de8166a",
+      "referenceSha256": "8896a9933f0e3ec2388ba70a48049c3abfdc29bed6107d7b7bab96550745c5ad",
+      "pixelsInspected": true,
+      "checks": [
+        "Jaqueta universitária azul com mangas verdes, camiseta branca, correntes douradas, calça cargo bege e tênis verde/branco mantidos.",
+        "Cabelo curto escuro, mãos vazias, joelhos flexionados e três vistas coerentes da mesma pose no mesmo cenário."
+      ],
+      "finishUsefulness": "Tecidos, tênis e metais distinguíveis; superfícies podem orientar acabamento sem provar custo no renderer.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-senador-drip",
+      "capture": "skin-senador-drip",
+      "name": "Senador do Drip",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-senador-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-senador-drip.png",
+      "conceptSha256": "10785b59f6ca6733d3f2229bcb5d9e9a9e9fc5e7c3df80541e1aa964e89471cb",
+      "referenceSha256": "2b2d9c808e3acaed553db763274a2afd0352330ae9b45f313f2d8bfbb0c33676",
+      "pixelsInspected": true,
+      "checks": [
+        "Jaqueta azul-escura, camiseta roxa, correntes/anéis dourados, calça com blocos roxos e tênis brancos mantidos.",
+        "Mesmo corte de cabelo, rosto, mãos abertas e vazias, inclinação do tronco e três ângulos no cenário."
+      ],
+      "finishUsefulness": "Tecidos, tênis e metais distinguíveis; superfícies podem orientar acabamento sem provar custo no renderer.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-senador-drip",
+      "capture": "skin-senador-drip",
+      "name": "Senador do Drip",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-senador-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-senador-drip.png",
+      "conceptSha256": "077fd018d0858b402cc227449aef358d4914e2f3c44ac16a18942527092f1450",
+      "referenceSha256": "2b2d9c808e3acaed553db763274a2afd0352330ae9b45f313f2d8bfbb0c33676",
+      "pixelsInspected": true,
+      "checks": [
+        "Jaqueta azul-escura, camiseta roxa, correntes/anéis dourados, calça com blocos roxos e tênis brancos mantidos.",
+        "Mesmo corte de cabelo, rosto, mãos abertas e vazias, inclinação do tronco e três ângulos no cenário."
+      ],
+      "finishUsefulness": "Tecidos, tênis e metais distinguíveis; superfícies podem orientar acabamento sem provar custo no renderer.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-janja",
+      "capture": "skin-janja",
+      "name": "Janjoca",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-janja.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-janja.png",
+      "conceptSha256": "dffab6aed269264b0bda1e71a9dce0eb1c669ddc18c806f3c3db7c096098085b",
+      "referenceSha256": "b210e5a21c29d396c963f80fffbef52ba74786de00238d61facd1b90c0406897",
+      "pixelsInspected": true,
+      "checks": [
+        "Óculos castanhos já presentes na base, cabelo ruivo longo, conjunto vinho com bordas brancas e tênis branco/vinho mantidos.",
+        "Mesmo corpo esguio, gesto das mãos e ângulos de frente, perfil e costas no cenário."
+      ],
+      "finishUsefulness": "Tecidos, tênis e metais distinguíveis; superfícies podem orientar acabamento sem provar custo no renderer.",
+      "failures": [
+        {
+          "requirement": "Não inserir/trocar objetos do cenário.",
+          "observed": "O pequeno roedor no asfalto do painel central virou um pombo, com peito claro, pescoço erguido e cauda de ave. A base tem corpo baixo e cauda fina de roedor.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-janja.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-janja.png",
+            "region": "painel central x≈581–606, y≈435–459",
+            "comparison": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/skin-janja-animal-evidence.png"
+          },
+          "origin": "troca do animal pela geração; a existência de animal pequeno nessa posição já era da base",
+          "cheapestFix": "Restaurar somente a silhueta e cor do roedor original no painel central, conservando personagem e materiais."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-janja",
+      "capture": "skin-janja",
+      "name": "Janjoca",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-janja.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-janja.png",
+      "conceptSha256": "f93c7d634e4e61a8297db7a8d23e1aada6b4341d776ad7456c7a2e71ec90b1fb",
+      "referenceSha256": "b210e5a21c29d396c963f80fffbef52ba74786de00238d61facd1b90c0406897",
+      "pixelsInspected": true,
+      "checks": [
+        "Óculos castanhos já presentes na base, cabelo ruivo longo, conjunto vinho com bordas brancas e tênis branco/vinho mantidos.",
+        "Mesmo corpo esguio, gesto das mãos e ângulos de frente, perfil e costas no cenário."
+      ],
+      "finishUsefulness": "Contorno escuro acrescentado em C/Janjoca; é escolha de acabamento a comparar pelo dono, sem alterar roupa ou silhueta.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-michelle-bolsonaro",
+      "capture": "skin-michelle-bolsonaro",
+      "name": "Mixelle",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-michelle-bolsonaro.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-michelle-bolsonaro.png",
+      "conceptSha256": "2c90eda5ba0fbce3a33795f6277f1211cc559a77e8553cd29183235013cb853e",
+      "referenceSha256": "b1308e34b5588f73a179e583929f28f5ad90b7d17c182e60794c39d902cc97a2",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo castanho na altura dos ombros, jaqueta azul/verde, calça azul e tênis verde/branco conservados.",
+        "Mesma silhueta esguia, pose de mãos vazias e três ângulos no mesmo cenário."
+      ],
+      "finishUsefulness": "Acabamento fornece referência de materiais e planos; eventuais mudanças de paleta reprovadas devem ser corrigidas antes de integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-michelle-bolsonaro",
+      "capture": "skin-michelle-bolsonaro",
+      "name": "Mixelle",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-michelle-bolsonaro.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-michelle-bolsonaro.png",
+      "conceptSha256": "9529dc235d4c5d45e96f8ae2cef43004140e8a9dbe86c217fad8bf59b5db7381",
+      "referenceSha256": "b1308e34b5588f73a179e583929f28f5ad90b7d17c182e60794c39d902cc97a2",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo castanho na altura dos ombros, jaqueta azul/verde, calça azul e tênis verde/branco conservados.",
+        "Mesma silhueta esguia, pose de mãos vazias e três ângulos no mesmo cenário."
+      ],
+      "finishUsefulness": "Acabamento fornece referência de materiais e planos; eventuais mudanças de paleta reprovadas devem ser corrigidas antes de integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-lula-cyborg",
+      "capture": "skin-lula-cyborg",
+      "name": "Barbudo Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lula-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-cyborg.png",
+      "conceptSha256": "8c9c04cc2866dc952095a3288fed05f47fc58641c39742282de236ed43ea2851",
+      "referenceSha256": "cf8d79b3a1f3ee6f47ff135169b79e9f5194b157dd7df0ac75435a25ae65636f",
+      "pixelsInspected": true,
+      "checks": [
+        "Meia máscara metálica com olho vermelho, cabelo curto cinza, barba, faixa verde/amarela e placas de armadura conservados em posição.",
+        "Mesmo gesto vazio das mãos, joelhos flexionados, botas e três ângulos no cenário."
+      ],
+      "finishUsefulness": "Acabamento fornece referência de materiais e planos; eventuais mudanças de paleta reprovadas devem ser corrigidas antes de integração.",
+      "failures": [
+        {
+          "requirement": "Preservar cores de identidade da roupa e corpo.",
+          "observed": "As grandes áreas vinho/castanhas do peitoral, costas superiores, abdômen e botas da base foram repintadas de prata/cinza. A barba branca também ficou predominantemente escura. O conceito perde a divisão vinho/prata da skin.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lula-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-cyborg.png",
+            "region": "frente x≈154–297, y≈288–608; perfil/costas na placa superior x≈654–727/y≈301–376 e x≈1106–1177/y≈299–358"
+          },
+          "origin": "mudança de paleta pela geração; não apenas brilho localizado",
+          "cheapestFix": "Restaurar os campos vinho/castanho nas mesmas placas e botas, e a barba cinza-clara da base; conservar roughness, bordas e faixa verde/amarela."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-lula-cyborg",
+      "capture": "skin-lula-cyborg",
+      "name": "Barbudo Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-lula-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-cyborg.png",
+      "conceptSha256": "02eca6af8a99bf9460ee7b4255b9096486bbf7da91e1d28458fefe0d8c75aa68",
+      "referenceSha256": "cf8d79b3a1f3ee6f47ff135169b79e9f5194b157dd7df0ac75435a25ae65636f",
+      "pixelsInspected": true,
+      "checks": [
+        "Meia máscara metálica com olho vermelho, cabelo curto cinza, barba, faixa verde/amarela e placas de armadura conservados em posição.",
+        "Mesmo gesto vazio das mãos, joelhos flexionados, botas e três ângulos no cenário."
+      ],
+      "finishUsefulness": "Acabamento fornece referência de materiais e planos; eventuais mudanças de paleta reprovadas devem ser corrigidas antes de integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-bolsonaro-cyborg",
+      "capture": "skin-bolsonaro-cyborg",
+      "name": "Capitão Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-bolsonaro-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-cyborg.png",
+      "conceptSha256": "a25d99f17d3f3be1bd3a98d1b4849d32d6ba98a61dc8e98bdc103e1d579247ae",
+      "referenceSha256": "259dba355249009486bb6be9ec1d41e47a80006829c5997569c62fc50302f098",
+      "pixelsInspected": true,
+      "checks": [
+        "Meia máscara, olho vermelho, cabelo escuro curto, traje azul com placas claras e mãos mecânicas conservados.",
+        "Mesma posição, pose e três vistas no cenário, sem arma ou membro novo."
+      ],
+      "finishUsefulness": "Acabamento fornece referência de materiais e planos; eventuais mudanças de paleta reprovadas devem ser corrigidas antes de integração.",
+      "failures": [
+        {
+          "requirement": "Preservar cores de identidade e desenho de superfície.",
+          "observed": "As linhas verdes finas no peito, costas e coxas foram convertidas em tubos branco/ciano muito luminosos. A base apresenta linhas verdes sem esse brilho intenso.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-bolsonaro-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-cyborg.png",
+            "region": "frente peito x≈194–260/y≈314–344 e coxa x≈176–206/y≈426–497; costas x≈1116–1191/y≈306–355"
+          },
+          "origin": "cor/emissão nova no conceito",
+          "cheapestFix": "Repor o verde original e reduzir a emissão das linhas, conservando placas, tecido e geometria aparente."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-bolsonaro-cyborg",
+      "capture": "skin-bolsonaro-cyborg",
+      "name": "Capitão Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-bolsonaro-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-cyborg.png",
+      "conceptSha256": "c502409ae3b6899e451a11a9fdd18b359089f86698ee411acf121b98c63ef72c",
+      "referenceSha256": "259dba355249009486bb6be9ec1d41e47a80006829c5997569c62fc50302f098",
+      "pixelsInspected": true,
+      "checks": [
+        "Meia máscara, olho vermelho, cabelo escuro curto, traje azul com placas claras e mãos mecânicas conservados.",
+        "Mesma posição, pose e três vistas no cenário, sem arma ou membro novo."
+      ],
+      "finishUsefulness": "Acabamento fornece referência de materiais e planos; eventuais mudanças de paleta reprovadas devem ser corrigidas antes de integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-aljuiz-toga-mandrake",
+      "capture": "skin-aljuiz-toga-mandrake",
+      "name": "Juiz da Toga Mandrake",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-aljuiz-toga-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-aljuiz-toga-mandrake.png",
+      "conceptSha256": "131d449b54db9fc6fde7ac00eaad8970e62f581d9afbdfa529238a2e08994689",
+      "referenceSha256": "a9b144dddbb8e6ef0541c523f213089cc6908c81f8c80e7fa29ccf3b077394e3",
+      "pixelsInspected": true,
+      "checks": [
+        "Careca, óculos amarelos, toga longa azul-escura, roupa estampada preta/branca, shorts, meias brancas e tênis roxo/turquesa mantidos.",
+        "Mãos juntas vazias, joelhos e pés na mesma pose; frente/perfil/costas da mesma skin no cenário."
+      ],
+      "finishUsefulness": "Toga B ficou muito brilhante; separação de roughness é utilizável, mas o dono deve julgar o material pretendido.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-aljuiz-toga-mandrake",
+      "capture": "skin-aljuiz-toga-mandrake",
+      "name": "Juiz da Toga Mandrake",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-aljuiz-toga-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-aljuiz-toga-mandrake.png",
+      "conceptSha256": "489072bdedc8decf7ffd9430d182164a977613bdb7324f05046f6d5431fa229c",
+      "referenceSha256": "a9b144dddbb8e6ef0541c523f213089cc6908c81f8c80e7fa29ccf3b077394e3",
+      "pixelsInspected": true,
+      "checks": [
+        "Careca, óculos amarelos, toga longa azul-escura, roupa estampada preta/branca, shorts, meias brancas e tênis roxo/turquesa mantidos.",
+        "Mãos juntas vazias, joelhos e pés na mesma pose; frente/perfil/costas da mesma skin no cenário."
+      ],
+      "finishUsefulness": "Acabamento fornece referência de materiais e planos; eventuais mudanças de paleta reprovadas devem ser corrigidas antes de integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-lula-mandrake",
+      "capture": "skin-lula-mandrake",
+      "name": "Barbudo Mandrake",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lula-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-mandrake.png",
+      "conceptSha256": "89d2571e7bbf77bae9357caca52f34eadf017ac8872e31c9b174005a1f2dd57d",
+      "referenceSha256": "4ebfc95b179d5c776f1ebcf09e7ac6cceabf598e36d82f47aa784aeafd55c023",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné escuro invertido, óculos amarelos, barba cinza, correntes douradas, moletom escuro estampado, shorts vermelhos, meias brancas e tênis roxos mantidos.",
+        "Corrente em U nas costas já pertence à base; mesma pose e três ângulos no cenário."
+      ],
+      "finishUsefulness": "Tecido, metal e cor agrupada fornecem direção de acabamento; alterações inventadas listadas exigem correção.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-lula-mandrake",
+      "capture": "skin-lula-mandrake",
+      "name": "Barbudo Mandrake",
+      "category": "skins",
+      "style": "C",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-lula-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-mandrake.png",
+      "conceptSha256": "4034b68a861c9ae004cad3ee06a91b96ebaf0c42fcefe807d166975f22e5c295",
+      "referenceSha256": "4ebfc95b179d5c776f1ebcf09e7ac6cceabf598e36d82f47aa784aeafd55c023",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné escuro invertido, óculos amarelos, barba cinza, correntes douradas, moletom escuro estampado, shorts vermelhos, meias brancas e tênis roxos mantidos.",
+        "Corrente em U nas costas já pertence à base; mesma pose e três ângulos no cenário."
+      ],
+      "finishUsefulness": "Tecido, metal e cor agrupada fornecem direção de acabamento; alterações inventadas listadas exigem correção.",
+      "failures": [
+        {
+          "requirement": "Não inventar acessórios; preservar roupa/identidade.",
+          "observed": "Relógio dourado grande com mostrador circular emissivo foi acrescentado ao pulso esquerdo na frente. Na base o pulso tem somente pele e manga escura.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-lula-mandrake.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-mandrake.png",
+            "region": "frente x≈220–248, y≈385–416",
+            "comparison": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/skin-lula-mandrake-watch-evidence.png"
+          },
+          "origin": "acessório inventado no conceito",
+          "cheapestFix": "Remover somente relógio e brilho, restaurando pele e borda da manga a partir da base."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-bolsonaro-mandrake",
+      "capture": "skin-bolsonaro-mandrake",
+      "name": "Capitão Mandrake",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-bolsonaro-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-mandrake.png",
+      "conceptSha256": "541759fe88b4f405d527d3f55efc8ad3f3d24eb0f3d4476ef70af85763d1b2a8",
+      "referenceSha256": "c185745269a159ff15d9df1c285060bc1b7215acf76be01d09be730bcc6e9c56",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné branco, óculos amarelos, correntes, relógio já existente, conjunto estampado ciano/branco/azul, meias claras e tênis azul/roxo mantidos.",
+        "Mesmo gesto vazio das mãos, braços, pernas e localização nas três vistas."
+      ],
+      "finishUsefulness": "Tecido, metal e cor agrupada fornecem direção de acabamento; alterações inventadas listadas exigem correção.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-bolsonaro-mandrake",
+      "capture": "skin-bolsonaro-mandrake",
+      "name": "Capitão Mandrake",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-bolsonaro-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-mandrake.png",
+      "conceptSha256": "df4c3facb0387e39e6a26f0ea98593b0d90a4ed3558fa8943f19c9a85fdf4ae2",
+      "referenceSha256": "c185745269a159ff15d9df1c285060bc1b7215acf76be01d09be730bcc6e9c56",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné branco, óculos amarelos, correntes, relógio já existente, conjunto estampado ciano/branco/azul, meias claras e tênis azul/roxo mantidos.",
+        "Mesmo gesto vazio das mãos, braços, pernas e localização nas três vistas."
+      ],
+      "finishUsefulness": "Tecido, metal e cor agrupada fornecem direção de acabamento; alterações inventadas listadas exigem correção.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-michelle-mandrake",
+      "capture": "skin-michelle-mandrake",
+      "name": "Mixelle Mandrake",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-michelle-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-michelle-mandrake.png",
+      "conceptSha256": "d04b600aec89b7faceb1604e489f52b30f9a85968e801691804294d9b4d61969",
+      "referenceSha256": "99654d47da18759a21a0164fafe2dc46d9fe83ed62d456efb40e7d6589435077",
+      "pixelsInspected": true,
+      "checks": [
+        "Óculos vermelhos, cabelo escuro longo, camiseta escura de rosas vermelhas, shorts cargo, meias claras e tênis vermelho/azul conservados.",
+        "Mesmo gesto vazio das mãos e três vistas da mesma roupa, sem arma ou membro novo."
+      ],
+      "finishUsefulness": "Tecido, metal e cor agrupada fornecem direção de acabamento; alterações inventadas listadas exigem correção.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-michelle-mandrake",
+      "capture": "skin-michelle-mandrake",
+      "name": "Mixelle Mandrake",
+      "category": "skins",
+      "style": "C",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-michelle-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-michelle-mandrake.png",
+      "conceptSha256": "0a3093446de728c6042e06e36e96e203b3d71bfb3ec085ac8c4a6ff827061f29",
+      "referenceSha256": "99654d47da18759a21a0164fafe2dc46d9fe83ed62d456efb40e7d6589435077",
+      "pixelsInspected": true,
+      "checks": [
+        "Óculos vermelhos, cabelo escuro longo, camiseta escura de rosas vermelhas, shorts cargo, meias claras e tênis vermelho/azul conservados.",
+        "Mesmo gesto vazio das mãos e três vistas da mesma roupa, sem arma ou membro novo."
+      ],
+      "finishUsefulness": "Tecido, metal e cor agrupada fornecem direção de acabamento; alterações inventadas listadas exigem correção.",
+      "failures": [
+        {
+          "requirement": "Mesma estrutura espacial; não inserir cobertura/objetos.",
+          "observed": "Os dois blocos lisos vermelho/amarelo do perfil foram substituídos por caixas de papelão empilhadas; o muro baixo contínuo atrás da vista de costas virou uma fileira de caixas separadas, com novas quinas, fendas e etiquetas.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-michelle-mandrake.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-michelle-mandrake.png",
+            "region": "perfil x≈460–595, y≈351–455; costas x≈1170–1375, y≈350–423"
+          },
+          "origin": "objetos e segmentação novos na geração",
+          "cheapestFix": "Restaurar as duas massas lisas originais no perfil e o muro contínuo no painel de costas, mantendo personagem e acabamento de superfície."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma e joelhos flexionados já pertencem à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-zero-um-mandrake",
+      "capture": "skin-zero-um-mandrake",
+      "name": "Senador Mandrake",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-zero-um-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-zero-um-mandrake.png",
+      "conceptSha256": "ea5130870f0558a03c30761b6d395dcab07f0ec23fcce104fdef96927a2afecd",
+      "referenceSha256": "1d73db4212780b1e6feaa1bcb3c26bb5bc6773197092b072a690d3e25c7a7fb8",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné azul de lado, óculos amarelos, múltiplas correntes/anéis, relógio, agasalho azul com faixas douradas e tênis azul/dourado mantidos.",
+        "Pose, corpo, mãos vazias e três vistas no mesmo cenário conservados."
+      ],
+      "finishUsefulness": "Materiais e agrupamento dos planos podem orientar acabamento; seleção editorial fica com o dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-zero-um-mandrake",
+      "capture": "skin-zero-um-mandrake",
+      "name": "Senador Mandrake",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-zero-um-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-zero-um-mandrake.png",
+      "conceptSha256": "7f8712ac80e108ba7d5470c499d278b143c715d53247181352b4cffe8684080a",
+      "referenceSha256": "1d73db4212780b1e6feaa1bcb3c26bb5bc6773197092b072a690d3e25c7a7fb8",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné azul de lado, óculos amarelos, múltiplas correntes/anéis, relógio, agasalho azul com faixas douradas e tênis azul/dourado mantidos.",
+        "Pose, corpo, mãos vazias e três vistas no mesmo cenário conservados."
+      ],
+      "finishUsefulness": "Materiais e agrupamento dos planos podem orientar acabamento; seleção editorial fica com o dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-canarinho-drip",
+      "capture": "skin-canarinho-drip",
+      "name": "Canarinho Pistola Drip",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-canarinho-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-drip.png",
+      "conceptSha256": "e3ff7f90d64b8c4194a520963661145f6f745253ebc7ce738a8c89622164d9a7",
+      "referenceSha256": "ccd365032e1cbdc1daa7b46adbdac5fb3ee30755d9309e1fcc230b01e1b99b9b",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça/crista amarela, bico rosa, sobrancelha vermelha, jaqueta verde/amarela, cargo azul, cauda amarela e tênis azul/amarelo conservados.",
+        "Mesmos braços emplumados, dedos, pernas e contatos dos pés; frente/perfil/costas da mesma skin no cenário."
+      ],
+      "finishUsefulness": "Materiais e agrupamento dos planos podem orientar acabamento; seleção editorial fica com o dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-canarinho-drip",
+      "capture": "skin-canarinho-drip",
+      "name": "Canarinho Pistola Drip",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-canarinho-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-drip.png",
+      "conceptSha256": "94e24688ebc0696f4ff1976a9282c24458a2a88dc086292ee8b55d0ddaec33f2",
+      "referenceSha256": "ccd365032e1cbdc1daa7b46adbdac5fb3ee30755d9309e1fcc230b01e1b99b9b",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça/crista amarela, bico rosa, sobrancelha vermelha, jaqueta verde/amarela, cargo azul, cauda amarela e tênis azul/amarelo conservados.",
+        "Mesmos braços emplumados, dedos, pernas e contatos dos pés; frente/perfil/costas da mesma skin no cenário."
+      ],
+      "finishUsefulness": "Materiais e agrupamento dos planos podem orientar acabamento; seleção editorial fica com o dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-canarinho-mandrake",
+      "capture": "skin-canarinho-mandrake",
+      "name": "Canarinho Pistola Mandrake",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-canarinho-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-mandrake.png",
+      "conceptSha256": "f5440c2c1eff0aa2e663b224c55d1766ed95fc5c958bcbd9b435bb4461467f09",
+      "referenceSha256": "341bc66ac59c6ee917dee0518e6e20a6cff44681026ebb15e14f5762e1cafd47",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné verde invertido com abertura, óculos dourados, camiseta verde estampada em azul/amarelo, shorts azuis, meias brancas e tênis azuis conservados.",
+        "Cauda, crista, bico, mãos vazias e três ângulos mantidos no cenário."
+      ],
+      "finishUsefulness": "Detalhes de tecido e acabamento de superfícies podem orientar produção; mudanças de identidade/cenário listadas não passam para integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-canarinho-mandrake",
+      "capture": "skin-canarinho-mandrake",
+      "name": "Canarinho Pistola Mandrake",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-canarinho-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-mandrake.png",
+      "conceptSha256": "48c348a82fc165bfd2f6b80ad45ca1f2d2fc6f9902e7a2c2858e94afb19c8f0b",
+      "referenceSha256": "341bc66ac59c6ee917dee0518e6e20a6cff44681026ebb15e14f5762e1cafd47",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné verde invertido com abertura, óculos dourados, camiseta verde estampada em azul/amarelo, shorts azuis, meias brancas e tênis azuis conservados.",
+        "Cauda, crista, bico, mãos vazias e três ângulos mantidos no cenário."
+      ],
+      "finishUsefulness": "Detalhes de tecido e acabamento de superfícies podem orientar produção; mudanças de identidade/cenário listadas não passam para integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-gotinha-drip",
+      "capture": "skin-gotinha-drip",
+      "name": "Zé da Gotinha Drip",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-gotinha-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-drip.png",
+      "conceptSha256": "6587c988e9a2fee49353dad459e6912a3feccd3a9eeb4d36807a899abd63c145",
+      "referenceSha256": "6887bcf5cfb11a9598a5845afb26ec4d7778f8126f2e2e673df9a23b45dd72c8",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça branca em gota, rosto sorridente, jaqueta de bloco vermelho, emblema vermelho e tênis vermelho/azul mantidos.",
+        "Mesmo gesto vazio das mãos, pernas flexionadas e três vistas no cenário."
+      ],
+      "finishUsefulness": "Detalhes de tecido e acabamento de superfícies podem orientar produção; mudanças de identidade/cenário listadas não passam para integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-gotinha-drip",
+      "capture": "skin-gotinha-drip",
+      "name": "Zé da Gotinha Drip",
+      "category": "skins",
+      "style": "C",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-gotinha-drip.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-drip.png",
+      "conceptSha256": "5de393cb504d8acf6f27be81d72651ecdb37e290870d00c24a69cc6e33321591",
+      "referenceSha256": "6887bcf5cfb11a9598a5845afb26ec4d7778f8126f2e2e673df9a23b45dd72c8",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça branca em gota, rosto sorridente, jaqueta de bloco vermelho, emblema vermelho e tênis vermelho/azul mantidos.",
+        "Mesmo gesto vazio das mãos, pernas flexionadas e três vistas no cenário."
+      ],
+      "finishUsefulness": "Detalhes de tecido e acabamento de superfícies podem orientar produção; mudanças de identidade/cenário listadas não passam para integração.",
+      "failures": [
+        {
+          "requirement": "Preservar cores da roupa e skin.",
+          "observed": "A calça cargo branca da base ficou azul em todas as vistas; o bloco superior azul muito claro da jaqueta virou azul saturado médio.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-gotinha-drip.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-drip.png",
+            "region": "calça frente x≈169–279/y≈441–571, perfil x≈642–727/y≈437–575, costas x≈1104–1213/y≈442–567"
+          },
+          "origin": "repintura introduzida pela geração",
+          "cheapestFix": "Repor a calça branca e o azul-claro original da jaqueta, mantendo agrupamento, rugas e roughness."
+        },
+        {
+          "requirement": "Não alterar massas do cenário ou inserir objetos.",
+          "observed": "O bloco amarelo do perfil ganhou uma divisão horizontal de duas caixas; o muro baixo da vista traseira foi quebrado em painéis com vãos verticais. A base tem massas contínuas.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-gotinha-drip.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-drip.png",
+            "region": "perfil x≈533–593/y≈351–454; costas x≈1180–1375/y≈350–420"
+          },
+          "origin": "segmentação e vãos inventados no conceito",
+          "cheapestFix": "Restaurar o bloco amarelo único e a continuidade do muro da base, conservando materiais de superfície."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-gotinha-mandrake",
+      "capture": "skin-gotinha-mandrake",
+      "name": "Zé da Gotinha Mandrake",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-gotinha-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-mandrake.png",
+      "conceptSha256": "c09e88a82a03923d83d8924afc13e55312ea74eefcb92439cfb784ec1f4460ba",
+      "referenceSha256": "9713a8e93b71e5a3d37416dd8fd728eb8466b9610978d5e40e7340e83f1f5fa5",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné azul de lado, óculos dourados baixos, corrente, camiseta branca com gotas coloridas, shorts vermelhos e tênis azuis mantidos.",
+        "Forma arredondada da cabeça com pequena ponta acima do boné já pertence à base; mesma pose nos três ângulos."
+      ],
+      "finishUsefulness": "Detalhes de tecido e acabamento de superfícies podem orientar produção; mudanças de identidade/cenário listadas não passam para integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-gotinha-mandrake",
+      "capture": "skin-gotinha-mandrake",
+      "name": "Zé da Gotinha Mandrake",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-gotinha-mandrake.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-mandrake.png",
+      "conceptSha256": "932444de437b9d799087c913ac2ada5a9679da278b1a1897ffc5ec7462f830d8",
+      "referenceSha256": "9713a8e93b71e5a3d37416dd8fd728eb8466b9610978d5e40e7340e83f1f5fa5",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné azul de lado, óculos dourados baixos, corrente, camiseta branca com gotas coloridas, shorts vermelhos e tênis azuis mantidos.",
+        "Forma arredondada da cabeça com pequena ponta acima do boné já pertence à base; mesma pose nos três ângulos."
+      ],
+      "finishUsefulness": "Detalhes de tecido e acabamento de superfícies podem orientar produção; mudanças de identidade/cenário listadas não passam para integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-gotinha-cyborg",
+      "capture": "skin-gotinha-cyborg",
+      "name": "Zé da Gotinha Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-gotinha-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-cyborg.png",
+      "conceptSha256": "63d659341bc87e960fee61dad9cf42d76a91e6f75f9eb059e3b60ec52efd4dfb",
+      "referenceSha256": "e6e25bd734827de72030736e1ee7a17c10597c6e30cdeeed961589084cae6e21",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça branca em gota com disco mecânico no olho, sorriso, emblema vermelho no peito e armadura branca/cinza mantidos em posição.",
+        "Mãos mecânicas vazias, pernas, placas e três ângulos da mesma pose no cenário."
+      ],
+      "finishUsefulness": "Acabamento de metal/couro/pelo sugere materiais e normais; fidelidade depende das correções listadas, sem prometer viabilidade de fios ou geometria do conceito.",
+      "failures": [
+        {
+          "requirement": "Preservar objetos e estrutura do cenário.",
+          "observed": "A chapa retangular cinza corrugada atrás da cabeça foi convertida em pano pendurado, com dobra e borda superior/central caída; a mesma conversão aparece na chapa sobre a cobertura vermelha na vista traseira.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-gotinha-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-cyborg.png",
+            "region": "frente x≈172–273/y≈171–240; costas x≈919–1003/y≈209–260"
+          },
+          "origin": "troca de prop e silhueta introduzida pela geração",
+          "cheapestFix": "Restaurar as duas chapas rígidas retangulares corrugadas da captura, mantendo o acabamento do personagem."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-gotinha-cyborg",
+      "capture": "skin-gotinha-cyborg",
+      "name": "Zé da Gotinha Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-gotinha-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-cyborg.png",
+      "conceptSha256": "4f3077b996e495d085fdf4f5ecf6092692f528005db15037f11982c2b76c33f4",
+      "referenceSha256": "e6e25bd734827de72030736e1ee7a17c10597c6e30cdeeed961589084cae6e21",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça branca em gota com disco mecânico no olho, sorriso, emblema vermelho no peito e armadura branca/cinza mantidos em posição.",
+        "Mãos mecânicas vazias, pernas, placas e três ângulos da mesma pose no cenário."
+      ],
+      "finishUsefulness": "Acabamento de metal/couro/pelo sugere materiais e normais; fidelidade depende das correções listadas, sem prometer viabilidade de fios ou geometria do conceito.",
+      "failures": [
+        {
+          "requirement": "Preservar cor, desenho e acessórios da identidade.",
+          "observed": "O disco cinza opaco do olho mecânico ganhou uma pupila vermelha luminosa com aro preto. A referência tem disco uniforme cinza, sem ponto vermelho.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-gotinha-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-cyborg.png",
+            "region": "frente x≈232–262/y≈273–307"
+          },
+          "origin": "pupila, cor e emissão novas no conceito",
+          "cheapestFix": "Repor o disco cinza opaco original; manter a separação material do aro sem inventar lente vermelha."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-lampiao-cyborg",
+      "capture": "skin-lampiao-cyborg",
+      "name": "Lampião Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lampiao-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lampiao-cyborg.png",
+      "conceptSha256": "bd915fbbf051c0884f3288c91b1d67927396390c1dbcc13c8016b0bdd800c943",
+      "referenceSha256": "4d322368767e03e0501f68a3b21809dba4c815083ed270b6d81ac565bf8bd29f",
+      "pixelsInspected": true,
+      "checks": [
+        "Chapéu de cangaço marrom com estrelas, óculos redondos, bigode, roupa de couro ocre, cartucheiras cruzadas, antebraços/canelas metálicos e sandálias mantidos.",
+        "Corpo, mãos vazias, joelhos e três ângulos no mesmo cenário conservados."
+      ],
+      "finishUsefulness": "Acabamento de metal/couro/pelo sugere materiais e normais; fidelidade depende das correções listadas, sem prometer viabilidade de fios ou geometria do conceito.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-lampiao-cyborg",
+      "capture": "skin-lampiao-cyborg",
+      "name": "Lampião Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-lampiao-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lampiao-cyborg.png",
+      "conceptSha256": "be921378fc786ee5a2d6897036ab747eb8c1b1bdb63738af79044eedb8dc9090",
+      "referenceSha256": "4d322368767e03e0501f68a3b21809dba4c815083ed270b6d81ac565bf8bd29f",
+      "pixelsInspected": true,
+      "checks": [
+        "Chapéu de cangaço marrom com estrelas, óculos redondos, bigode, roupa de couro ocre, cartucheiras cruzadas, antebraços/canelas metálicos e sandálias mantidos.",
+        "Corpo, mãos vazias, joelhos e três ângulos no mesmo cenário conservados."
+      ],
+      "finishUsefulness": "Acabamento de metal/couro/pelo sugere materiais e normais; fidelidade depende das correções listadas, sem prometer viabilidade de fios ou geometria do conceito.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-lobisomem-cyborg",
+      "capture": "skin-lobisomem-cyborg",
+      "name": "Lobisomem Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lobisomem-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lobisomem-cyborg.png",
+      "conceptSha256": "11e0659a3db28d0733912b6177da998509533d03c2deee5c3220a9045c74630f",
+      "referenceSha256": "f1e4a0a4cfaa71a8b2a3cfb6f90d31d68b6840785a699f5a43d3afbeb7714ab4",
+      "pixelsInspected": true,
+      "checks": [
+        "Pelagem roxa, focinho/orelhas, olhos amarelos, placas cinzas, mãos mecânicas, patas com garras e cauda longa mantidos.",
+        "Mesma pose de braços e pernas, cauda apontada ao chão e três vistas no cenário."
+      ],
+      "finishUsefulness": "Acabamento de metal/couro/pelo sugere materiais e normais; fidelidade depende das correções listadas, sem prometer viabilidade de fios ou geometria do conceito.",
+      "failures": [
+        {
+          "requirement": "Mesma estrutura espacial; sem cobertura ou objetos novos.",
+          "observed": "O muro baixo liso amarelo atrás da vista traseira foi convertido em cerca de tábuas verticais, com quinas superiores individuais e frestas. A captura tem uma massa contínua com topo reto.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-lobisomem-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lobisomem-cyborg.png",
+            "region": "costas x≈1210–1375/y≈348–419"
+          },
+          "origin": "estrutura de cerca inventada no conceito",
+          "cheapestFix": "Restaurar o muro liso contínuo e seu topo reto na vista traseira, preservando personagem e variação superficial."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-lobisomem-cyborg",
+      "capture": "skin-lobisomem-cyborg",
+      "name": "Lobisomem Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-lobisomem-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lobisomem-cyborg.png",
+      "conceptSha256": "12ff35186ce4622857206c11414a2e111fae3808a6ec57c12d2887fed3380ddf",
+      "referenceSha256": "f1e4a0a4cfaa71a8b2a3cfb6f90d31d68b6840785a699f5a43d3afbeb7714ab4",
+      "pixelsInspected": true,
+      "checks": [
+        "Pelagem roxa, focinho/orelhas, olhos amarelos, placas cinzas, mãos mecânicas, patas com garras e cauda longa mantidos.",
+        "Mesma pose de braços e pernas, cauda apontada ao chão e três vistas no cenário."
+      ],
+      "finishUsefulness": "Acabamento de metal/couro/pelo sugere materiais e normais; fidelidade depende das correções listadas, sem prometer viabilidade de fios ou geometria do conceito.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-mariabonita-cyborg",
+      "capture": "skin-mariabonita-cyborg",
+      "name": "Maria Bonita Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-mariabonita-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mariabonita-cyborg.png",
+      "conceptSha256": "b3f6dd79cd2eda089a5f91f89278c6ddb466104aef27c4ec6e9bb7a48eafc2d4",
+      "referenceSha256": "97ddd7c4be2042b4ecd17f3a978e248e830ae5ab3e256e52c2a43319ebd107d2",
+      "pixelsInspected": true,
+      "checks": [
+        "Chapéu marrom decorado, cabelo longo, lente cinza no olho, vestido roxo/vinho com faixas amarelas, cartucheiras e bolsa conservados.",
+        "Perna/bota mecânica de um lado e bota marrom do outro já pertencem à base, sem troca de lado nas três vistas."
+      ],
+      "finishUsefulness": "Metal, tecido e couro podem orientar acabamento. Invenções localizadas listadas exigem correção antes de integração.",
+      "failures": [
+        {
+          "requirement": "Mesma estrutura do cenário; não inserir objetos/aberturas.",
+          "observed": "Foi acrescentada uma boca de drenagem preta alongada no meio-fio do fundo da vista frontal. A referência tem passeio/meio-fio contínuo claro nesse trecho.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-mariabonita-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mariabonita-cyborg.png",
+            "region": "frente x≈70–151/y≈408–427",
+            "comparison": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/reviews/skin-mariabonita-curb-evidence.png"
+          },
+          "origin": "abertura inventada na geração",
+          "cheapestFix": "Restaurar somente o trecho contínuo do passeio/meio-fio da base, removendo a fenda preta."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base; qualquer arma acrescentada é divergência nova.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-mariabonita-cyborg",
+      "capture": "skin-mariabonita-cyborg",
+      "name": "Maria Bonita Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-mariabonita-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mariabonita-cyborg.png",
+      "conceptSha256": "f35c28e5387bcabc23b0fe9d16e6544d60d86f1149ac6c2067fe4b1c3c1db4a5",
+      "referenceSha256": "97ddd7c4be2042b4ecd17f3a978e248e830ae5ab3e256e52c2a43319ebd107d2",
+      "pixelsInspected": true,
+      "checks": [
+        "Chapéu marrom decorado, cabelo longo, lente cinza no olho, vestido roxo/vinho com faixas amarelas, cartucheiras e bolsa conservados.",
+        "Perna/bota mecânica de um lado e bota marrom do outro já pertencem à base, sem troca de lado nas três vistas."
+      ],
+      "finishUsefulness": "Metal, tecido e couro podem orientar acabamento. Invenções localizadas listadas exigem correção antes de integração.",
+      "failures": [
+        {
+          "requirement": "Mesma arma, pose e contatos nos três ângulos; sem arma inventada.",
+          "observed": "O painel de perfil introduz um rifle comprido e levanta os dois braços para mirar. Na base o perfil tem mãos vazias próximas à cintura; a frente e as costas do próprio conceito continuam em idle, portanto já não são três vistas da mesma pose.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-mariabonita-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mariabonita-cyborg.png",
+            "region": "perfil rifle x≈482–656/y≈275–316; braços elevados x≈551–671/y≈287–347"
+          },
+          "origin": "arma e pose novas no conceito",
+          "cheapestFix": "Remover o rifle e repor braços/mãos do perfil da captura na altura original; preservar vestido, bolsa e acabamento."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base; qualquer arma acrescentada é divergência nova.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-et-cyborg",
+      "capture": "skin-et-cyborg",
+      "name": "ET Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-et-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-et-cyborg.png",
+      "conceptSha256": "dc8048557d91ceb71fec6e981f16cf6ecf2fa56fcb64ed35ea3e2c5ea19b73be",
+      "referenceSha256": "d5f9785bc476a2971983fefbcc461683aee45f0e91f13fee1b97948c061ed7a9",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça grande cinza, olhos escuros com ponto verde de um lado, corpo esguio, placas verdes/cinzas e mãos longas vazias mantidos.",
+        "Mesmo gesto das mãos, joelhos flexionados e três ângulos da mesma posição no cenário."
+      ],
+      "finishUsefulness": "Metal, tecido e couro podem orientar acabamento. Invenções localizadas listadas exigem correção antes de integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base; qualquer arma acrescentada é divergência nova.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-et-cyborg",
+      "capture": "skin-et-cyborg",
+      "name": "ET Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-et-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-et-cyborg.png",
+      "conceptSha256": "2bffcb8788bd655ce318132c8c6a64d6b026b89e275833770ec5cd8ac632097c",
+      "referenceSha256": "d5f9785bc476a2971983fefbcc461683aee45f0e91f13fee1b97948c061ed7a9",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabeça grande cinza, olhos escuros com ponto verde de um lado, corpo esguio, placas verdes/cinzas e mãos longas vazias mantidos.",
+        "Mesmo gesto das mãos, joelhos flexionados e três ângulos da mesma posição no cenário."
+      ],
+      "finishUsefulness": "Metal, tecido e couro podem orientar acabamento. Invenções localizadas listadas exigem correção antes de integração.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base; qualquer arma acrescentada é divergência nova.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-mandrake-cyborg",
+      "capture": "skin-mandrake-cyborg",
+      "name": "Mandrake Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-mandrake-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mandrake-cyborg.png",
+      "conceptSha256": "1122fb02131f9dd168cee518ac9517e9960d34cd4cc5e77b16790fcf380158c7",
+      "referenceSha256": "57ad55e5feaabd603177edd7fc6614ddddccc03345053e83de45e8be23a7c64e",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné escuro com vermelho, face parcialmente metálica, correntes, camiseta preta/vermelha, calça cargo preta/vermelha e tênis azuis mantidos.",
+        "Mãos vazias e três vistas da mesma pose no cenário."
+      ],
+      "finishUsefulness": "Acabamento pode orientar materiais e normais; os efeitos e props inventados listados exigem correção. Seleção editorial fica com o dono.",
+      "failures": [
+        {
+          "requirement": "Não substituir objetos do cenário.",
+          "observed": "Os dois blocos lisos vermelho/amarelo do perfil foram convertidos em caixotes de madeira com travessas diagonais. O bloco vermelho na vista traseira também virou caixote.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-mandrake-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mandrake-cyborg.png",
+            "region": "perfil x≈462–591/y≈351–455; costas x≈1033–1074/y≈355–415"
+          },
+          "origin": "troca de props introduzida pela geração",
+          "cheapestFix": "Repor as duas massas lisas originais e o bloco vermelho traseiro, conservando personagem e acabamento."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-mandrake-cyborg",
+      "capture": "skin-mandrake-cyborg",
+      "name": "Mandrake Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-mandrake-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mandrake-cyborg.png",
+      "conceptSha256": "30b13ea61648d55f5be7bcd3ea7ff31aad3d11abb63c93298117ab1257dccfbc",
+      "referenceSha256": "57ad55e5feaabd603177edd7fc6614ddddccc03345053e83de45e8be23a7c64e",
+      "pixelsInspected": true,
+      "checks": [
+        "Boné escuro com vermelho, face parcialmente metálica, correntes, camiseta preta/vermelha, calça cargo preta/vermelha e tênis azuis mantidos.",
+        "Mãos vazias e três vistas da mesma pose no cenário."
+      ],
+      "finishUsefulness": "Acabamento pode orientar materiais e normais; os efeitos e props inventados listados exigem correção. Seleção editorial fica com o dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-emo-cyborg",
+      "capture": "skin-emo-cyborg",
+      "name": "Emo Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-emo-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-emo-cyborg.png",
+      "conceptSha256": "c62e65ac19a59d481815ac7ecb94175f835a3e4f106938b8e07a611d30e15f67",
+      "referenceSha256": "105297e0ce583eb33bc46f485d507c5074fe96f55597cf623594b4e521bbd178",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo preto assimétrico cobrindo um olho, face com placa lateral, roupa escura, faixa cinza na cintura, cinto de tachas e botas mantidos.",
+        "Mesma silhueta esguia, gesto vazio das mãos e três ângulos."
+      ],
+      "finishUsefulness": "Acabamento pode orientar materiais e normais; os efeitos e props inventados listados exigem correção. Seleção editorial fica com o dono.",
+      "failures": [
+        {
+          "requirement": "Não redesenhar roupa/corpo ou inventar novos mecanismos luminosos.",
+          "observed": "Uma coluna mecânica com pontos ciano luminosos foi acrescentada às costas; os antebraços ganharam tubos e módulos ciano emissivos. A base tem costas de camiseta e faixa cinza lisa, com braços claros e peças cinzas sem essas luzes.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-emo-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-emo-cyborg.png",
+            "region": "perfil coluna x≈692–723/y≈296–389; costas x≈1127–1154/y≈299–394; frente braços x≈173–268/y≈310–370"
+          },
+          "origin": "mecanismos, emissão e acentos de cor inventados no conceito",
+          "cheapestFix": "Remover coluna, tubos e luzes ciano; restaurar camiseta, cintura e braços da captura mantendo o acabamento de tecido/metal."
+        },
+        {
+          "requirement": "Não substituir objetos do cenário.",
+          "observed": "Blocos lisos vermelho/amarelo do perfil e bloco vermelho traseiro viraram caixotes de madeira com tábuas diagonais.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-emo-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-emo-cyborg.png",
+            "region": "perfil x≈462–594/y≈351–455; costas x≈1033–1076/y≈354–414"
+          },
+          "origin": "troca de props na geração",
+          "cheapestFix": "Repor blocos lisos nas cores e silhuetas originais."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-emo-cyborg",
+      "capture": "skin-emo-cyborg",
+      "name": "Emo Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-emo-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-emo-cyborg.png",
+      "conceptSha256": "a40e7ca1fb9463f7ce4cb4c144e5206d5e9af9fede80c38f962671663b0b8eca",
+      "referenceSha256": "105297e0ce583eb33bc46f485d507c5074fe96f55597cf623594b4e521bbd178",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo preto assimétrico cobrindo um olho, face com placa lateral, roupa escura, faixa cinza na cintura, cinto de tachas e botas mantidos.",
+        "Mesma silhueta esguia, gesto vazio das mãos e três ângulos."
+      ],
+      "finishUsefulness": "Acabamento pode orientar materiais e normais; os efeitos e props inventados listados exigem correção. Seleção editorial fica com o dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "B-skin-curupira-cyborg",
+      "capture": "skin-curupira-cyborg",
+      "name": "Curupira Cyborg",
+      "category": "skins",
+      "style": "B",
+      "verdict": "REPROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-curupira-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-curupira-cyborg.png",
+      "conceptSha256": "bcef7390510ad57a951b151d3f76e53d8a04158b5e2fa62ee4fceee2d9c8d971",
+      "referenceSha256": "7deefe5e7038e83bb40f6d32711d0041c1e1bbe1442e95c53b24f5799afd90ac",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo em formas laranja/vermelhas, meia máscara verde, olho mecânico amarelo, placas verdes/cinzas, saia de folhas e pele laranja mantidos em posição.",
+        "Mãos vazias, mesma pose e pés invertidos/pontudos já existentes na referência, conservados nas três vistas."
+      ],
+      "finishUsefulness": "Acabamento pode orientar materiais e normais; os efeitos e props inventados listados exigem correção. Seleção editorial fica com o dono.",
+      "failures": [
+        {
+          "requirement": "Preservar design e não inserir objetos/efeitos separados.",
+          "observed": "A geração acrescenta várias faíscas destacadas ao redor da cabeça e transforma o cabelo laranja em brasa luminosa. A base tem formas sólidas laranja/vermelhas sem partículas flutuantes.",
+          "evidence": {
+            "concept": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/B-skin-curupira-cyborg.png",
+            "reference": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-curupira-cyborg.png",
+            "region": "frente x≈188–267/y≈183–301; perfil x≈638–746/y≈208–337; costas x≈1101–1205/y≈190–330"
+          },
+          "origin": "partículas e efeito de brasa novos no conceito",
+          "cheapestFix": "Remover faíscas e a emissão pontilhada, preservando as formas sólidas e paleta laranja/vermelha da base."
+        }
+      ],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida.",
+        "Pés invertidos/pontudos e aparente flutuação/falta de contato já estão na captura original; não são erro criado pelo conceito. Exigem avaliação própria do asset/pose no renderer."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    },
+    {
+      "id": "C-skin-curupira-cyborg",
+      "capture": "skin-curupira-cyborg",
+      "name": "Curupira Cyborg",
+      "category": "skins",
+      "style": "C",
+      "verdict": "APROVADO",
+      "scope": "fidelidade de conceito 2D; não é implementação, asset 3D, FPS ou escolha editorial",
+      "conceptPath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/concepts/skins/C-skin-curupira-cyborg.png",
+      "referencePath": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-curupira-cyborg.png",
+      "conceptSha256": "4e0b91e9f1f43ed55ecf6f6adbc4f9a15e1a04fcce2ec439627a1ae630cfb393",
+      "referenceSha256": "7deefe5e7038e83bb40f6d32711d0041c1e1bbe1442e95c53b24f5799afd90ac",
+      "pixelsInspected": true,
+      "checks": [
+        "Cabelo em formas laranja/vermelhas, meia máscara verde, olho mecânico amarelo, placas verdes/cinzas, saia de folhas e pele laranja mantidos em posição.",
+        "Mãos vazias, mesma pose e pés invertidos/pontudos já existentes na referência, conservados nas três vistas."
+      ],
+      "finishUsefulness": "Acabamento pode orientar materiais e normais; os efeitos e props inventados listados exigem correção. Seleção editorial fica com o dono.",
+      "failures": [],
+      "inheritedLimitations": [
+        "Idle sem arma já pertence à base.",
+        "Enquadramento grande não comprova reconhecimento em distância real de partida.",
+        "Pés invertidos/pontudos e aparente flutuação/falta de contato já estão na captura original; não são erro criado pelo conceito. Exigem avaliação própria do asset/pose no renderer."
+      ],
+      "engineAssessment": "Somente aparência 2D; polycount, UV, pivô, rig, animação, textura e custo em Three.js não medidos."
+    }
+  ],
+  "updatedAt": "2026-11-01T02:40:07.254968+00:00",
+  "reviewedCount": 50,
+  "availableAtCheckpoint": 50,
+  "counts": {
+    "APROVADO": 35,
+    "REPROVADO": 15
+  },
+  "nextStep": "Dono compara direções editoriais. Para usar conceitos reprovados como guia de integração, corrigir somente as divergências registradas e submeter imagens corrigidas a nova revisão; depois provar o acabamento em amostra jogável.",
+  "countsByStyle": {
+    "B": {
+      "APROVADO": 15,
+      "REPROVADO": 10
+    },
+    "C": {
+      "APROVADO": 20,
+      "REPROVADO": 5
+    }
+  },
+  "missingConcepts": [],
+  "integrity": {
+    "conceptHashesVerified": 50,
+    "uniqueReferenceHashesVerified": 25,
+    "duplicateReviewIds": 0,
+    "unreviewedManifestConcepts": []
+  }
+}

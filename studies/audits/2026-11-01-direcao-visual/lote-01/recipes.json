@@ -1,0 +1,20 @@
+[
+  {
+    "id": "A",
+    "title": "Competitivo limpo",
+    "art": "Art direction A: polished competitive stylization. Clear designed shapes, elegant simple surfaces and strong visual hierarchy. A warm Brazilian neighborhood palette of pale sand plaster, rich terracotta brick, muted mint/teal painted metal and limited saturated cultural accents. Neutral daylight with a warm directional sun, cool soft fill, crisp stable shadows and tasteful contact shading. Foreground and playable surfaces are clear; distant buildings slightly lower contrast. Large clean material regions, restrained medium-scale wear, no noisy uniform grunge. Add well-placed edge bevel highlights and clean window reveals without moving openings. Character: carefully sculpted stylized forms and face planes, readable rainbow polygonal punk hair, blue jacket, red tartan trousers and dark boots, finely controlled cloth and metal response. Keep the existing satirical low-poly identity but give it deliberate commercial finish.",
+    "recipe": "Formas simples com bevels seletivos; base color e roughness organizados por superfície; normal apenas onde muda leitura; uma luz direcional e preenchimento ambiente; AO moderado; paleta areia/terracota/verde. Silhueta e fundo separados por valor. Não exige novas técnicas de renderização."
+  },
+  {
+    "id": "B",
+    "title": "Realismo estilizado",
+    "art": "Art direction B: high-finish stylized realism for an actual browser FPS. Believable masonry, painted plaster, cast concrete, galvanized corrugated metal, glass, leather and fabric with distinctly different roughness. Calm large surfaces with controlled medium-scale chipped plaster at edges, masonry joints and localized contact dirt, never all-over procedural noise. Rich but restrained ochre/terracotta and faded green Brazilian rooftop colors. Neutral-to-warm late afternoon sun with readable cool sky fill, shadows retaining detail, physically plausible exposure, no heavy orange filter. Convincing depth through material scale, designed shadowing and restrained baked indirect light, not cinematic haze. Preserve a stylized satirical character: rainbow hard-surface punk mohawk, blue jacket with credible broad folds, red plaid trousers, dark boots. Better sculpting and texture resolution, not a photoreal human replacement. Weapon retains its exact current model and proportions with believable painted metal and grip roughness.",
+    "recipe": "Meshes modulares; bevel/normal para quinas; atlas base color/normal/roughness/AO; lightmap ou AO assado como candidatos para ambiente estático; shadow map de uma luz solar; PMREM estático para metal. Uso e orçamento de lightmap ainda precisam de protótipo; mais risco de memória e textura que A."
+  },
+  {
+    "id": "C",
+    "title": "Caricatura elaborada",
+    "art": "Art direction C: a distinctive premium stylized Brazilian satirical game, hand-authored graphic charm and polished 3D materials. Warm cream, orange terracotta, dusty turquoise and selective vivid yellow/blue accents. Sculpted broad shapes, slightly softened bevels, subtly hand-painted color variation and elegant gradients grounded in surface materials. The existing modular architecture gets strong intentional color grouping and art-directed contact shadows, not a different building layout. Sunny lively neighborhood, a clear sky with broad simple cloud forms, soft readable shadows; no storybook illustration overlay. The existing punk reads as a memorable playable caricature: large clean color clumps in his rainbow spiked hair, appealing readable face planes, blue jacket, red tartan trousers, solid dark boots. Preserve his existing anatomical proportions, silhouette, pose, costume and weapon; improve the craftsmanship, not the design. No black ink outlines required; separation comes from values and restrained edge lighting.",
+    "recipe": "Base color com variações pintadas amplas; geometria de cabelo em blocos; bevels e normais suaves; luz solar com sombras convencionais; AO leve; materiais com roughness alta e especular controlado. Gradientes devem sobreviver à câmera e ao movimento. Nenhum contorno novo é pressuposto."
+  }
+]

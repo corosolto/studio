@@ -1,0 +1,3470 @@
+{
+  "captures": [
+    {
+      "id": "map-piscina_treta",
+      "category": "maps",
+      "name": "Piscina da Treta",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/piscina_treta.png",
+      "map": "piscina_treta",
+      "position": [
+        0,
+        2.3,
+        -8
+      ],
+      "lookAt": [
+        0,
+        0.3,
+        8
+      ],
+      "fov": 65,
+      "source": "production-alpha.133-a64e2abe238c",
+      "synthetic": true,
+      "inspected": true,
+      "notes": "Camera staged over pool basin for clear environment overview; no gameplay/performance claim."
+    },
+    {
+      "id": "map-quebrada",
+      "category": "maps",
+      "name": "Quebrada (Rua do Baile)",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/quebrada.png",
+      "map": "quebrada",
+      "bounds": {
+        "minX": -27.5,
+        "maxX": 27.5,
+        "minZ": -46.5,
+        "maxZ": 46.5
+      },
+      "position": [
+        3,
+        4,
+        -28
+      ],
+      "lookAt": [
+        0,
+        2,
+        10
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:11:01.856Z",
+      "inspected": true,
+      "inspection": "Câmera vista: ambiente legível, composição utilizável; Ferro Velho conserva neblina original."
+    },
+    {
+      "id": "map-posto_treta",
+      "category": "maps",
+      "name": "Posto da Treta",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/posto_treta.png",
+      "map": "posto_treta",
+      "bounds": {
+        "minX": -27.5,
+        "maxX": 27.5,
+        "minZ": -35.5,
+        "maxZ": 35.5
+      },
+      "position": [
+        19,
+        5.5,
+        -23
+      ],
+      "lookAt": [
+        -2,
+        2,
+        1
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=posto_treta&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:11:14.967Z",
+      "inspected": true,
+      "inspection": "Câmera vista: ambiente legível, composição utilizável; Ferro Velho conserva neblina original."
+    },
+    {
+      "id": "map-ferro_velho",
+      "category": "maps",
+      "name": "Ferro Velho do Zé",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/ferro_velho.png",
+      "map": "ferro_velho",
+      "bounds": {
+        "minX": -31.5,
+        "maxX": 31.5,
+        "minZ": -35.5,
+        "maxZ": 35.5
+      },
+      "position": [
+        18.9,
+        10,
+        -24.849999999999998
+      ],
+      "lookAt": [
+        0,
+        2,
+        0
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=ferro_velho&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:11:25.343Z",
+      "inspected": true,
+      "inspection": "Câmera vista: ambiente legível, composição utilizável; Ferro Velho conserva neblina original."
+    },
+    {
+      "id": "map-praca_poderes",
+      "category": "maps",
+      "name": "Praça dos Três Poderes",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/praca_poderes.png",
+      "map": "praca_poderes",
+      "bounds": {
+        "minX": -34.95402901917803,
+        "maxX": 34.95402901917803,
+        "minZ": -76,
+        "maxZ": 84
+      },
+      "position": [
+        0,
+        18,
+        -25
+      ],
+      "lookAt": [
+        0,
+        5,
+        30
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=praca_poderes&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:12:47.589Z",
+      "inspected": true,
+      "inspection": "Composição vista e legível, fonte preservada; UPA mantém obstrução fina existente."
+    },
+    {
+      "id": "map-loja_h",
+      "category": "maps",
+      "name": "Loja H",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/loja_h.png",
+      "map": "loja_h",
+      "bounds": {
+        "minX": -37.5,
+        "maxX": 37.5,
+        "minZ": -57.5,
+        "maxZ": 57.5
+      },
+      "position": [
+        24,
+        5.5,
+        38
+      ],
+      "lookAt": [
+        0,
+        5,
+        -9
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=loja_h&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:12:58.741Z",
+      "inspected": true,
+      "inspection": "Composição vista e legível, fonte preservada; UPA mantém obstrução fina existente."
+    },
+    {
+      "id": "map-upa_24h",
+      "category": "maps",
+      "name": "UPA 24h",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/upa_24h.png",
+      "map": "upa_24h",
+      "bounds": {
+        "minX": -29,
+        "maxX": 29,
+        "minZ": -35,
+        "maxZ": 35
+      },
+      "position": [
+        0,
+        2,
+        -12
+      ],
+      "lookAt": [
+        0,
+        1.6,
+        12
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=upa_24h&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:13:22.261Z",
+      "inspected": true,
+      "inspection": "Composição vista e legível, fonte preservada; UPA mantém obstrução fina existente."
+    },
+    {
+      "id": "map-atacadao_treta",
+      "category": "maps",
+      "name": "Atacadão da Treta — oficina",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/atacadao_treta.png",
+      "map": "atacadao_treta",
+      "bounds": {
+        "minX": -25.5,
+        "maxX": 25.5,
+        "minZ": -41,
+        "maxZ": 35.2
+      },
+      "position": [
+        0,
+        2.3,
+        22
+      ],
+      "lookAt": [
+        0,
+        2,
+        -15
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=atacadao_treta&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:15:55.798Z",
+      "inspected": true,
+      "inspection": "Imagem examinada: arquitetura identificável, volumes e ambientação originais preservados."
+    },
+    {
+      "id": "map-velho_oeste",
+      "category": "maps",
+      "name": "Sertão da Treta",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/velho_oeste.png",
+      "map": "velho_oeste",
+      "bounds": {
+        "minX": -33.2,
+        "maxX": 33.2,
+        "minZ": -45.2,
+        "maxZ": 45.2
+      },
+      "position": [
+        8,
+        5,
+        -23
+      ],
+      "lookAt": [
+        0,
+        2,
+        12
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=velho_oeste&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:16:03.549Z",
+      "inspected": true,
+      "inspection": "Imagem examinada: arquitetura identificável, volumes e ambientação originais preservados."
+    },
+    {
+      "id": "map-amazonia",
+      "category": "maps",
+      "name": "Treta na Amazônia",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/amazonia.png",
+      "map": "amazonia",
+      "bounds": {
+        "minX": -31.2,
+        "maxX": 31.2,
+        "minZ": -43.2,
+        "maxZ": 43.2
+      },
+      "position": [
+        0,
+        5,
+        -28
+      ],
+      "lookAt": [
+        0,
+        2,
+        12
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=amazonia&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:16:12.950Z",
+      "inspected": true,
+      "inspection": "Imagem examinada: arquitetura identificável, volumes e ambientação originais preservados."
+    },
+    {
+      "id": "map-corrego",
+      "category": "maps",
+      "name": "Córrego",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/corrego.png",
+      "map": "corrego",
+      "bounds": {
+        "minX": -23.5,
+        "maxX": 23.5,
+        "minZ": -39.5,
+        "maxZ": 39.5
+      },
+      "position": [
+        0,
+        6,
+        -28
+      ],
+      "lookAt": [
+        0,
+        2,
+        12
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=corrego&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:17:26.653Z",
+      "inspected": true,
+      "inspection": "Pixels vistos: cenário legível; personagem íntegro nos três ângulos, sem obstrução; pose idle original preservada."
+    },
+    {
+      "id": "map-lajes",
+      "category": "maps",
+      "name": "Lajes",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/lajes.png",
+      "map": "lajes",
+      "bounds": {
+        "minX": -19,
+        "maxX": 19,
+        "minZ": -32,
+        "maxZ": 32
+      },
+      "position": [
+        14,
+        8,
+        -16
+      ],
+      "lookAt": [
+        0,
+        3,
+        5
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=lajes&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:17:37.006Z",
+      "inspected": true,
+      "inspection": "Pixels vistos: cenário legível; personagem íntegro nos três ângulos, sem obstrução; pose idle original preservada."
+    },
+    {
+      "id": "map-penitenciaria",
+      "category": "maps",
+      "name": "CARANDIRU — oficina",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/penitenciaria.png",
+      "map": "penitenciaria",
+      "bounds": {
+        "minX": -37.1,
+        "maxX": 37.1,
+        "minZ": -47.1,
+        "maxZ": 47.1
+      },
+      "position": [
+        15,
+        8,
+        -23
+      ],
+      "lookAt": [
+        0,
+        2,
+        8
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=penitenciaria&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:17:47.543Z",
+      "inspected": true,
+      "inspection": "Pixels vistos: cenário legível; personagem íntegro nos três ângulos, sem obstrução; pose idle original preservada."
+    },
+    {
+      "id": "skin-canarinho-cyborg",
+      "name": "Canarinho Pistola Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-cyborg.png",
+      "character": "canarinho",
+      "skin": "canarinho-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:17:54.654Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "map-obras_prefeitura",
+      "category": "maps",
+      "name": "Obras da Prefeitura — oficina",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/obras_prefeitura.png",
+      "map": "obras_prefeitura",
+      "bounds": {
+        "minX": -27.5,
+        "maxX": 27.5,
+        "minZ": -34.5,
+        "maxZ": 34.5
+      },
+      "position": [
+        18,
+        9,
+        -24
+      ],
+      "lookAt": [
+        0,
+        3,
+        8
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=obras_prefeitura&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:18:00.371Z",
+      "inspected": true,
+      "inspection": "Pixels vistos: cenário legível; personagem íntegro nos três ângulos, sem obstrução; pose idle original preservada."
+    },
+    {
+      "id": "map-parque_treta",
+      "category": "maps",
+      "name": "Parque da Treta — oficina",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/parque_treta.png",
+      "map": "parque_treta",
+      "bounds": {
+        "minX": -31.2,
+        "maxX": 31.2,
+        "minZ": -41.2,
+        "maxZ": 41.2
+      },
+      "position": [
+        19,
+        7,
+        -24
+      ],
+      "lookAt": [
+        0,
+        2,
+        8
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=parque_treta&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:18:08.944Z",
+      "inspected": true,
+      "inspection": "Pixels vistos: cenário legível; personagem íntegro nos três ângulos, sem obstrução; pose idle original preservada."
+    },
+    {
+      "id": "map-mansao",
+      "category": "maps",
+      "name": "Mansão do Joá — oficina",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/mansao.png",
+      "map": "mansao",
+      "bounds": {
+        "minX": -21.5,
+        "maxX": 21.5,
+        "minZ": -35.5,
+        "maxZ": 35.5
+      },
+      "position": [
+        0,
+        6,
+        30
+      ],
+      "lookAt": [
+        0,
+        3,
+        0
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=mansao&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:19:13.443Z",
+      "inspected": true,
+      "inspection": "Pixels examinados: enquadramento livre, arquitetura/quadra legíveis."
+    },
+    {
+      "id": "char-esquerdomacho",
+      "name": "Esquerdomacho",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-esquerdomacho.png",
+      "character": "esquerdomacho",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:23.197Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-doutora",
+      "name": "Doutora do SUS",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-doutora.png",
+      "character": "doutora",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:24.807Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "map-campomorro",
+      "category": "maps",
+      "name": "Campinho do Morro — oficina",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/campomorro.png",
+      "map": "campomorro",
+      "bounds": {
+        "minX": -35.5,
+        "maxX": 35.5,
+        "minZ": -29.5,
+        "maxZ": 29.5
+      },
+      "position": [
+        17,
+        8,
+        -22
+      ],
+      "lookAt": [
+        0,
+        2,
+        8
+      ],
+      "fov": 65,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=campomorro&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "source": "production",
+      "synthetic": true,
+      "actorCountHidden": 7,
+      "capturedAt": "2026-11-01T02:19:25.938Z",
+      "inspected": true,
+      "inspection": "Pixels examinados: enquadramento livre, arquitetura/quadra legíveis."
+    },
+    {
+      "id": "char-caminhoneiro",
+      "name": "Caminhoneiro",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-caminhoneiro.png",
+      "character": "caminhoneiro",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:26.036Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-coach",
+      "name": "Coach Quântico",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-coach.png",
+      "character": "coach",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:28.189Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-adjim",
+      "name": "Adjim",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-adjim.png",
+      "character": "adjim",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:29.532Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-punk",
+      "name": "Punk",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-punk.png",
+      "character": "punk",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:30.622Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-mandrake",
+      "name": "Mandrake",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-mandrake.png",
+      "character": "mandrake",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:31.826Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-lampiao",
+      "name": "Lampião",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-lampiao.png",
+      "character": "lampiao",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:33.419Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-caipora",
+      "name": "Caipora",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-caipora.png",
+      "character": "caipora",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:34.827Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-gotinha",
+      "name": "Zé da Gotinha",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-gotinha.png",
+      "character": "gotinha",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:36.064Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-et",
+      "name": "ET de Varginha",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-et.png",
+      "character": "et",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:37.288Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "char-canarinho",
+      "name": "Canarinho Pistola",
+      "category": "characters",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/characters/char-canarinho.png",
+      "character": "canarinho",
+      "skin": null,
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": null,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:38.455Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-lula-drip",
+      "name": "Barbudo do Drip",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-drip.png",
+      "character": "barbudo",
+      "skin": "lula-drip",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:39.981Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-bolsonaro-drip",
+      "name": "Capitão do Drip",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-drip.png",
+      "character": "capitao",
+      "skin": "bolsonaro-drip",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:42.768Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-senador-drip",
+      "name": "Senador do Drip",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-senador-drip.png",
+      "character": "senador",
+      "skin": "senador-drip",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:44.973Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-janja",
+      "name": "Janjoca",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-janja.png",
+      "character": "dama",
+      "skin": "janja",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:46.570Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-michelle-bolsonaro",
+      "name": "Mixelle",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-michelle-bolsonaro.png",
+      "character": "julia-zanatta",
+      "skin": "michelle-bolsonaro",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:49.011Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-lula-cyborg",
+      "name": "Barbudo Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-cyborg.png",
+      "character": "barbudo",
+      "skin": "lula-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:50.386Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-bolsonaro-cyborg",
+      "name": "Capitão Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-cyborg.png",
+      "character": "capitao",
+      "skin": "bolsonaro-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:51.924Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-aljuiz-toga-mandrake",
+      "name": "Juiz da Toga Mandrake",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-aljuiz-toga-mandrake.png",
+      "character": "juiz",
+      "skin": "aljuiz-toga-mandrake",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:53.378Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-lula-mandrake",
+      "name": "Barbudo Mandrake",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lula-mandrake.png",
+      "character": "barbudo",
+      "skin": "lula-mandrake",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:54.553Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-bolsonaro-mandrake",
+      "name": "Capitão Mandrake",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-bolsonaro-mandrake.png",
+      "character": "capitao",
+      "skin": "bolsonaro-mandrake",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:56.009Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-michelle-mandrake",
+      "name": "Mixelle Mandrake",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-michelle-mandrake.png",
+      "character": "julia-zanatta",
+      "skin": "michelle-mandrake",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:57.605Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-zero-um-mandrake",
+      "name": "Senador Mandrake",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-zero-um-mandrake.png",
+      "character": "senador",
+      "skin": "zero-um-mandrake",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:19:59.171Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-canarinho-drip",
+      "name": "Canarinho Pistola Drip",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-drip.png",
+      "character": "canarinho",
+      "skin": "canarinho-drip",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:00.747Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-canarinho-mandrake",
+      "name": "Canarinho Pistola Mandrake",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-canarinho-mandrake.png",
+      "character": "canarinho",
+      "skin": "canarinho-mandrake",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:02.495Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-gotinha-drip",
+      "name": "Zé da Gotinha Drip",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-drip.png",
+      "character": "gotinha",
+      "skin": "gotinha-drip",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:04.273Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-gotinha-mandrake",
+      "name": "Zé da Gotinha Mandrake",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-mandrake.png",
+      "character": "gotinha",
+      "skin": "gotinha-mandrake",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:05.929Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-gotinha-cyborg",
+      "name": "Zé da Gotinha Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-gotinha-cyborg.png",
+      "character": "gotinha",
+      "skin": "gotinha-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:07.775Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-lampiao-cyborg",
+      "name": "Lampião Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lampiao-cyborg.png",
+      "character": "lampiao",
+      "skin": "lampiao-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:09.427Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-lobisomem-cyborg",
+      "name": "Lobisomem Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-lobisomem-cyborg.png",
+      "character": "lobisomem",
+      "skin": "lobisomem-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:11.331Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-mariabonita-cyborg",
+      "name": "Maria Bonita Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mariabonita-cyborg.png",
+      "character": "mariabonita",
+      "skin": "mariabonita-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:13.570Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-et-cyborg",
+      "name": "ET Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-et-cyborg.png",
+      "character": "et",
+      "skin": "et-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:15.578Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-mandrake-cyborg",
+      "name": "Mandrake Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-mandrake-cyborg.png",
+      "character": "mandrake",
+      "skin": "mandrake-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:17.501Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-emo-cyborg",
+      "name": "Emo Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-emo-cyborg.png",
+      "character": "emo",
+      "skin": "emo-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:19.132Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "skin-curupira-cyborg",
+      "name": "Curupira Cyborg",
+      "category": "skins",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/skins/skin-curupira-cyborg.png",
+      "character": "curupira",
+      "skin": "curupira-cyborg",
+      "map": "quebrada",
+      "position": [
+        6,
+        0,
+        -16
+      ],
+      "views": [
+        {
+          "angle": "frente",
+          "position": [
+            6,
+            1.1,
+            -11.2
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "perfil",
+          "position": [
+            10.8,
+            1.1,
+            -16
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        },
+        {
+          "angle": "costas",
+          "position": [
+            6.000000000000001,
+            1.1,
+            -20.8
+          ],
+          "lookAt": [
+            6,
+            0.95,
+            -16
+          ],
+          "fov": 38
+        }
+      ],
+      "triptych": true,
+      "pose": "single frozen unarmed idle; same pose and spot in all three views",
+      "skinGeometryVerified": true,
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production-assets-staged-in-production-map",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:20:20.748Z",
+      "inspected": true,
+      "inspection": "Prancha de três ângulos vista nas folhas preflight-char-00 a 09: corpo inteiro, roupa e perfil/costas legíveis; pose idle sem arma original, não validação de contatos/animacao."
+    },
+    {
+      "id": "map-escadao",
+      "name": "Escadão (Morro)",
+      "category": "maps",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/map-escadao.png",
+      "map": "escadao",
+      "position": [
+        0,
+        16,
+        34
+      ],
+      "lookAt": [
+        0,
+        5,
+        0
+      ],
+      "fov": 65,
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=escadao&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "synthetic": true,
+      "stagedBoars": [],
+      "capturedAt": "2026-11-01T02:22:59.481Z",
+      "inspected": true
+    },
+    {
+      "id": "jav-city",
+      "name": "Javaporcos — cidade / preview",
+      "category": "javaporco",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-city.png",
+      "map": "invasao_javaporcos",
+      "position": [
+        21,
+        15,
+        31
+      ],
+      "lookAt": [
+        0,
+        3,
+        0
+      ],
+      "fov": 65,
+      "source": "local-preview",
+      "url": "http://localhost:4321/?debug=1&auto=E%2Cesquerdomacho%2CT&map=invasao_javaporcos&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "main": "http://localhost:4321/js/main.js?v=2.1.0-alpha.130-3eff8f38d028",
+      "synthetic": true,
+      "stagedBoars": [],
+      "capturedAt": "2026-11-01T02:23:00.939Z",
+      "inspected": true
+    },
+    {
+      "id": "jav-pasto",
+      "name": "Javaporcos — borda da mata",
+      "category": "javaporco",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-pasto.png",
+      "map": "invasao_javaporcos",
+      "position": [
+        46,
+        7,
+        40
+      ],
+      "lookAt": [
+        44,
+        3,
+        52
+      ],
+      "fov": 65,
+      "source": "local-preview",
+      "url": "http://localhost:4321/?debug=1&auto=E%2Cesquerdomacho%2CT&map=invasao_javaporcos&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "main": "http://localhost:4321/js/main.js?v=2.1.0-alpha.130-3eff8f38d028",
+      "synthetic": true,
+      "stagedBoars": [],
+      "capturedAt": "2026-11-01T02:23:02.115Z",
+      "inspected": true
+    },
+    {
+      "id": "jav-enemies",
+      "name": "Javaporcos — quatro tipos no cenário (encenado)",
+      "category": "javaporco",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/javaporco/jav-enemies.png",
+      "map": "invasao_javaporcos",
+      "position": [
+        0,
+        3,
+        13
+      ],
+      "lookAt": [
+        0,
+        0.8,
+        0
+      ],
+      "fov": 65,
+      "source": "local-preview",
+      "url": "http://localhost:4321/?debug=1&auto=E%2Cesquerdomacho%2CT&map=invasao_javaporcos&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+      "main": "http://localhost:4321/js/main.js?v=2.1.0-alpha.130-3eff8f38d028",
+      "synthetic": true,
+      "stagedBoars": [
+        {
+          "id": "99.0",
+          "type": "jovem",
+          "variant": "listrado",
+          "position": [
+            -4.5,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "99.1",
+          "type": "adulto",
+          "variant": "adulto",
+          "position": [
+            -1.5,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "99.2",
+          "type": "matriarca",
+          "variant": "velho",
+          "position": [
+            1.5,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "99.3",
+          "type": "ariete",
+          "variant": "ariete",
+          "position": [
+            4.5,
+            0,
+            0
+          ]
+        }
+      ],
+      "capturedAt": "2026-11-01T02:28:19.222Z",
+      "inspected": true,
+      "staging": "Four existing runtime-generated boar visuals using objective.assignar; not a live wave encounter.",
+      "inspection": "Four distinct source visualAnimal types visible on the city road, no fallback; staged still, not active-wave gameplay."
+    },
+    {
+      "id": "weapon-ak",
+      "name": "AK-47 — fuzil de assalto",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-ak.png",
+      "weapon": "ak",
+      "family": "Fuzil de assalto",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 50.13081998361215,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=ak&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:32:06.582Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-pistol",
+      "name": "PT-38 — pistola",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-pistol.png",
+      "weapon": "pistol",
+      "family": "Pistola",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 54.999999999999986,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=pistol&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:32:23.078Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-revolver38",
+      "name": "Revólver .38 — revólver",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-revolver38.png",
+      "weapon": "revolver38",
+      "family": "Revólver",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 54.999999999999986,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=revolver38&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:32:39.010Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-mp5",
+      "name": "MP5 — submetralhadora",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-mp5.png",
+      "weapon": "mp5",
+      "family": "Submetralhadora",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 57,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=mp5&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:32:56.192Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-shotgun",
+      "name": "M3 — escopeta",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-shotgun.png",
+      "weapon": "shotgun",
+      "family": "Escopeta",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 57,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=shotgun&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:33:13.998Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-awp",
+      "name": "AWP — sniper de ferrolho",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-awp.png",
+      "weapon": "awp",
+      "family": "Sniper de ferrolho",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 43.99999999999999,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=awp&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:33:29.899Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-svd",
+      "name": "SVD — DMR semiautomático",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-svd.png",
+      "weapon": "svd",
+      "family": "DMR semiautomático",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 57,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=svd&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:33:46.120Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-lmg",
+      "name": "Metralha — metralhadora leve",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-lmg.png",
+      "weapon": "lmg",
+      "family": "Metralhadora leve",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 57,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=lmg&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:34:03.090Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-carbine",
+      "name": "Carabina — ação por alavanca",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-carbine.png",
+      "weapon": "carbine",
+      "family": "Carabina de alavanca",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 50,
+      "presentation": "authored",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=carbine&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:34:19.450Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    },
+    {
+      "id": "weapon-knife",
+      "name": "Faca — corpo a corpo",
+      "category": "weapons",
+      "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/weapons/weapon-knife.png",
+      "weapon": "knife",
+      "family": "Corpo a corpo",
+      "map": "quebrada",
+      "position": [
+        3,
+        1.62,
+        -28
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        0,
+        "YXZ"
+      ],
+      "fov": 70,
+      "vmFov": 42.954024887199395,
+      "presentation": "melee",
+      "postprocessing": "bloom=0 existing runtime option; raw world plus real vmScene overlay. Default postprocessing produced an obstructed frozen capture, not diagnosed as a production defect.",
+      "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+      "source": "production",
+      "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=quebrada&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&bloom=0&vmweapon=knife&personagem=esquerdomacho",
+      "synthetic": true,
+      "capturedAt": "2026-11-01T02:34:34.183Z",
+      "inspected": true,
+      "inspection": "Pixels conferidos: arma e mangas presentes no cenário real, sem obstrução. Uma captura estática em primeira pessoa, sem prova de animação ou contatos."
+    }
+  ]
+}

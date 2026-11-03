@@ -1,0 +1,25 @@
+{
+  "id": "map-escadao",
+  "name": "Escadão (Morro)",
+  "category": "maps",
+  "path": "/Volumes/Zenith/Projects/game/corosolto/csbrasil/audits/2026-11-01-direcao-visual/lote-02-geral/baseline/maps/map-escadao.png",
+  "map": "escadao",
+  "position": [
+    0,
+    16,
+    34
+  ],
+  "lookAt": [
+    0,
+    5,
+    0
+  ],
+  "fov": 65,
+  "source": "production",
+  "url": "https://www.csbrasil.online/?debug=1&auto=E%2Cesquerdomacho%2CT&map=escadao&oficina=1&perfqa=1&lang=pt&perfilauto=0&q=high&personagem=esquerdomacho",
+  "main": "https://www.csbrasil.online/js/main.js?v=2.1.0-alpha.133-a64e2abe238c",
+  "synthetic": true,
+  "stagedBoars": [],
+  "capturedAt": "2026-11-01T02:22:59.481Z",
+  "inspected": true
+}

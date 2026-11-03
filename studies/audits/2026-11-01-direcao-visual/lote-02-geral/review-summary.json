@@ -1,0 +1,37 @@
+{
+  "total": 136,
+  "APROVADO": 78,
+  "REPROVADO": 58,
+  "categories": {
+    "maps": {
+      "APROVADO": 11,
+      "REPROVADO": 25
+    },
+    "skins": {
+      "APROVADO": 35,
+      "REPROVADO": 15
+    },
+    "characters": {
+      "APROVADO": 19,
+      "REPROVADO": 5
+    },
+    "javaporco": {
+      "APROVADO": 4,
+      "REPROVADO": 2
+    },
+    "weapons": {
+      "APROVADO": 9,
+      "REPROVADO": 11
+    }
+  },
+  "styles": {
+    "B": {
+      "APROVADO": 31,
+      "REPROVADO": 37
+    },
+    "C": {
+      "APROVADO": 47,
+      "REPROVADO": 21
+    }
+  }
+}

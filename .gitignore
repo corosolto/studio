@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+.blender/
+.cache/
+.tmp/
+dist/
+build/
+# Workspace local de GLBs/texturas copiados do client ou gerados pelas ferramentas.
+public/
+# Evidência bruta temporária; resultados aprovados são promovidos para gauntlet/evidence.
+**/tmp/
+**/scratch/
