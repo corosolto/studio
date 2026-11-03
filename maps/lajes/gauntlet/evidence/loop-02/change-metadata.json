@@ -1,0 +1,53 @@
+{
+  "additional_rejected_evidence": [
+    {
+      "private_evidence": "previews/rejected-loop02-composition/",
+      "public_evidence": "rejected/composition/",
+      "status": "rejected_composition_iteration"
+    },
+    {
+      "private_evidence": "previews/rejected-loop02-pre-metric/",
+      "public_evidence": "rejected/pre-metric-reconciliation/",
+      "status": "superseded_pre_metric_reconciliation"
+    }
+  ],
+  "corrected_integration_mismatches": [
+    "Raised the accessible west roof from 5.80 m to 6.60 m and replaced two 17-riser flights with four 10-riser flights at 0.165 m rise, 0.30 m tread and 1.20 m clear width.",
+    "Raised every exposed west parapet from 0.95 m to 1.10 m while retaining the stair-arrival opening.",
+    "Placed both tapered 1000 L tanks on the accessible west roof with level bases and a measured 0.725 m plinth-to-route service clearance.",
+    "Changed the grocery identity to MERCEARIA IRM\u00c3OS REIS and reconciled secondary lettering to P\u00c3O \u2022 LEITE \u2022 GELO.",
+    "Re-aimed the sky camera from building context to direct +Z zenith for the polar-distortion test.",
+    "Opened a real 1.50 m court passage, routed through its center and added five-centimetre agent-radius collision-clearance sampling.",
+    "Moved the single remaining crate stack wholly inside the shop threshold and verified the 1.20 m public walkway and 0.30 m-radius corner spawn.",
+    "Batched medium export proxies by collection/material to the 90-primitive budget while keeping the Blender master editable and unjoined.",
+    "Aligned spawn/corner cameras with declared player-height spawn poses and rendered matching medium/low fixed-camera sets plus a Blender-only route sequence.",
+    "Added post-export GLB byte/accessor/index validation evidence instead of relying on unchanged hashes.",
+    "Reframed the player-height corner from a clear road approach and pitched flight-sequence cameras toward actual tread contact.",
+    "Expanded commercial_corner to include the road approach; reconciled the teal 3.60 x 0.055 x 0.55 m sign, P\u00c3O \u2022 LEITE \u2022 GELO text, 3.00 m rolling opening, 0.15 m curb, 1.80 m sidewalk and 1.55 m tank plinths."
+  ],
+  "loop": "loop-02",
+  "loop_01_private_archive": "previews/loop-01/",
+  "loop_01_public_evidence_unchanged": true,
+  "loop_01_rejected_evidence_preserved": "loop-01/rejected/",
+  "loop_02_rejected_attempt": {
+    "private_evidence": "previews/rejected-loop02-first/",
+    "public_evidence": "rejected/",
+    "status": "rejected_first_loop_02_attempt"
+  },
+  "schema_version": 1,
+  "supersedes": "loop-01",
+  "unresolved_dimensional_deviations": [
+    {
+      "actual_m": 4.6,
+      "feature": "alley_clear_width",
+      "metric_kit_m": 2.4,
+      "reason": "The self-contained wider playable alley is retained in this candidate."
+    },
+    {
+      "actual_m": 4.2,
+      "feature": "east_context_roof_z",
+      "metric_kit_m": 6.6,
+      "reason": "The non-route commercial context roof is retained below the accessible west roof."
+    }
+  ]
+}

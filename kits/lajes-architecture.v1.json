@@ -1,0 +1,436 @@
+{
+  "schema": "lajes-architecture-kit/v1",
+  "id": "lajes-terrace-architecture",
+  "version": "1.0.0",
+  "status": "constructible_art_direction_not_research_clearance",
+  "director_integration_revision": {
+    "id": "loop-02-camera-contract",
+    "site_assembly_status": "conceptual_constructible_metric_layout_not_loop02_as_built_coordinate_survey",
+    "candidate_camera_set": "composition_and_light.candidate_integration_camera_contract",
+    "conceptual_camera_set_retained_as": "composition_and_light.conceptual_cameras",
+    "svg_status": "composition_diagram_not_as_built_coordinate_survey",
+    "owner_review": "pending"
+  },
+  "premise": {
+    "place": "Fictional Morro das Lajes, a North Zone Rio de Janeiro hillside community; not a reconstruction of a named real community.",
+    "topography": "A level occupied terrace cut into a northwest-facing hillside. The playable alley runs along the terrace; uphill repetition is expressed by the stair and three stepped background roof bands, not by a steep gameplay corridor.",
+    "climate": "Humid tropical summer, 16:20 after a rain shower. Northwest sun at 32 degrees elevation, warm direct light, cool open shade, dampness retained only in drainage and shaded base zones.",
+    "construction_history": [
+      {"phase": "P0", "period": "narrative_ongoing_work", "use": "Active upper-floor construction with an exposed concrete frame and bounded ceramic masonry infill."},
+      {"phase": "P1", "period": "narrative_1975_1990", "use": "Original one-storey load-bearing ceramic masonry rooms on the terrace."},
+      {"phase": "P2", "period": "narrative_1990_2010", "use": "Household-funded upper floor and accessible concrete roof, with slimmer columns and practical rectangular openings."},
+      {"phase": "P3", "period": "narrative_2010_2020", "use": "Partial plaster and paint campaigns; old masonry remains visible at repairs and returns."},
+      {"phase": "P4", "period": "narrative_current_use", "use": "Ground-floor family grocery, rolling shutter, painted sign and service connections added without changing the upper dwelling."}
+    ],
+    "historical_note": "Dates and phases are an internal storytelling premise for coherent variation, not researched claims about a real settlement."
+  },
+  "units_and_coordinates": {
+    "unit": "metre",
+    "blender_unit_scale": 1.0,
+    "up_axis": "Z",
+    "east_axis": "X",
+    "north_axis": "Y",
+    "origin": "Southwest corner of the west plot at finished sidewalk level.",
+    "datum_z_m": 0.0,
+    "angle_unit": "degree",
+    "color_space": "All color_hex values are sRGB; convert to scene-linear for Blender shader base color.",
+    "box_convention": "Assembly bounds are absolute [min,max] coordinates in metres. Reusable module pivots are bottom center at finished floor or ground contact, front faces local -Y.",
+    "round_trip_tolerance_m": 0.001
+  },
+  "shared_contract": {
+    "player_eye_height_m": 1.65,
+    "door_clear_width_m": 0.9,
+    "door_clear_height_m": 2.1,
+    "stair_riser_max_m": 0.175,
+    "stair_tread_min_m": 0.28,
+    "route_min_clear_width_m": 1.2,
+    "route_min_clear_height_m": 2.1,
+    "collision_note": "Collision follows finished wall, curb, stair, parapet and tank-plinth faces; decorative wires, signs and small trim do not alter the walking envelope."
+  },
+  "site_assembly": {
+    "slice_bounds_m": {"x": [-4.2, 16.4], "y": [-5.0, 18.0], "z": [-0.15, 10.2]},
+    "street": {
+      "bounds_m": {"x": [-4.2, 16.4], "y": [-5.0, -1.8], "z": [-0.19, -0.15]},
+      "surface": "asphalt_worn",
+      "crown_crossfall_percent": 1.5,
+      "gutter_bounds_m": {"x": [-4.2, 16.4], "y": [-2.05, -1.8], "z": [-0.16, -0.15]}
+    },
+    "curb": {
+      "front_face_y_m": -1.8,
+      "height_m": 0.15,
+      "width_m": 0.2,
+      "segment_length_m": 0.9,
+      "material": "curb_concrete",
+      "corner_radius_m": 0.15
+    },
+    "sidewalk": {
+      "bounds_m": {"x": [-4.2, 16.4], "y": [-1.8, 0.0], "z": [-0.15, 0.0]},
+      "clear_width_m": 1.8,
+      "crossfall_percent_to_street": 1.5,
+      "paver_module_m": [0.6, 0.6, 0.06],
+      "joint_width_m": 0.008,
+      "material": "sidewalk_concrete",
+      "pole_keep_clear_m": 1.2,
+      "shop_threshold": "Flush for 1.20 m depth inside the open grocery entrance; no loose ramp or miniature step."
+    },
+    "alley": {
+      "bounds_m": {"x": [7.4, 9.8], "y": [0.0, 14.4], "z": [-0.18, 0.0]},
+      "finished_wall_faces_x_m": [7.4, 9.8],
+      "clear_width_m": 2.4,
+      "length_m": 14.4,
+      "longitudinal_grade_percent": 0.0,
+      "crossfall_percent_to_drain": 1.5,
+      "walkable_clear_width_m": 2.18,
+      "drain": {"x_m": [9.62, 9.8], "width_m": 0.18, "depth_m": 0.06, "covered_segments_y_m": [[0.0, 1.2], [6.0, 7.2], [12.0, 14.4]], "cover_material": "drain_grate"},
+      "north_exit": "Turn west onto a 1.20 m wide rear landing at Y=14.4; terminate the slice with a masonry retaining wall rising 3.30 m behind the landing.",
+      "surface": "alley_concrete"
+    },
+    "west_corner_plot": {
+      "envelope_m": {"x": [0.0, 7.4], "y": [0.0, 8.4], "z": [0.0, 6.6]},
+      "front_facade_plane_y_m": 0.0,
+      "alley_facade_plane_x_m": 7.4,
+      "ground_finished_floor_z_m": 0.0,
+      "upper_finished_floor_z_m": 3.3,
+      "roof_finished_z_m": 6.6,
+      "wall_thickness_m": 0.15,
+      "floor_and_roof_slab_thickness_m": 0.18,
+      "plaster_thickness_m": 0.015,
+      "facade_phase": ["P3", "P4", "P2"],
+      "accessible_roof": true
+    },
+    "east_plot": {
+      "envelope_m": {"x": [9.8, 16.4], "y": [0.0, 12.6], "z": [0.0, 6.6]},
+      "alley_facade_plane_x_m": 9.8,
+      "upper_setback": {"y_m": [8.4, 12.6], "additional_storey_z_m": [6.6, 9.9], "alley_face_x_m": 10.4},
+      "wall_thickness_m": 0.15,
+      "facade_phase": ["P1", "P2", "P0"],
+      "accessible_roof": false
+    },
+    "background_terraces": [
+      {"bounds_m": {"x": [-8.0, 24.0], "y": [18.0, 24.0], "z": [3.3, 9.9]}, "roof_band_z_m": [6.6, 9.9], "detail": "Large occupied volumes, parapets and tanks only; no playable facade microdetail."},
+      {"bounds_m": {"x": [-12.0, 30.0], "y": [26.0, 34.0], "z": [6.6, 13.2]}, "roof_band_z_m": [9.9, 13.2], "detail": "Skyline silhouette with varied setbacks; preserve open sky between clusters."},
+      {"bounds_m": {"x": [-18.0, 36.0], "y": [37.0, 47.0], "z": [9.9, 16.5]}, "roof_band_z_m": [13.2, 16.5], "detail": "Haze-separated silhouette; no floating miniature houses or repeated tank grid."}
+    ]
+  },
+  "module_grid": {
+    "structural_bay_m": 1.2,
+    "facade_panel_widths_m": [0.6, 1.2, 1.8, 2.4, 3.0, 3.6],
+    "storey_floor_to_floor_m": 3.3,
+    "wall_thickness_m": 0.15,
+    "column_section_m": [0.2, 0.2],
+    "beam_depth_m": 0.25,
+    "slab_thickness_m": 0.18,
+    "module_pivot": "bottom_center",
+    "module_front": "local_-Y",
+    "tiling": "Join panels on structural bay lines; trim overlaps the joint by 0.02 m, never leaves coplanar wall faces."
+  },
+  "modules": [
+    {"id": "wall_solid_1200", "kind": "wall", "size_m": [1.2, 0.15, 3.12], "material": "plaster_warm", "pivot": "bottom_center", "mesh_note": "Height leaves 0.18 m slab above; bevel 0.008 m, 1 segment."},
+    {"id": "wall_exposed_brick_1200", "kind": "wall", "size_m": [1.2, 0.15, 3.12], "material": "ceramic_masonry", "pivot": "bottom_center", "brick_unit_m": [0.19, 0.09, 0.14], "mortar_joint_m": 0.012, "mesh_note": "Use relief only on exposed hero patch; bond elsewhere."},
+    {"id": "column_200", "kind": "structure", "section_m": [0.2, 0.2], "height_m": 3.12, "material": "structural_concrete", "pivot": "bottom_center"},
+    {"id": "slab_1200", "kind": "slab", "size_m": [1.2, 1.2, 0.18], "material": "structural_concrete", "pivot": "bottom_center", "edge_drip_projection_m": 0.025},
+    {"id": "window_bath_060", "kind": "window", "clear_size_m": [0.6, 0.6], "sill_above_ffl_m": 1.8, "frame": "painted_steel", "opening_recess_m": 0.08},
+    {"id": "window_room_120", "kind": "window", "clear_size_m": [1.2, 1.2], "sill_above_ffl_m": 0.95, "frame": "painted_steel", "opening_recess_m": 0.1, "security_bars": {"optional_for_phase": ["P1", "P2"], "bar_diameter_m": 0.012, "max_spacing_m": 0.14, "projection_m": 0.045}},
+    {"id": "door_entry_090", "kind": "door", "clear_size_m": [0.9, 2.1], "leaf_thickness_m": 0.04, "frame_face_width_m": 0.055, "frame_depth_m": 0.15, "material": "painted_steel", "threshold_max_m": 0.015},
+    {"id": "shop_rolling_300", "kind": "shop_opening", "clear_size_m": [3.0, 2.4], "shutter_slats_m": {"height": 0.075, "thickness": 0.012}, "side_guide_face_m": 0.08, "open_state": "Shutter rolled above 2.55 m; opening unobstructed to 2.40 m."},
+    {"id": "parapet_1200", "kind": "roof_edge", "size_m": [1.2, 0.15, 1.1], "coping_size_m": [1.2, 0.21, 0.06], "material": "plaster_warm", "pivot": "bottom_center"},
+    {"id": "sidewalk_paver_060", "kind": "ground", "size_m": [0.6, 0.6, 0.06], "material": "sidewalk_concrete", "joint_m": 0.008, "bevel_m": 0.004},
+    {"id": "curb_090", "kind": "ground", "size_m": [0.9, 0.2, 0.15], "material": "curb_concrete", "bevel_m": 0.015},
+    {"id": "water_tank_1000", "kind": "roof_utility", "capacity_litres": 1000, "shape": "tapered_round", "upper_diameter_m": 1.47, "lower_diameter_m": 1.29, "body_height_m": 0.72, "lid_height_m": 0.08, "overall_height_m": 0.8, "base_support": "full_level", "plinth_m": [1.55, 1.55, 0.2], "service_perimeter_m": 0.6, "service_envelope_m": [2.67, 2.67], "material": "tank_blue", "radial_segments_med": 32, "radial_segments_low": 16, "design_status": "art_direction_calibration_not_structural_certification"},
+    {"id": "utility_pole_780", "kind": "infrastructure", "height_m": 7.8, "base_diameter_m": 0.18, "top_diameter_m": 0.12, "material": "utility_concrete", "pivot": "bottom_center"},
+    {"id": "shop_sign_360", "kind": "sign", "size_m": [3.6, 0.055, 0.55], "material": "sign_teal", "letter_material": "letter_cream", "primary_text": "MERCEARIA IRMÃOS REIS", "secondary_text": "PÃO • LEITE • GELO", "primary_cap_height_m": 0.25, "secondary_cap_height_m": 0.09}
+  ],
+  "facade_rules": {
+    "phase_materials": {
+      "P0": ["structural_concrete", "ceramic_masonry"],
+      "P1": ["ceramic_masonry", "plaster_warm"],
+      "P2": ["plaster_sage", "plaster_ochre", "structural_concrete"],
+      "P3": ["plaster_warm", "plaster_sage"],
+      "P4": ["plaster_warm", "sign_teal", "painted_steel"]
+    },
+    "west_front_schedule": [
+      {"x_m": [0.0, 0.6], "z_m": [0.0, 3.3], "type": "solid", "phase": "P4"},
+      {"x_m": [0.75, 3.75], "z_m": [0.0, 2.4], "type": "shop_rolling_300"},
+      {"x_m": [4.65, 5.55], "z_m": [0.0, 2.1], "type": "door_entry_090"},
+      {"x_m": [6.15, 6.9], "z_m": [1.25, 1.85], "type": "window_bath_060"},
+      {"x_m": [0.9, 2.1], "z_m": [4.25, 5.45], "type": "window_room_120"},
+      {"x_m": [4.8, 6.0], "z_m": [4.25, 5.45], "type": "window_room_120"}
+    ],
+    "west_alley_schedule": [
+      {"y_m": [2.3, 3.2], "z_m": [0.0, 2.1], "type": "door_entry_090", "destination": "stair_core"},
+      {"y_m": [4.7, 5.3], "z_m": [1.8, 2.4], "type": "window_bath_060"},
+      {"y_m": [1.2, 2.4], "z_m": [4.25, 5.45], "type": "window_room_120"},
+      {"y_m": [5.4, 6.6], "z_m": [4.25, 5.45], "type": "window_room_120"}
+    ],
+    "east_alley_schedule": [
+      {"y_m": [0.9, 1.8], "z_m": [0.0, 2.1], "type": "door_entry_090"},
+      {"y_m": [3.3, 4.5], "z_m": [0.95, 2.15], "type": "window_room_120", "bars": true},
+      {"y_m": [7.2, 8.1], "z_m": [0.0, 2.1], "type": "door_entry_090"},
+      {"y_m": [10.2, 11.4], "z_m": [0.95, 2.15], "type": "window_room_120", "bars": true},
+      {"y_m": [2.0, 3.2], "z_m": [4.25, 5.45], "type": "window_room_120"},
+      {"y_m": [8.4, 9.6], "z_m": [4.25, 5.45], "type": "window_room_120"}
+    ],
+    "opening_rules": {
+      "clear_dimension_excludes_frame": true,
+      "minimum_solid_between_openings_m": 0.45,
+      "minimum_corner_return_m": 0.45,
+      "lintel_depth_m": 0.2,
+      "sill_projection_m": 0.07,
+      "sill_thickness_m": 0.045,
+      "sill_slope_percent_outward": 8.0,
+      "recess_shadow_is_geometry": true,
+      "no_identical_blue_glass": "Use dark interior recesses, one frosted bathroom pane and open dark rooms; do not tile reflective glass across facades."
+    },
+    "junction_rules": [
+      {"junction": "plaster_to_brick", "rule": "Plaster ends with a 0.015 m physical lip and a ragged but bounded repair contour; never coplanar noise."},
+      {"junction": "wall_to_floor", "rule": "Wall starts at finished floor; 0.08 m high painted base band in grocery, flush elsewhere."},
+      {"junction": "slab_to_parapet", "rule": "Parapet overlaps slab edge by 0.075 m; coping overhangs 0.03 m and has a 0.012 m drip recess."},
+      {"junction": "facade_to_sidewalk", "rule": "Finished plaster meets sidewalk without a floating gap; moisture wear follows this contact, not a full-wall grunge mask."},
+      {"junction": "addition_to_original", "rule": "Expose a 0.20 m column or a 0.025 m vertical construction seam at the phase boundary; never blend phases with random color."}
+    ]
+  },
+  "stair_and_roof_route": {
+    "meaning_of_accessible": "Player-traversable by stairs; this does not claim step-free or universal accessibility.",
+    "entry_door_center_m": [7.4, 2.75, 1.05],
+    "entry_door_clear_m": [0.9, 2.1],
+    "core_internal_bounds_m": {"x": [4.65, 7.25], "y": [2.4, 8.2], "z": [0.0, 9.15]},
+    "flight_count": 4,
+    "risers_per_flight": 10,
+    "total_risers": 40,
+    "riser_height_m": 0.165,
+    "tread_depth_m": 0.3,
+    "flight_run_m": 2.7,
+    "storey_rise_m": 3.3,
+    "total_rise_m": 6.6,
+    "clear_width_m": 1.2,
+    "gap_between_flights_m": 0.2,
+    "landing_depth_m": 1.2,
+    "entry_vestibule_depth_m": 0.7,
+    "flight_layout": "U-shaped: flights 1 and 3 run +Y in the west lane centered at X=5.25; flights 2 and 4 run -Y in the east lane centered at X=6.65. Each pair reaches a storey landing at 3.30 m or the roof at 6.60 m.",
+    "landing_levels_z_m": [1.65, 3.3, 4.95, 6.6],
+    "minimum_headroom_m": 2.1,
+    "handrail": {"height_above_nosing_m": 0.92, "diameter_m": 0.045, "wall_offset_m": 0.06, "continuous_at_landings": true},
+    "roof_arrival": {"landing_center_m": [6.65, 7.45, 6.6], "headhouse_door_clear_m": [0.9, 2.1], "headhouse_height_above_roof_m": 2.4, "headhouse_roof_thickness_m": 0.15, "headhouse_west_face_x_m": 5.55},
+    "parapets": {"height_above_roof_m": 1.1, "thickness_m": 0.15, "coping_thickness_m": 0.06, "all_open_roof_edges_protected": true},
+    "route_waypoints_m": [[-3.6, -0.9, 0.0], [5.9, -0.9, 0.0], [8.6, 1.0, 0.0], [8.6, 2.75, 0.0], [6.85, 2.75, 0.0], [5.25, 2.75, 0.0], [6.65, 7.45, 6.6], [6.65, 4.6, 6.6], [2.0, 4.6, 6.6], [2.0, 4.0, 6.6]],
+    "water_tanks": [
+      {"id": "tank_A", "module": "water_tank_1000", "plinth_center_xy_m": [1.45, 6.9], "plinth_base_z_m": 6.6, "plinth_top_z_m": 6.8, "service_envelope_bounds_m": {"x": [0.115, 2.785], "y": [5.565, 8.235]}, "feed_pipe_diameter_m": 0.032},
+      {"id": "tank_B", "module": "water_tank_1000", "plinth_center_xy_m": [4.15, 6.9], "plinth_base_z_m": 6.6, "plinth_top_z_m": 6.8, "service_envelope_bounds_m": {"x": [2.815, 5.485], "y": [5.565, 8.235]}, "feed_pipe_diameter_m": 0.032}
+    ],
+    "tank_layout_note": "Each 2.67 x 2.67 m service envelope includes the 1.47 m upper diameter plus 0.60 m on every side. Enclosures and props must remain outside these bounds; the headhouse west face at X=5.55 clears tank_B by 0.065 m. This is art-direction calibration, not structural certification.",
+    "tank_plumbing": "32 mm street feed branches to both tanks; 40 mm overflows join one visible downpipe at the west rear corner; 25 mm distribution drops serve the dwelling. Every pipe has clips at 1.20 m maximum spacing and terminates at a tank, manifold or drain."
+  },
+  "commercial_corner": {
+    "name": "MERCEARIA IRMÃOS REIS",
+    "reason": "A family-run daily-needs grocery anchors the corner and explains the wider opening, sign, shallow awning and protected sidewalk edge.",
+    "sign_center_m": [2.25, -0.055, 2.9],
+    "sign_size_m": [3.6, 0.055, 0.55],
+    "awning": {"width_m": 3.9, "projection_m": 1.05, "front_height_m": 2.55, "wall_height_m": 2.75, "material": "fiber_cement", "support": "Two 0.04 m square steel brackets fixed to the facade; no unsupported floating canopy."},
+    "price_board": {"size_m": [0.45, 0.025, 0.65], "location": "Inside the grocery jamb, not in the 1.20 m accessible sidewalk clear zone.", "maximum_count": 1},
+    "display_rule": "One low crate stack maximum, 0.60 x 0.40 x 0.75 m, wholly inside the shop threshold. No merchandise scatter in the route.",
+    "lettering": "Single hand-painted sign family, cream on teal; secondary text limited to PÃO • LEITE • GELO. No competing neon, brand collage or duplicated signs."
+  },
+  "infrastructure": {
+    "pole": {"module": "utility_pole_780", "center_xy_m": [7.95, -1.3], "base_z_m": 0.0, "sidewalk_clear_preserved_m": 1.2},
+    "attachment_points_m": {
+      "pole_main": [7.95, -1.3, 7.25],
+      "west_service_bracket": [7.35, 1.2, 5.6],
+      "east_service_bracket": [9.85, 2.2, 5.2],
+      "west_roof_junction": [0.3, 7.9, 7.0]
+    },
+    "spans": [
+      {"id": "street_feed", "from": "offslice_south_distribution", "to": "pole_main", "cable_count": 3, "bundle_diameter_m": 0.055, "sag_m": 0.45},
+      {"id": "west_drop", "from": "pole_main", "to": "west_service_bracket", "cable_count": 1, "diameter_m": 0.016, "sag_m": 0.32},
+      {"id": "east_service", "from": "pole_main", "to": "east_service_bracket", "cable_count": 1, "diameter_m": 0.016, "sag_m": 0.36},
+      {"id": "roof_low_voltage", "from": "west_service_bracket", "to": "west_roof_junction", "cable_count": 1, "diameter_m": 0.012, "sag_m": 0.2}
+    ],
+    "catenary_rule": "Author a supported droop between named endpoints. For a quadratic Bezier, place its control point at the chord midpoint lowered by 2*sag; the curve midpoint is then lowered by sag. Low LOD retains endpoints and sag with fewer segments.",
+    "support_rule": "Every span ends at a pole, bracket, junction box or off-slice continuation. Facade brackets have 0.12 m stand-offs and visible fasteners; no free wire ends or unsupported straight webs.",
+    "maximum_visible_spans_in_alley_camera": 3,
+    "pipe_clip_spacing_max_m": 1.2
+  },
+  "materials": {
+    "structural_concrete": {"color_hex": "#8C867A", "roughness": 0.88, "metallic": 0.0, "family": "cast_concrete"},
+    "ceramic_masonry": {"color_hex": "#9E513B", "roughness": 0.92, "metallic": 0.0, "family": "exposed_ceramic"},
+    "mortar": {"color_hex": "#8D8172", "roughness": 0.95, "metallic": 0.0, "family": "masonry_joint"},
+    "plaster_warm": {"color_hex": "#D7C7A8", "roughness": 0.86, "metallic": 0.0, "family": "painted_plaster"},
+    "plaster_sage": {"color_hex": "#8FAE9E", "roughness": 0.84, "metallic": 0.0, "family": "painted_plaster"},
+    "plaster_ochre": {"color_hex": "#C58D55", "roughness": 0.85, "metallic": 0.0, "family": "painted_plaster"},
+    "painted_steel": {"color_hex": "#B8B19D", "roughness": 0.58, "metallic": 0.35, "family": "painted_metal"},
+    "dark_steel": {"color_hex": "#353B3B", "roughness": 0.5, "metallic": 0.65, "family": "metal"},
+    "tank_blue": {"color_hex": "#246C9B", "roughness": 0.48, "metallic": 0.0, "family": "polyethylene"},
+    "fiber_cement": {"color_hex": "#636C6B", "roughness": 0.9, "metallic": 0.0, "family": "roof_sheet"},
+    "sidewalk_concrete": {"color_hex": "#9A9386", "roughness": 0.92, "metallic": 0.0, "family": "ground"},
+    "curb_concrete": {"color_hex": "#AAA394", "roughness": 0.9, "metallic": 0.0, "family": "ground"},
+    "alley_concrete": {"color_hex": "#817F73", "roughness": 0.9, "metallic": 0.0, "family": "ground"},
+    "asphalt_worn": {"color_hex": "#484944", "roughness": 0.96, "metallic": 0.0, "family": "ground"},
+    "sign_teal": {"color_hex": "#1E6663", "roughness": 0.65, "metallic": 0.0, "family": "sign_paint"},
+    "letter_cream": {"color_hex": "#F1E3C2", "roughness": 0.7, "metallic": 0.0, "family": "sign_paint"},
+    "timber_dark": {"color_hex": "#6C4932", "roughness": 0.78, "metallic": 0.0, "family": "wood"},
+    "window_recess": {"color_hex": "#252C2B", "roughness": 0.82, "metallic": 0.0, "family": "interior_shadow"},
+    "frosted_glass": {"color_hex": "#8A9B96", "roughness": 0.42, "metallic": 0.0, "transmission": 0.15, "family": "glass"},
+    "damp_concrete": {"color_hex": "#5E665B", "roughness": 0.7, "metallic": 0.0, "family": "localized_wear"},
+    "drain_grate": {"color_hex": "#454B49", "roughness": 0.62, "metallic": 0.7, "family": "metal"},
+    "utility_concrete": {"color_hex": "#87877C", "roughness": 0.9, "metallic": 0.0, "family": "cast_concrete"}
+  },
+  "wear_rules": {
+    "coverage": {"ground_contact_max_percent_of_wall": 18.0, "upper_facade_max_percent": 6.0, "single_exposed_brick_patch_max_m": [0.9, 1.4], "painted_color_patch_min_m": [2.4, 2.4]},
+    "moisture": "Rising damp reaches 0.15–0.45 m above ground contacts. The shaded alley drain may reach 0.60 m within 0.45 m of the channel; do not continue it around dry sunlit facades.",
+    "impact": "Corner chips occur below 0.80 m within 0.25 m of an exposed corner; one hero brick repair only on the east alley wall.",
+    "dust": "Horizontal coping and sill upward faces receive a restrained 10–20 percent lightening; vertical faces do not receive uniform dust.",
+    "water_streaks": "Only below coping joints, tank overflow and unguttered drip edges; width 0.03–0.12 m, length 0.25–0.90 m, maximum three streak families per facade.",
+    "post_rain": "Use damp_concrete only in the drain, gutter and two shallow alley depressions; no mirror-like wet coating over the whole map.",
+    "geometry": "Hero plaster losses are 0.015–0.04 m deep with a physical edge. Fine grain belongs in material, not silhouette noise."
+  },
+  "composition_and_light": {
+    "sun": {"azimuth_deg_clockwise_from_north": 315.0, "elevation_deg": 32.0, "color_hex": "#FFE0B0", "strength_note": "One direct sun; tune exposure to preserve cream plaster and teal sign color."},
+    "sky": {"horizon_color_hex": "#C8D8D4", "zenith_color_hex": "#5E91B4", "haze": "Light warm-gray distance separation only; use a world direction that remains stable at zenith, with no stretched cloud singularity."},
+    "conceptual_camera_status": "Composition guidance only for the conceptual site_assembly coordinates; not an as-built survey and not valid for direct placement in loop-02 geometry.",
+    "conceptual_cameras": [
+      {"id": "spawn", "position_m": [-3.6, -0.9, 1.65], "target_m": [4.0, 3.0, 2.5], "lens_mm": 24.0, "sensor_width_mm": 36.0, "required_read": "Human-scale shop threshold, corner turning into alley and upper-floor addition."},
+      {"id": "alley", "position_m": [8.6, 1.0, 1.65], "target_m": [8.6, 12.0, 2.4], "lens_mm": 25.0, "sensor_width_mm": 36.0, "required_read": "Two facade phases, clear walking line, drain, stair entry and three supported cable spans maximum."},
+      {"id": "corner", "position_m": [-4.2, -4.0, 1.65], "target_m": [3.4, 0.6, 2.35], "lens_mm": 28.0, "sensor_width_mm": 36.0, "required_read": "Curb, sidewalk, grocery sign, rolling opening and upper dwelling read as one inhabited corner."},
+      {"id": "rooftop", "position_m": [2.0, 4.0, 8.25], "target_m": [7.0, 13.5, 8.0], "lens_mm": 24.0, "sensor_width_mm": 36.0, "required_read": "Safe parapet, paired household tanks, stair arrival and three receding terrace bands."},
+      {"id": "sky", "position_m": [2.0, 4.0, 8.25], "target_m": [2.0, 4.0, 20.0], "lens_mm": 24.0, "sensor_width_mm": 36.0, "required_read": "Zenith remains undistorted; parapet and tank silhouette may anchor only the lower edge."}
+    ],
+    "candidate_integration_camera_contract": {
+      "revision": "loop-02-director-integration",
+      "status": "candidate_fixed_camera_set_owner_review_pending",
+      "authoritative_source": "maps/lajes/gauntlet/evidence/loop-02/cameras.json",
+      "source_schema_version": 1,
+      "coordinate_system": "Blender metres, Z up; rotation is XYZ Euler radians and quaternion WXYZ",
+      "layout_note": "Loop-02 geometry uses a different coordinate layout from the conceptual site_assembly. Use this candidate set, not conceptual_cameras, for loop-02 integration.",
+      "resolution_px": [1600, 1000],
+      "fixed_order": ["spawn", "alley", "corner", "rooftop", "sky"],
+      "cameras": [
+        {
+          "id": "spawn",
+          "object": "CAM_spawn",
+          "declared_spawn_id": "spawn",
+          "eye_height_above_spawn_m": 1.65,
+          "location_m": [0.0, -4.0, 1.6699999570846558],
+          "target_m": [0.0, 3.0, 1.85],
+          "rotation_euler_radians": [1.596505045890808, -0.0, 0.0],
+          "rotation_quaternion_wxyz": [0.6979591846466064, 0.7161375284194946, 0.0, 0.0],
+          "lens_mm": 24.0,
+          "sensor_width_mm": 36.0,
+          "clip_m": [0.05000000074505806, 250.0],
+          "purpose": "Declared ground spawn eye view; feet Z 0.02 m plus 1.65 m eye height",
+          "preview": "previews/spawn.png",
+          "low_preview": "previews/low/spawn.png"
+        },
+        {
+          "id": "alley",
+          "object": "CAM_alley",
+          "declared_spawn_id": null,
+          "eye_height_above_spawn_m": null,
+          "location_m": [0.75, -2.5, 1.649999976158142],
+          "target_m": [-2.5, 9.2, 3.05],
+          "rotation_euler_radians": [1.6855820417404175, 4.302400924416361e-08, 0.27094680070877075],
+          "rotation_quaternion_wxyz": [0.6592853665351868, 0.739663302898407, 0.10082226991653442, 0.08986605703830719],
+          "lens_mm": 22.0,
+          "sensor_width_mm": 36.0,
+          "clip_m": [0.05000000074505806, 250.0],
+          "purpose": "Eye-level alley facade and court approach",
+          "preview": "previews/alley.png",
+          "low_preview": "previews/low/alley.png"
+        },
+        {
+          "id": "corner",
+          "object": "CAM_corner",
+          "declared_spawn_id": "corner",
+          "eye_height_above_spawn_m": 1.65,
+          "location_m": [8.800000190734863, -8.0, 1.5199999809265137],
+          "target_m": [4.5, -4.4, 2.25],
+          "rotation_euler_radians": [1.7002389430999756, -6.362111548696703e-08, 0.8737748861312866],
+          "rotation_quaternion_wxyz": [0.5979115962982178, 0.6807863712310791, 0.3179160952568054, 0.2792149782180786],
+          "lens_mm": 22.0,
+          "sensor_width_mm": 36.0,
+          "clip_m": [0.05000000074505806, 250.0],
+          "purpose": "Declared corner road-approach spawn at 1.65 m eye height; grocery frontage and clear public walkway",
+          "preview": "previews/corner.png",
+          "low_preview": "previews/low/corner.png"
+        },
+        {
+          "id": "rooftop",
+          "object": "CAM_rooftop",
+          "declared_spawn_id": null,
+          "eye_height_above_spawn_m": null,
+          "location_m": [-2.950000047683716, 12.5, 8.649999618530273],
+          "target_m": [-4.75, 1.2, 6.55],
+          "rotation_euler_radians": [1.3892892599105835, -2.1075608813703184e-08, 2.9836277961730957],
+          "rotation_quaternion_wxyz": [0.06061764061450958, 0.05050509423017502, 0.6381168961524963, 0.765886127948761],
+          "lens_mm": 22.0,
+          "sensor_width_mm": 36.0,
+          "clip_m": [0.05000000074505806, 250.0],
+          "purpose": "Four-flight arrival, 6.60 m roof, parapets and both west water tanks",
+          "preview": "previews/rooftop.png",
+          "low_preview": "previews/low/rooftop.png"
+        },
+        {
+          "id": "sky",
+          "object": "CAM_sky",
+          "declared_spawn_id": null,
+          "eye_height_above_spawn_m": null,
+          "location_m": [-4.699999809265137, 5.400000095367432, 7.75],
+          "target_m": [-4.7, 5.4, 50.0],
+          "rotation_euler_radians": [3.141592502593994, -0.0, 0.0],
+          "rotation_quaternion_wxyz": [7.549790126404332e-08, 1.0, 0.0, 0.0],
+          "lens_mm": 18.0,
+          "sensor_width_mm": 36.0,
+          "clip_m": [0.05000000074505806, 250.0],
+          "purpose": "Direct +Z zenith polar-distortion test; camera up vector tracks world Y",
+          "preview": "previews/sky.png",
+          "low_preview": "previews/low/sky.png"
+        }
+      ]
+    },
+    "conceptual_clip_m": [0.05, 250.0],
+    "composition_rule": "Use foreground architectural edges to frame routes. Keep at least 35 percent of the rooftop frame as legible sky and do not fill every roof with tanks or aerials."
+  },
+  "lod_identity_and_budgets": {
+    "slice_caps": {
+      "med": {"triangles_max": 100000, "draw_calls_max": 90},
+      "low": {"triangles_max": 32000, "draw_calls_max": 40}
+    },
+    "category_caps": {
+      "two_hero_buildings": {"med": {"triangles": 56000, "calls": 44}, "low": {"triangles": 18000, "calls": 20}},
+      "water_tanks": {"med": {"triangles": 3000, "calls": 6}, "low": {"triangles": 640, "calls": 2}},
+      "infrastructure": {"med": {"triangles": 8000, "calls": 10}, "low": {"triangles": 2000, "calls": 4}},
+      "ground_and_stairs": {"med": {"triangles": 12000, "calls": 8}, "low": {"triangles": 4000, "calls": 4}},
+      "commercial_identity": {"med": {"triangles": 5000, "calls": 8}, "low": {"triangles": 1500, "calls": 4}},
+      "purposeful_props": {"med": {"triangles": 4000, "calls": 8}, "low": {"triangles": 1000, "calls": 3}},
+      "background_terraces": {"med": {"triangles": 12000, "calls": 6}, "low": {"triangles": 4000, "calls": 3}}
+    },
+    "retain_at_low": ["2.40 m alley and all traversable geometry", "3.30 m storey rhythm and upper setbacks", "opening positions and dark recesses", "three large facade color fields", "shop rolling opening and readable MERCEARIA IRMÃOS REIS sign", "0.15 m curb and sidewalk edge", "1.10 m roof parapet silhouette", "two 1000 L tank silhouettes and plinths", "all supported cable spans with simplified segments", "stair risers, treads, landings and collision", "three separated background terrace bands"],
+    "remove_or_merge_at_low": ["individual brick relief outside the hero patch", "small plaster chips and sill bevels", "secondary pipe clips and cable ties", "shutter slat microgeometry", "small price-board lettering", "tank ribs and lid fasteners", "distant window bars and roof props", "material layers below perceptual threshold"],
+    "identity_test": "At low, the five fixed cameras must still identify the same grocery corner, terraced alley and paired-tank rooftop. If a budget cut changes route, storey height, sign, tank count or skyline spacing, reduce secondary detail elsewhere."
+  },
+  "measurable_anti_rules": {
+    "anti_miniature": ["Every clear passage door is exactly 0.90 x 2.10 m unless explicitly larger.", "Storey floor-to-floor is 3.30 m; no facade is scaled independently to fit a camera.", "Conceptual cameras use eye Z=ground+1.65 m; loop-02 candidate camera elevations come only from candidate_integration_camera_contract because its geometry uses another layout.", "Stair riser 0.165 m and tread 0.30 m are geometry, not texture.", "Tank upper/lower diameters 1.47/1.29 m and total height 0.80 m, grocery sign 3.60 m and curb height 0.15 m provide scale witnesses in every hero group.", "No roof accessory may resemble a miniature dwelling; tanks remain tapered utilities on explicit full level plinths."],
+    "anti_clutter": ["Keep the 1.20 m navigation envelope and 1.20 m sidewalk clear zone free of props.", "Maximum three cable spans crossing the alley camera and one junction box per service drop.", "Maximum three base facade colors per elevation and one exposed-brick hero patch per elevation.", "Maximum one price board and one crate stack at the grocery, both inside the clear route.", "No more than two tanks on the accessible roof; preserve at least 35 percent sky in rooftop composition.", "Do not repeat a facade phase more than two adjacent 1.20 m bays without a structural seam or use change.", "Large color patches are at least 2.40 x 2.40 m; wear never exceeds 18 percent at ground contact or 6 percent on upper walls.", "No prop without a use, support and owner: groceries belong to shop, tanks to water system, cables to service network."],
+    "anti_repetition": ["Vary upper setbacks and phase boundaries by structural bay, not random object scale.", "Identical paired tanks are intentional capacity redundancy; do not clone that pairing across background roofs.", "No identical blue glass grid and no uniform peeling mask across multiple facades."]
+  },
+  "reference_category_links": [
+    {"category": "openings_and_circulation", "existing_reference": "https://www.youtube.com/shorts/QqQmPkyLkdM", "applied_to": ["door_entry_090", "window_room_120", "opening_rules"]},
+    {"category": "street_poles_wiring_sidewalk", "existing_reference": "https://www.youtube.com/shorts/TkXng5bGQUs", "applied_to": ["sidewalk", "infrastructure"]},
+    {"category": "alley_depth_and_junctions", "existing_reference": "https://www.youtube.com/shorts/s3LNGJro0Y8", "applied_to": ["alley", "junction_rules", "cameras.alley"]},
+    {"category": "rolling_doors_bars_sills_tanks", "existing_reference": "https://www.youtube.com/shorts/fugtKMTzmA0", "applied_to": ["shop_rolling_300", "water_tank_1000", "security_bars"]},
+    {"category": "roof_objects_extensions", "existing_reference": "rocinha-telhados", "applied_to": ["water_tanks", "background_terraces"]},
+    {"category": "connected_wire_bundles", "existing_reference": "rocinha-fios", "applied_to": ["infrastructure.spans"]},
+    {"category": "height_variation_and_masonry", "existing_reference": "rocinha-densidade", "applied_to": ["facade_rules", "east_plot.upper_setback"]},
+    {"category": "hillside_layers_and_haze", "existing_reference": "alemao-camadas", "applied_to": ["background_terraces", "composition_and_light.sky"]},
+    {"category": "dense_skyline_small_variations", "existing_reference": "mare-silhueta", "applied_to": ["background_terraces", "anti_repetition"]},
+    {"category": "localized_plaster_damage", "existing_reference": "damaged-plaster", "applied_to": ["wear_rules"]},
+    {"category": "directional_light_and_trim_shadows", "existing_reference": "urban-alley", "applied_to": ["composition_and_light"]}
+  ],
+  "limitations": [
+    "Reference links only inherit categories already listed by the research matrix and legacy manifest; this kit does not claim frame review, measurement extraction or research completion.",
+    "The named place, dates, grocery and exact dimensions are a fictional constructible premise requiring research and owner review before broader production reuse.",
+    "The alley is level because this slice occupies one terrace; later slices must resolve other terrace connections and drainage at the hillside scale.",
+    "The roof is player-accessible by stairs, not step-free; no universal-accessibility claim is made.",
+    "Triangle and draw-call caps are slice authoring budgets, not measured runtime performance or approval of the owner's visual target.",
+    "Conceptual camera lenses assume a 36 mm horizontal sensor and must not be placed directly in loop-02 geometry.",
+    "The loop-02 fixed-camera set is a candidate integration contract mirrored from its public evidence export; owner review remains pending and no approval is claimed."
+  ]
+}

@@ -10,7 +10,9 @@
     "check:asset-gen": "node tools/checks/gen-asset-pbr-check.mjs",
     "check:pistol-source": "node tools/checks/pistol-hires-pilot-check.mjs",
     "smoke:pack": "node tools/smoke-pack.mjs",
-    "pack:validate": "node tools/validate-pack.mjs"
+    "pack:build-lajes": "node tools/build-lajes-pack.mjs",
+    "pack:validate": "node tools/validate-pack.mjs",
+    "gauntlet:lajes": "node tools/validate-lajes-gauntlet.mjs"
   },
   "dependencies": {
     "@gltf-transform/core": "^4.4.1",

@@ -1,0 +1,177 @@
+{
+  "cameras": [
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "id": "spawn",
+      "lens_mm": 24.0,
+      "location_m": [
+        0.0,
+        -10.5,
+        1.649999976158142
+      ],
+      "object": "CAM_spawn",
+      "preview": "previews/spawn.png",
+      "rotation_euler_radians": [
+        1.610775113105774,
+        -0.0,
+        0.0
+      ],
+      "rotation_quaternion_wxyz": [
+        0.692831814289093,
+        0.7210991978645325,
+        0.0,
+        0.0
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        0.0,
+        2.0,
+        2.15
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "id": "alley",
+      "lens_mm": 22.0,
+      "location_m": [
+        0.75,
+        -2.5,
+        1.649999976158142
+      ],
+      "object": "CAM_alley",
+      "preview": "previews/alley.png",
+      "rotation_euler_radians": [
+        1.6855820417404175,
+        4.302400924416361e-08,
+        0.27094680070877075
+      ],
+      "rotation_quaternion_wxyz": [
+        0.6592853665351868,
+        0.739663302898407,
+        0.10082226991653442,
+        0.08986605703830719
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        -2.5,
+        9.2,
+        3.05
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "id": "corner",
+      "lens_mm": 27.0,
+      "location_m": [
+        10.800000190734863,
+        -10.199999809265137,
+        3.0999999046325684
+      ],
+      "object": "CAM_corner",
+      "preview": "previews/corner.png",
+      "rotation_euler_radians": [
+        1.470285415649414,
+        -3.215481925167296e-08,
+        0.8424789309501648
+      ],
+      "rotation_quaternion_wxyz": [
+        0.6768946647644043,
+        0.612062931060791,
+        0.2742409110069275,
+        0.3032894432544708
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        3.4,
+        -3.6,
+        2.1
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "id": "rooftop",
+      "lens_mm": 24.0,
+      "location_m": [
+        -3.1500000953674316,
+        12.75,
+        7.550000190734863
+      ],
+      "object": "CAM_rooftop",
+      "preview": "previews/rooftop.png",
+      "rotation_euler_radians": [
+        1.4143948554992676,
+        5.3466070681906785e-08,
+        2.9565675258636475
+      ],
+      "rotation_quaternion_wxyz": [
+        0.07022647559642792,
+        0.06002023443579674,
+        0.646927535533905,
+        0.7569350004196167
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        -4.9,
+        3.4,
+        6.05
+      ]
+    },
+    {
+      "clip_m": [
+        0.05000000074505806,
+        250.0
+      ],
+      "id": "sky",
+      "lens_mm": 25.0,
+      "location_m": [
+        -4.699999809265137,
+        5.400000095367432,
+        7.550000190734863
+      ],
+      "object": "CAM_sky",
+      "preview": "previews/sky.png",
+      "rotation_euler_radians": [
+        1.5742712020874023,
+        1.7204797586600762e-09,
+        -0.33273911476135254
+      ],
+      "rotation_quaternion_wxyz": [
+        0.6961307525634766,
+        0.6985539197921753,
+        -0.11730237305164337,
+        -0.11689546704292297
+      ],
+      "sensor_width_mm": 36.0,
+      "target_m": [
+        0.0,
+        19.0,
+        7.6
+      ]
+    }
+  ],
+  "coordinate_system": "Blender metres, Z up; rotation is XYZ Euler radians and quaternion WXYZ",
+  "fixed_order": [
+    "spawn",
+    "alley",
+    "corner",
+    "rooftop",
+    "sky"
+  ],
+  "resolution_px": [
+    1600,
+    1000
+  ],
+  "schema_version": 1
+}

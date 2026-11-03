@@ -1,0 +1,167 @@
+{
+  "blender_version": "5.2.0 LTS",
+  "candidate": {
+    "approval": "candidate only; not owner-approved or runtime-promoted",
+    "id": "lajes",
+    "kind": "map",
+    "version": "0.1.0"
+  },
+  "captures": [
+    {
+      "bytes": 1945588,
+      "camera": "spawn",
+      "path": "previews/spawn.png",
+      "public_evidence": "spawn.png",
+      "render_representation": "medium",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "c46d7d0972f1e1c81b78a630724f1d2d5c2a0f78db646b5f0376ca9bd7d9d6a1"
+    },
+    {
+      "bytes": 1975742,
+      "camera": "alley",
+      "path": "previews/alley.png",
+      "public_evidence": "alley.png",
+      "render_representation": "medium",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "9eb85957b17917d211cdd3b27527f3a118a5d43f3d987d4d47147edb881fcdd8"
+    },
+    {
+      "bytes": 1861166,
+      "camera": "corner",
+      "path": "previews/corner.png",
+      "public_evidence": "corner.png",
+      "render_representation": "medium",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "186fa70ab73842241805b6657b08a66f5e52bd885b395e225fc00ca9540ba8e4"
+    },
+    {
+      "bytes": 1681408,
+      "camera": "rooftop",
+      "path": "previews/rooftop.png",
+      "public_evidence": "rooftop.png",
+      "render_representation": "medium",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "7f54a9580c4bf025612bd1dfc718e873e8502b3cdcdb8794cda4c65d18ecff9e"
+    },
+    {
+      "bytes": 1225133,
+      "camera": "sky",
+      "path": "previews/sky.png",
+      "public_evidence": "sky.png",
+      "render_representation": "medium",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "78d7045f0c04ad123f3f4f2327a3155f067313326c55c26552c8d59dc1f7512d"
+    }
+  ],
+  "change_metadata": "change-metadata.json",
+  "engine": "BLENDER_EEVEE",
+  "limitations": [
+    "Fixed-camera renders are visual evidence, not runtime performance or physics certification.",
+    "Loop-01 accepted and rejected evidence remains unchanged; loop-02 corrections are described in change-metadata.json."
+  ],
+  "loop": "loop-02",
+  "low_captures": [
+    {
+      "bytes": 1965032,
+      "camera": "spawn",
+      "path": "previews/low/spawn.png",
+      "public_evidence": "low/spawn.png",
+      "render_representation": "low",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "f8033688f409849ec016c8e9600d91bfa46b0085f29944793dc3acf6b15aeab4"
+    },
+    {
+      "bytes": 1976218,
+      "camera": "alley",
+      "path": "previews/low/alley.png",
+      "public_evidence": "low/alley.png",
+      "render_representation": "low",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "dd11a3d75d771350119f10d21acac3ce56f8d3989b638990968159562cd74b3d"
+    },
+    {
+      "bytes": 1852116,
+      "camera": "corner",
+      "path": "previews/low/corner.png",
+      "public_evidence": "low/corner.png",
+      "render_representation": "low",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "cf924dcce5ac5056b430b004612e6646c27f36f25846ce2cc4d8da8e4093c728"
+    },
+    {
+      "bytes": 1660657,
+      "camera": "rooftop",
+      "path": "previews/low/rooftop.png",
+      "public_evidence": "low/rooftop.png",
+      "render_representation": "low",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "072cb691ae77d9ba854bacb5840a544c77f7f186d04cd81879030689c7bfb203"
+    },
+    {
+      "bytes": 1225133,
+      "camera": "sky",
+      "path": "previews/low/sky.png",
+      "public_evidence": "low/sky.png",
+      "render_representation": "low",
+      "resolution_px": [
+        1600,
+        1000
+      ],
+      "sha256": "b39c25c18b1a63e0903c0d714120e678ff5f404ddae8413319c26e361a7cf120"
+    }
+  ],
+  "prior_loop_rejected_attempts": [
+    {
+      "loop": "loop-01",
+      "observed_issues": [
+        "The commercial corner render showed two produce crates encroaching on the sloped curb-ramp area at X=2.90 and X=3.55 metres.",
+        "Blender 5.2.0 emitted 'Mesh Road_asphalt_carriageway_mesh.001 is not valid, and may be exported wrongly' while exporting the joined/decimated low LOD."
+      ],
+      "private_evidence": "previews/rejected/",
+      "public_evidence": "loop-01/rejected/",
+      "remediation": [
+        "Move produce crates outside the curb ramp and door envelopes.",
+        "Validate and update the joined low-LOD mesh after decimation and before GLB export; regenerate all dependent hashes and reports."
+      ]
+    }
+  ],
+  "rejected_attempt": {
+    "private_evidence": "previews/rejected-loop02-first/",
+    "public_evidence": "rejected/",
+    "status": "rejected_first_loop_02_attempt"
+  },
+  "resolution_px": [
+    1600,
+    1000
+  ],
+  "route_sequence": "route-sequence.json",
+  "schema_version": 1,
+  "seed": 12061103
+}

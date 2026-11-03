@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "candidate": { "kind": "map", "id": "lajes", "version": "0.1.0", "status": "candidate" },
+  "bounds_blender_z_up": {
+    "min_m": [-5, -5, 0],
+    "max_m": [5, 10, 8],
+    "dimensions_m": [10, 15, 8]
+  },
+  "metric_contract": {
+    "unit_metres": 1,
+    "player_eye_height": 1.65,
+    "clear_door_width": 0.9,
+    "clear_door_height": 2.1,
+    "stair_riser_max": 0.175,
+    "stair_tread_min": 0.28,
+    "stair_clear_width": 1.2
+  },
+  "cameras": {
+    "fixed_order": ["spawn", "alley", "corner", "rooftop", "sky"],
+    "cameras": [
+      { "id": "spawn", "location_m": [0, 0, 1.65], "target_m": [0, 4, 1.65], "preview": "previews/spawn.png" },
+      { "id": "alley", "location_m": [0, 2, 1.65], "target_m": [0, 8, 1.65], "preview": "previews/alley.png" },
+      { "id": "corner", "location_m": [3, 5, 1.65], "target_m": [0, 8, 1.4], "preview": "previews/corner.png" },
+      { "id": "rooftop", "location_m": [0, 8, 7.65], "target_m": [4, 10, 6.5], "preview": "previews/rooftop.png" },
+      { "id": "sky", "location_m": [0, 8, 7.65], "target_m": [0, 8, 30], "preview": "previews/sky.png" }
+    ]
+  },
+  "captures": [
+    { "camera": "spawn", "path": "previews/spawn.png", "public_evidence": "spawn.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "alley", "path": "previews/alley.png", "public_evidence": "alley.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "corner", "path": "previews/corner.png", "public_evidence": "corner.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "rooftop", "path": "previews/rooftop.png", "public_evidence": "rooftop.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "sky", "path": "previews/sky.png", "public_evidence": "sky.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" }
+  ],
+  "low_captures": [
+    { "camera": "spawn", "path": "previews/low/spawn.png", "public_evidence": "low/spawn.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "alley", "path": "previews/low/alley.png", "public_evidence": "low/alley.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "corner", "path": "previews/low/corner.png", "public_evidence": "low/corner.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "rooftop", "path": "previews/low/rooftop.png", "public_evidence": "low/rooftop.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+    { "camera": "sky", "path": "previews/low/sky.png", "public_evidence": "low/sky.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" }
+  ],
+  "route_sequence": {
+    "schema_version": 1,
+    "renderer": "BLENDER_EEVEE",
+    "evidence_type": "Blender Eevee authored camera-pose sequence; not runtime movement or physics evidence",
+    "frames": [
+      { "id": "01-ground", "route_node": "route-0", "location_m": [0, 0, 1.65], "target_m": [0, 1, 1.65], "path": "previews/route/01-ground.png", "public_evidence": "route/01-ground.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+      { "id": "02-court-passage", "route_node": "route-1", "location_m": [0, 1, 1.65], "target_m": [0, 2, 1.65], "path": "previews/route/02-court-passage.png", "public_evidence": "route/02-court-passage.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+      { "id": "03-flight-02", "route_node": "route-2", "location_m": [0, 2, 1.65], "target_m": [0, 3, 1.65], "path": "previews/route/03-flight-02.png", "public_evidence": "route/03-flight-02.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+      { "id": "04-landing-02", "route_node": "route-3", "location_m": [0, 3, 1.65], "target_m": [0, 4, 1.65], "path": "previews/route/04-landing-02.png", "public_evidence": "route/04-landing-02.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+      { "id": "05-flight-04", "route_node": "route-4", "location_m": [0, 4, 1.65], "target_m": [0, 5, 1.65], "path": "previews/route/05-flight-04.png", "public_evidence": "route/05-flight-04.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" },
+      { "id": "06-roof-arrival", "route_node": "route-5", "location_m": [0, 5, 1.65], "target_m": [0, 6, 1.65], "path": "previews/route/06-roof-arrival.png", "public_evidence": "route/06-roof-arrival.png", "bytes": 68, "sha256": "431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460" }
+    ]
+  },
+  "routes": {
+    "alley": {
+      "connected": true,
+      "traversable": true,
+      "minClearWidthMeters": 1.2,
+      "points": [[0, 0, 0], [0, 10, 0]]
+    },
+    "rooftop": {
+      "connected": true,
+      "traversable": true,
+      "accessibleByStairs": true,
+      "minClearWidthMeters": 1.2,
+      "elevationAscentMeters": 6,
+      "points": [[0, 0, 0], [0, 4, 3], [0, 8, 6]]
+    }
+  },
+  "roof_access": {
+    "spawn_to_roof_graph_connected": true,
+    "continuous_modeled_roof_access": true,
+    "roof_parapet_height_m": 1.1,
+    "west_tank_plinth_to_route_clearance_m": 0.725,
+    "west_tank_service_perimeter_at_least_0_60_m": true
+  },
+  "lods": {
+    "medium": {
+      "path": "lods/medium/scene.glb",
+      "triangles": 1000,
+      "primitives": 2,
+      "bytes": 10,
+      "sha256": "59296a1d85649e18251b3eb88f7743194fa7b32cad63c05117cc81231a8193b9"
+    },
+    "low": {
+      "path": "lods/low/scene.glb",
+      "triangles": 300,
+      "primitives": 1,
+      "bytes": 7,
+      "sha256": "e106a2b7551bbf85bd1249d892ddfea93190df4c370d7f44b8d545919cd9a685"
+    }
+  },
+  "construction_facts": {
+    "doors": { "clear_width_m": 0.9, "clear_height_m": 2.1, "modeled_as": "Synthetic smoke fixture" },
+    "stairs": { "flights": 2, "riser_m": 0.17, "tread_m": 0.3, "clear_width_m": 1.2 },
+    "commercial_corner": {
+      "shop": "Synthetic Mercearia",
+      "curb_height_m": 0.18,
+      "sidewalk_width_m": 1.7,
+      "material_junctions": ["asphalt", "curb concrete", "sidewalk concrete", "facade plaster"]
+    },
+    "water_tanks": {
+      "count": 2,
+      "on_accessible_west_roof": true,
+      "west_south_center_m": [-2, 3, 6],
+      "west_north_center_m": [-2, 7, 6]
+    },
+    "skyline": { "context_house_count": 3, "varied_roof_heights_m": [5, 7, 6] }
+  }
+}

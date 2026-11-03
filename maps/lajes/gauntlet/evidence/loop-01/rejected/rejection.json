@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "loop": "loop-01",
+  "status": "rejected",
+  "observed_issues": [
+    "The commercial corner render showed two produce crates encroaching on the sloped curb-ramp area at X=2.90 and X=3.55 metres.",
+    "Blender 5.2.0 emitted 'Mesh Road_asphalt_carriageway_mesh.001 is not valid, and may be exported wrongly' while exporting the joined/decimated low LOD."
+  ],
+  "preserved_evidence": [
+    "spawn.png",
+    "alley.png",
+    "corner.png",
+    "rooftop.png",
+    "sky.png",
+    "cameras.json",
+    "capture-metadata.json"
+  ],
+  "private_additional_evidence": [
+    "maps/lajes/build/vertical-slice/previews/rejected/scene-report.json",
+    "maps/lajes/build/vertical-slice/previews/rejected/lajes-vertical-slice-low-warning.glb"
+  ],
+  "required_remediation": [
+    "Move produce crates outside the curb ramp and door envelopes.",
+    "Validate and update the joined low-LOD mesh after decimation and before GLB export; regenerate all dependent hashes and reports."
+  ]
+}

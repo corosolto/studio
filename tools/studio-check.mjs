@@ -9,11 +9,21 @@ const requiredDirectories = ['art-bible', 'references', 'decisions', 'maps', 'ch
 for (const directory of requiredDirectories) {
   if (!statSync(path.join(root, directory), { throwIfNoEntry: false })?.isDirectory()) throw new Error(`Required directory is missing: ${directory}`);
 }
-const requiredFiles = ['tools/blender/viewmodels/build_ak_hires_pilot.py', 'tools/blender/viewmodels/build_pistol_hires_pilot.py'];
+const requiredFiles = [
+  'tools/blender/viewmodels/build_ak_hires_pilot.py',
+  'tools/blender/viewmodels/build_pistol_hires_pilot.py',
+  'tools/build-lajes-pack.mjs',
+  'tools/validate-lajes-gauntlet.mjs',
+  'tools/lib/pack.mjs',
+  'tools/lib/lajes-gauntlet.mjs',
+  'tools/lib/lajes-spatial.mjs',
+  'tools/lib/glb-inspect.mjs',
+  'maps/lajes/gauntlet/fixtures/scene-report.valid.json',
+];
 for (const file of requiredFiles) {
-  if (!statSync(path.join(root, file), { throwIfNoEntry: false })?.isFile()) throw new Error(`Required authoring recipe is missing: ${file}`);
+  if (!statSync(path.join(root, file), { throwIfNoEntry: false })?.isFile()) throw new Error(`Required Studio contract file is missing: ${file}`);
 }
-for (const file of ['package.json', 'mint-assets.json', 'schemas/asset-pack.schema.json']) {
+for (const file of ['package.json', 'mint-assets.json', 'schemas/asset-pack.schema.json', 'maps/lajes/gauntlet/fixtures/scene-report.valid.json']) {
   JSON.parse(readFileSync(path.join(root, file), 'utf8'));
 }
 const walk = (directory, ignored = new Set()) => readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
