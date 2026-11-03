@@ -9,6 +9,26 @@ Do not rewrite the game or migrate its architecture in a single program. Use an 
 
 The English migration must cover source code, developer documentation, automation and agent-facing workflows. It must not translate Brazilian player-facing content, cultural names, public IDs, database keys, URLs, asset node names or historical evidence. The game already has an English localization path; expand it instead of replacing Portuguese content.
 
+## Delivery window and strategic outcomes
+
+The owner-defined sequence is:
+
+1. Finish Javaporcos and produce/publish its trailer and campaign.
+2. Finish Operação Flavio, stabilize it and complete its public communication.
+3. Start the architecture migration only after the owner declares that release stable.
+
+Until then, release-critical gameplay work takes priority. Architecture work is limited to research, baseline capture and non-runtime documentation; no structural migration competes with these launches.
+
+The re-architecture has exactly three strategic outcomes:
+
+| Outcome | Required result |
+|---|---|
+| 1. Repeatable multiplatform deployment | Thin platform shells, signed content distribution and reproducible store builds without rewriting game rules per target |
+| 2. Scalable and consistent community production | Explicit contracts, reliable processes, safe creator access, provenance and evidence instead of ad-hoc asset contributions |
+| 3. Conference-quality engineering | Readable English code and documentation, defensible module boundaries, reproducible tests and architecture diagrams suitable for public technical talks in Austria and France |
+
+Conference readiness is an outcome of better engineering, not a cosmetic documentation pass. Every claimed improvement must remain reproducible in the public repository.
+
 ## Current foundations worth preserving
 
 | Area | Existing evidence | Decision |
