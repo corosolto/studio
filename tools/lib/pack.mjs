@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { open, readFile, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { characterDeclaredBytes, characterRoleEntries, validateCharacterPack } from './character-pack.mjs';
 
 const schema = JSON.parse(await readFile(new URL('../../schemas/asset-pack.schema.json', import.meta.url), 'utf8'));
 const validateSchema = new Ajv({ allErrors: true, strict: true }).compile(schema);
@@ -59,7 +60,7 @@ export function validateManifestStructure(manifest) {
   }
 
   const roleOwners = new Map();
-  for (const entry of mapRoleEntries(manifest)) {
+  for (const entry of [...mapRoleEntries(manifest), ...characterRoleEntries(manifest)]) {
     assertPackageRelativePath(entry.path, `${entry.role} path`);
     assertNotExecutableJavaScript(entry.path);
     if (roleOwners.has(entry.path)) {
@@ -69,11 +70,14 @@ export function validateManifestStructure(manifest) {
     roleOwners.set(entry.path, entry.role);
   }
 
-  if (manifest.kind === 'map') {
+  if (manifest.kind === 'map' || manifest.kind === 'character') {
     for (const file of manifest.files) {
-      if (!roleOwners.has(file.path)) throw new Error(`Pack file has no map role declaration: ${file.path}`);
+      if (!roleOwners.has(file.path)) throw new Error(`Pack file has no ${manifest.kind} role declaration: ${file.path}`);
     }
-    if (!manifest.lods.low?.length) throw new Error('Map pack is missing its low LOD profile');
+  }
+  if (manifest.kind === 'map' && !manifest.lods.low?.length) throw new Error('Map pack is missing its low LOD profile');
+  if (manifest.kind === 'character' && characterDeclaredBytes(manifest) > manifest.budgets.bytes) {
+    throw new Error(`Character pack declares ${characterDeclaredBytes(manifest)} bytes, over its ${manifest.budgets.bytes}-byte budget`);
   }
   return manifest;
 }
@@ -130,12 +134,15 @@ export async function validatePack({ manifestPath, packageRoot = path.dirname(ma
   const manifest = JSON.parse(await readFile(resolvedManifestPath, 'utf8'));
   validateManifestStructure(manifest);
 
+  const absolutes = new Map();
   for (const file of manifest.files) {
     const { absolute, info } = await resolvePackageFile(resolvedPackageRoot, file.path);
     await assertNoExecutableMagic(file.path, absolute);
     if (info.size !== file.bytes) throw new Error(`Byte size mismatch: ${file.path}`);
     const sha256 = await hashFile(absolute);
     if (sha256 !== file.sha256) throw new Error(`SHA-256 mismatch: ${file.path}`);
+    absolutes.set(file.path, absolute);
   }
-  return { manifest, manifestPath: resolvedManifestPath, packageRoot: resolvedPackageRoot };
+  const character = manifest.kind === 'character' ? await validateCharacterPack(manifest, absolutes) : undefined;
+  return { manifest, manifestPath: resolvedManifestPath, packageRoot: resolvedPackageRoot, character };
 }
