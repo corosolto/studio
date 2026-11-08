@@ -224,6 +224,10 @@ try {
     value.files.push({ path: 'evidence/shebang.bin', sha256: createHash('sha256').update(shebangBytes).digest('hex'), bytes: shebangBytes.length });
   });
   fs.rmSync(shebangPath);
+  // Character-only field names stay unconstrained data on map manifests.
+  writeJson(manifestPath, { ...manifest, model: { note: 'map metadata' }, skeleton: 7, animations: [], rights: 'n/a' });
+  await validatePack({ manifestPath, packageRoot: output });
+  console.log('PASS Map manifest keeps character-only field names as unconstrained data');
   writeJson(manifestPath, manifest);
   await validatePack({ manifestPath, packageRoot: output });
 

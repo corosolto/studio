@@ -56,10 +56,6 @@
     "navigation": { "$ref": "#/$defs/packagePathList" },
     "spawns": { "$ref": "#/$defs/packagePathList" },
     "regions": { "$ref": "#/$defs/packagePathList" },
-    "model": { "$ref": "#/$defs/glbPath" },
-    "skeleton": { "type": "string", "minLength": 1 },
-    "animations": { "type": "object", "additionalProperties": { "$ref": "#/$defs/glbPath" } },
-    "rights": { "type": "object" },
     "budgets": { "type": "object" },
     "previews": { "type": "array", "items": { "type": "string" } },
     "evidence": { "type": "array", "items": { "type": "string" } }
