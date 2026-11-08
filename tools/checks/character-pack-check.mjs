@@ -58,22 +58,22 @@ function floats(values) {
   return bytes;
 }
 
-function modelGlb({ joints = meshy28Joints, triangles = 12, skin = true, weights = true } = {}) {
+function modelGlb({ joints = meshy28Joints, triangles = 12, skin = true, weights = true, mode = 4, jointsAccessor = 1, jointValue = 0 } = {}) {
   const nodes = skeletonNodes(joints);
   const vertexCount = triangles * 3;
   const positions = floats(Array.from({ length: vertexCount * 3 }, (_, index) => ((index * 7) % 11) * 0.01));
-  const jointIndices = Buffer.alloc(vertexCount * 4);
+  const jointIndices = Buffer.alloc(vertexCount * 4, jointValue);
   const jointWeights = floats(Array.from({ length: vertexCount * 4 }, (_, index) => (index % 4 === 0 ? 1 : 0)));
   const indices = Buffer.alloc(vertexCount * 2);
   for (let index = 0; index < vertexCount; index += 1) indices.writeUInt16LE(index, index * 2);
   const inverseBind = floats(joints.flatMap(() => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]));
-  const attributes = { POSITION: 0, JOINTS_0: 1, ...(weights ? { WEIGHTS_0: 2 } : {}) };
+  const attributes = { POSITION: 0, JOINTS_0: jointsAccessor, ...(weights ? { WEIGHTS_0: 2 } : {}) };
   nodes.push({ name: 'Body', mesh: 0, ...(skin ? { skin: 0 } : {}) });
   return glb({
     scene: 0,
     scenes: [{ nodes: [0, nodes.length - 1] }],
     nodes,
-    meshes: [{ name: 'Body', primitives: [{ attributes, indices: 3, mode: 4 }] }],
+    meshes: [{ name: 'Body', primitives: [{ attributes, indices: 3, mode }] }],
     accessors: [
       { bufferView: 0, componentType: 5126, count: vertexCount, type: 'VEC3', min: [0, 0, 0], max: [0.1, 0.1, 0.1] },
       { bufferView: 1, componentType: 5121, count: vertexCount, type: 'VEC4' },
@@ -91,20 +91,23 @@ function modelGlb({ joints = meshy28Joints, triangles = 12, skin = true, weights
   ]);
 }
 
-function clipGlb(name, { target = 'Hips' } = {}) {
+function clipGlb(name, { target = 'Hips', path: channelPath = 'rotation', keyframes = 2, outputValues = keyframes } = {}) {
   const nodes = skeletonNodes(meshy28Joints);
   if (target !== 'Hips') nodes.push({ name: target });
   const targetNode = nodes.findIndex(node => node.name === target);
+  const input = keyframes ? [{ bufferView: 0, componentType: 5126, count: keyframes, type: 'SCALAR', min: [0], max: [keyframes - 1] }] : [{ componentType: 5126, count: 0, type: 'SCALAR' }];
+  const output = outputValues ? [{ bufferView: keyframes ? 1 : 0, componentType: 5126, count: outputValues, type: 'VEC4' }] : [{ componentType: 5126, count: 0, type: 'VEC4' }];
+  const chunks = [
+    ...(keyframes ? [{ bytes: floats(Array.from({ length: keyframes }, (_, index) => index)) }] : []),
+    ...(outputValues ? [{ bytes: floats(Array.from({ length: outputValues }, () => [0, 0, 0, 1]).flat()) }] : []),
+  ];
   return glb({
     scene: 0,
     scenes: [{ nodes: [0] }],
     nodes,
-    animations: [{ name, channels: [{ sampler: 0, target: { node: targetNode, path: 'rotation' } }], samplers: [{ input: 0, output: 1, interpolation: 'LINEAR' }] }],
-    accessors: [
-      { bufferView: 0, componentType: 5126, count: 2, type: 'SCALAR', min: [0], max: [1] },
-      { bufferView: 1, componentType: 5126, count: 2, type: 'VEC4' },
-    ],
-  }, [{ bytes: floats([0, 1]) }, { bytes: floats([0, 0, 0, 1, 0, 0, 0, 1]) }]);
+    animations: [{ name, channels: [{ sampler: 0, target: { node: targetNode, ...(channelPath ? { path: channelPath } : {}) } }], samplers: [{ input: 0, output: 1, interpolation: 'LINEAR' }] }],
+    accessors: [...input, ...output],
+  }, chunks);
 }
 
 const allStates = [...requiredCharacterStates, ...optionalCharacterStates];
@@ -176,6 +179,9 @@ try {
   });
   await expectRejection('Clip name differs from its state', /no animation named "jump"/, { replace: { 'animations/jump.glb': clipGlb('Jump') } });
   await expectRejection('Clip drives no meshy-28 bone', /drives no meshy-28 bone/, { replace: { 'animations/run.glb': clipGlb('run', { target: 'mixamorig:Hips' }) } });
+  await expectRejection('Clip channel without target path', /animation "shoot" has an invalid channel/, { replace: { 'animations/shoot.glb': clipGlb('shoot', { path: null }) } });
+  await expectRejection('Clip without keyframes', /animation "death" has no keyframes/, { replace: { 'animations/death.glb': clipGlb('death', { keyframes: 0 }) } });
+  await expectRejection('Clip output count differs from keyframes', /output values that do not match its rotation keyframes/, { replace: { 'animations/crouch.glb': clipGlb('crouch', { keyframes: 2, outputValues: 1 }) } });
   await expectRejection('Same clip declared for two states', /Duplicate declared path/, { mutate: manifest => { manifest.animations.walk = manifest.animations.idle; } });
 
   await expectRejection('Wrong skeleton id', /\/skeleton must be equal to constant/, { mutate: manifest => { manifest.skeleton = 'mixamo-65'; } });
@@ -186,6 +192,13 @@ try {
   await expectRejection('Missing duplicated finger helper', /27 joints; missing Curl_L<LeftHand/, { replace: { 'model/fixture-character.glb': modelGlb({ joints: meshy28Joints.slice(0, 27) }) } });
   await expectRejection('Model without skin', /exactly one skin/, { replace: { 'model/fixture-character.glb': modelGlb({ skin: false }) } });
   await expectRejection('Skinned primitive without weights', /missing JOINTS_0 or WEIGHTS_0/, { replace: { 'model/fixture-character.glb': modelGlb({ weights: false }) } });
+  await expectRejection('JOINTS_0 references a missing accessor', /missing JOINTS_0 or WEIGHTS_0/, { replace: { 'model/fixture-character.glb': modelGlb({ jointsAccessor: 999 }) } });
+  await expectRejection('JOINTS_0 is not a joint VEC4', /JOINTS_0 must be an unsigned byte or short VEC4/, { replace: { 'model/fixture-character.glb': modelGlb({ jointsAccessor: 2 }) } });
+  await expectRejection('JOINTS_0 value outside the skin', /JOINTS_0 vertex 0 references a joint outside the skin/, { replace: { 'model/fixture-character.glb': modelGlb({ jointValue: 28 }) } });
+  await expectRejection('Triangle strip hiding triangles from the budget', /character primitives must be triangle lists/, {
+    replace: { 'model/fixture-character.glb': modelGlb({ mode: 5 }) },
+    mutate: manifest => { manifest.budgets.triangles = 1; },
+  });
   const badMagic = Buffer.from(modelGlb());
   badMagic.writeUInt32LE(0x46546c68, 0);
   await expectRejection('Model with bad GLB magic', /invalid GLB 2 header/, { replace: { 'model/fixture-character.glb': badMagic } });
@@ -198,7 +211,10 @@ try {
   });
 
   await expectRejection('Model over triangle budget', /12 triangles, over the 11-triangle budget/, { mutate: manifest => { manifest.budgets.triangles = 11; } });
-  await expectRejection('Pack over byte budget', /over its 1024-byte budget/, { mutate: manifest => { manifest.budgets.bytes = 1024; } });
+  await expectRejection('Pack over byte budget', /declares \d+ bytes, over its 1024-byte budget/, { mutate: manifest => { manifest.budgets.bytes = 1024; } });
+  await expectRejection('Byte budget enforced before hashing', /declares \d+ bytes, over its 1048576-byte budget/, {
+    mutate: manifest => { manifest.files.find(file => file.path === manifest.model).bytes += 2097152; },
+  });
   await expectRejection('Triangle budget above contract ceiling', /\/budgets\/triangles must be <= 15000/, { mutate: manifest => { manifest.budgets.triangles = 15001; } });
   await expectRejection('Missing budgets', /must have required property 'budgets'/, { mutate: manifest => { delete manifest.budgets; } });
 

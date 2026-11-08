@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { open, readFile, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
-import { characterRoleEntries, validateCharacterPack } from './character-pack.mjs';
+import { characterDeclaredBytes, characterRoleEntries, validateCharacterPack } from './character-pack.mjs';
 
 const schema = JSON.parse(await readFile(new URL('../../schemas/asset-pack.schema.json', import.meta.url), 'utf8'));
 const validateSchema = new Ajv({ allErrors: true, strict: true }).compile(schema);
@@ -76,6 +76,9 @@ export function validateManifestStructure(manifest) {
     }
   }
   if (manifest.kind === 'map' && !manifest.lods.low?.length) throw new Error('Map pack is missing its low LOD profile');
+  if (manifest.kind === 'character' && characterDeclaredBytes(manifest) > manifest.budgets.bytes) {
+    throw new Error(`Character pack declares ${characterDeclaredBytes(manifest)} bytes, over its ${manifest.budgets.bytes}-byte budget`);
+  }
   return manifest;
 }
 

@@ -80,20 +80,23 @@ export async function readGlb(absolute, label = absolute) {
   }
 }
 
+// Reads one numeric component of an accessor already bounds-checked by readGlb.
+export function readAccessorComponent(document, bin, label, accessor, element, component = 0) {
+  const view = document.bufferViews[accessor.bufferView];
+  const components = typeComponents.get(accessor.type);
+  const stride = view.byteStride ?? componentBytes.get(accessor.componentType) * components;
+  const offset = (view.byteOffset ?? 0) + (accessor.byteOffset ?? 0) + element * stride + component * componentBytes.get(accessor.componentType);
+  if (accessor.componentType === 5126) return bin.readFloatLE(offset);
+  if (accessor.componentType === 5125) return bin.readUInt32LE(offset);
+  if (accessor.componentType === 5123) return bin.readUInt16LE(offset);
+  if (accessor.componentType === 5121) return bin.readUInt8(offset);
+  fail(label, 'unsupported numeric component in POSITION or index accessor');
+}
+
 export async function inspectGlb(absolute, label = absolute) {
   const { document, bin } = await readGlb(absolute, label);
   if (!Array.isArray(document.meshes)) fail(label, 'missing mesh inventory');
-  function readComponent(accessor, element, component = 0) {
-    const view = document.bufferViews[accessor.bufferView];
-    const components = typeComponents.get(accessor.type);
-    const stride = view.byteStride ?? componentBytes.get(accessor.componentType) * components;
-    const offset = (view.byteOffset ?? 0) + (accessor.byteOffset ?? 0) + element * stride + component * componentBytes.get(accessor.componentType);
-    if (accessor.componentType === 5126) return bin.readFloatLE(offset);
-    if (accessor.componentType === 5125) return bin.readUInt32LE(offset);
-    if (accessor.componentType === 5123) return bin.readUInt16LE(offset);
-    if (accessor.componentType === 5121) return bin.readUInt8(offset);
-    fail(label, 'unsupported numeric component in POSITION or index accessor');
-  }
+  const readComponent = (accessor, element, component = 0) => readAccessorComponent(document, bin, label, accessor, element, component);
 
   let primitives = 0;
   let triangles = 0;
@@ -128,5 +131,5 @@ export async function inspectGlb(absolute, label = absolute) {
       }
     }
   }
-  return { primitives, triangles, positionValuesChecked, indexValuesChecked, document };
+  return { primitives, triangles, positionValuesChecked, indexValuesChecked, document, bin };
 }

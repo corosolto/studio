@@ -1,5 +1,5 @@
 import { open } from 'node:fs/promises';
-import { inspectGlb, readGlb } from './glb-inspect.mjs';
+import { inspectGlb, readAccessorComponent, readGlb } from './glb-inspect.mjs';
 
 export const requiredCharacterStates = Object.freeze(['idle', 'walk', 'run', 'shoot', 'death', 'crouch', 'crouchwalk', 'jump']);
 export const optionalCharacterStates = Object.freeze(['idle1h', 'walk1h', 'walkfire']);
@@ -44,26 +44,43 @@ function multiset(pairs) {
   return counts;
 }
 
-function assertMeshy28Skin(document, label) {
-  const nodes = Array.isArray(document.nodes) ? document.nodes : [];
-  if (!Array.isArray(document.skins) || document.skins.length !== 1) throw new Error(`${label}: character model must contain exactly one skin`);
-  const [skin] = document.skins;
-  const skinnedMeshNodes = nodes.filter(node => node.skin !== undefined);
-  if (!skinnedMeshNodes.length) throw new Error(`${label}: no node binds a mesh to the skin`);
-  for (const node of skinnedMeshNodes) {
-    if (node.skin !== 0 || !document.meshes[node.mesh]) throw new Error(`${label}: skinned node must reference skin 0 and a valid mesh`);
-    for (const primitive of document.meshes[node.mesh].primitives) {
-      if (primitive.attributes?.JOINTS_0 === undefined || primitive.attributes?.WEIGHTS_0 === undefined) {
-        throw new Error(`${label}: skinned primitive is missing JOINTS_0 or WEIGHTS_0`);
+function assertSkinAttributes(document, bin, label, primitive, jointCount) {
+  const position = document.accessors[primitive.attributes?.POSITION];
+  const joints = document.accessors[primitive.attributes?.JOINTS_0];
+  const weights = document.accessors[primitive.attributes?.WEIGHTS_0];
+  if (!joints || !weights) throw new Error(`${label}: skinned primitive is missing JOINTS_0 or WEIGHTS_0`);
+  if (joints.type !== 'VEC4' || ![5121, 5123].includes(joints.componentType) || joints.count !== position.count) {
+    throw new Error(`${label}: JOINTS_0 must be an unsigned byte or short VEC4 per vertex`);
+  }
+  const normalizedWeights = [5121, 5123].includes(weights.componentType) && weights.normalized === true;
+  if (weights.type !== 'VEC4' || (weights.componentType !== 5126 && !normalizedWeights) || weights.count !== position.count) {
+    throw new Error(`${label}: WEIGHTS_0 must be a float or normalized VEC4 per vertex`);
+  }
+  for (let vertex = 0; vertex < joints.count; vertex += 1) {
+    for (let component = 0; component < 4; component += 1) {
+      if (readAccessorComponent(document, bin, label, joints, vertex, component) >= jointCount) {
+        throw new Error(`${label}: JOINTS_0 vertex ${vertex} references a joint outside the skin`);
       }
     }
   }
+}
+
+function assertMeshy28Skin(document, bin, label) {
+  const nodes = Array.isArray(document.nodes) ? document.nodes : [];
+  if (!Array.isArray(document.skins) || document.skins.length !== 1) throw new Error(`${label}: character model must contain exactly one skin`);
+  const [skin] = document.skins;
   if (!Array.isArray(skin.joints) || skin.joints.some(index => !Number.isInteger(index) || !nodes[index]) || new Set(skin.joints).size !== skin.joints.length) {
     throw new Error(`${label}: skin joints must be unique valid node indices`);
   }
   const inverseBind = document.accessors[skin.inverseBindMatrices];
   if (!inverseBind || inverseBind.type !== 'MAT4' || inverseBind.componentType !== 5126 || inverseBind.count !== skin.joints.length) {
     throw new Error(`${label}: inverseBindMatrices must be one float MAT4 per joint`);
+  }
+  const skinnedMeshNodes = nodes.filter(node => node.skin !== undefined);
+  if (!skinnedMeshNodes.length) throw new Error(`${label}: no node binds a mesh to the skin`);
+  for (const node of skinnedMeshNodes) {
+    if (node.skin !== 0 || !document.meshes[node.mesh]) throw new Error(`${label}: skinned node must reference skin 0 and a valid mesh`);
+    for (const primitive of document.meshes[node.mesh].primitives) assertSkinAttributes(document, bin, label, primitive, skin.joints.length);
   }
 
   const parents = new Map();
@@ -93,6 +110,8 @@ function assertMeshy28Skin(document, label) {
   }
 }
 
+const channelOutputTypes = { translation: 'VEC3', rotation: 'VEC4', scale: 'VEC3', weights: 'SCALAR' };
+
 function assertStateAnimation(document, state, label) {
   const animation = (document.animations || []).find(candidate => candidate.name === state);
   if (!animation) throw new Error(`${label}: no animation named "${state}"`);
@@ -100,11 +119,24 @@ function assertStateAnimation(document, state, label) {
   if (!Array.isArray(animation.channels) || !animation.channels.length || !Array.isArray(animation.samplers)) {
     throw new Error(`${label}: animation "${state}" has no channels`);
   }
-  for (const channel of animation.channels) {
-    if (!animation.samplers[channel.sampler] || !nodes[channel.target?.node]) throw new Error(`${label}: animation "${state}" has an invalid channel`);
-  }
   for (const sampler of animation.samplers) {
     if (!document.accessors[sampler.input] || !document.accessors[sampler.output]) throw new Error(`${label}: animation "${state}" has an invalid sampler`);
+  }
+  for (const channel of animation.channels) {
+    const sampler = animation.samplers[channel.sampler];
+    const outputType = channelOutputTypes[channel.target?.path];
+    if (!sampler || !nodes[channel.target?.node] || !outputType) throw new Error(`${label}: animation "${state}" has an invalid channel`);
+    const input = document.accessors[sampler.input];
+    const output = document.accessors[sampler.output];
+    const interpolation = sampler.interpolation ?? 'LINEAR';
+    if (!['LINEAR', 'STEP', 'CUBICSPLINE'].includes(interpolation)) throw new Error(`${label}: animation "${state}" has an invalid interpolation`);
+    if (input.type !== 'SCALAR' || input.componentType !== 5126 || input.count < 1) throw new Error(`${label}: animation "${state}" has no keyframes`);
+    const normalizedRotation = channel.target.path === 'rotation' && [5120, 5121, 5122, 5123].includes(output.componentType) && output.normalized === true;
+    const keyframeValues = input.count * (interpolation === 'CUBICSPLINE' ? 3 : 1);
+    const countMatches = channel.target.path === 'weights' ? output.count > 0 && output.count % keyframeValues === 0 : output.count === keyframeValues;
+    if (output.type !== outputType || (output.componentType !== 5126 && !normalizedRotation) || !countMatches) {
+      throw new Error(`${label}: animation "${state}" has output values that do not match its ${channel.target.path} keyframes`);
+    }
   }
   if (!animation.channels.some(channel => meshy28BoneNames.has(nodes[channel.target.node].name))) {
     throw new Error(`${label}: animation "${state}" drives no meshy-28 bone`);
@@ -124,14 +156,20 @@ async function assertImage(file, absolute) {
   }
 }
 
-// Reads every declared character file as data only: GLB containers are parsed and bounds
-// checked, nothing is loaded into a renderer or executed.
-export async function validateCharacterPack(manifest, absolutes) {
-  const totalBytes = manifest.files.reduce((sum, file) => sum + file.bytes, 0);
-  if (totalBytes > manifest.budgets.bytes) throw new Error(`Character pack is ${totalBytes} bytes, over its ${manifest.budgets.bytes}-byte budget`);
+// Sum of declared payload bytes, compared with `budgets.bytes` before anything is hashed.
+export function characterDeclaredBytes(manifest) {
+  return manifest.files.reduce((sum, file) => sum + file.bytes, 0);
+}
 
+// Reads every declared character file as data only: GLB containers are parsed and bounds
+// checked, nothing is loaded into a renderer or executed. The byte budget is enforced
+// earlier, by validateManifestStructure, before any payload is hashed.
+export async function validateCharacterPack(manifest, absolutes) {
   const model = await inspectGlb(absolutes.get(manifest.model), manifest.model);
-  assertMeshy28Skin(model.document, manifest.model);
+  for (const mesh of model.document.meshes) {
+    if (mesh.primitives.some(primitive => (primitive.mode ?? 4) !== 4)) throw new Error(`${manifest.model}: character primitives must be triangle lists (mode 4)`);
+  }
+  assertMeshy28Skin(model.document, model.bin, manifest.model);
   if (model.triangles > manifest.budgets.triangles) {
     throw new Error(`${manifest.model}: ${model.triangles} triangles, over the ${manifest.budgets.triangles}-triangle budget`);
   }
@@ -141,5 +179,5 @@ export async function validateCharacterPack(manifest, absolutes) {
     assertStateAnimation(document, state, file);
   }
   for (const file of manifest.previews) await assertImage(file, absolutes.get(file));
-  return { triangles: model.triangles, bytes: totalBytes, joints: meshy28Joints.length, animations: Object.keys(manifest.animations).length };
+  return { triangles: model.triangles, bytes: characterDeclaredBytes(manifest), joints: meshy28Joints.length, animations: Object.keys(manifest.animations).length };
 }
