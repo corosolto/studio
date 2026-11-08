@@ -37,14 +37,13 @@ Every file in `files` must be declared by exactly one role (`model`, `animations
 
 ## Validation
 
-`node tools/validate-pack.mjs <manifest.json> [package-root]` runs the schema, safe-path, role, size and SHA-256 checks shared by every pack, then reads the character bytes as data only (no renderer, no code execution):
+`node tools/validate-pack.mjs <manifest.json> [package-root]` runs the schema, safe-path, role, size and SHA-256 checks shared by every pack. Before any payload is hashed, the sum of `files[].bytes` must not exceed `budgets.bytes`. It then reads the character bytes as data only (no renderer, no code execution):
 
-- The model is a GLB 2 container with in-bounds buffer views and accessors, finite positions and in-range indices. Its triangle count must not exceed `budgets.triangles`.
-- The model has exactly one skin, every skinned primitive has `JOINTS_0` and `WEIGHTS_0`, and `inverseBindMatrices` holds one float `MAT4` per joint.
+- The model is a GLB 2 container with in-bounds buffer views and accessors, finite positions and in-range indices. Every primitive is a triangle list (mode 4), and the triangle count must not exceed `budgets.triangles`.
+- The model has exactly one skin, and `inverseBindMatrices` holds one float `MAT4` per joint. Every skinned primitive has a `JOINTS_0` unsigned byte/short `VEC4` and a float or normalized `WEIGHTS_0` `VEC4` per vertex, and every joint index stays inside the skin.
 - The skin is exactly meshy-28: 28 joints whose (name, nearest joint ancestor) pairs match the list below as a multiset.
-- Each animation GLB contains an animation named exactly as its state, with valid channels and samplers, driving at least one meshy-28 bone.
+- Each animation GLB contains an animation named exactly as its state that drives at least one meshy-28 bone. Every channel targets a node with a `translation`, `rotation`, `scale` or `weights` path, and its sampler has at least one float keyframe time and the matching output type and count for its interpolation.
 - Each preview starts with the PNG, JPEG or WebP signature for its extension.
-- The sum of `files[].bytes` does not exceed `budgets.bytes`.
 
 ## meshy-28
 
@@ -64,8 +63,8 @@ Photos of real people never enter either repository.
 
 ## Checks
 
-`npm run check` builds a synthetic character pack (a programmatic 12-triangle skinned GLB and eleven one-channel clips, no real asset bytes), validates it, and requires each contract mutant to be rejected for its stated reason: missing states, unknown state, misnamed clip, clip driving no meshy-28 bone, wrong skeleton id, renamed, reparented or missing bone, missing skin or weights, bad GLB magic or version, triangle and byte budgets, bad rights, missing or invalid previews, undeclared files, and hash or size mutations.
+`npm run check` builds a synthetic character pack (a programmatic 12-triangle skinned GLB and eleven one-channel clips, no real asset bytes), validates it, and requires each contract mutant to be rejected for its stated reason: missing states, unknown state, misnamed clip, clip driving no meshy-28 bone, clip channel without a path, clip without keyframes or with mismatched output, wrong skeleton id, renamed, reparented or missing bone, missing skin or weights, missing, mistyped or out-of-skin `JOINTS_0`, triangle strips, bad GLB magic or version, triangle and byte budgets (including the byte budget before hashing), bad rights, missing or invalid previews, undeclared files, and hash or size mutations.
 
 ## Concept generation
 
-`tools/gen-character-concept-openrouter.mjs --ficha <ficha.json> --reference <cast image> --out <png>` composes the concept prompt from a character sheet (`especie`/`proporcao`, ORIGINAL CHARACTER clause without references, `dominioPublico` clause) via `tools/lib/character-concept-prompt.mjs`. `openai/gpt-image-*` models use OpenRouter's Images API in this tool and in `tools/gen-image.mjs`. Both call paid APIs and are never run by checks.
+`tools/gen-character-concept-openrouter.mjs --ficha <ficha.json> --reference <cast image> --out <png>` composes the concept prompt from a character sheet (`especie`/`proporcao`, ORIGINAL CHARACTER clause without references, `dominioPublico` clause) via `tools/lib/character-concept-prompt.mjs`. `openai/gpt-image-*` models use OpenRouter's Images API in this tool and in `tools/gen-image.mjs`. Both tools call paid APIs. Checks run the concept tool only with `--dry-run`, which exits before credentials are read, and never run `gen-image.mjs`.
