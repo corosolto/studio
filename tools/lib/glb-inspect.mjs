@@ -93,7 +93,9 @@ export function readAccessorComponent(document, bin, label, accessor, element, c
   fail(label, 'unsupported numeric component in POSITION or index accessor');
 }
 
-export async function inspectGlb(absolute, label = absolute) {
+// `includeBin` keeps the BIN chunk in the result for callers that read more accessors;
+// it is off by default so LOD inspection does not retain every BIN chunk.
+export async function inspectGlb(absolute, label = absolute, { includeBin = false } = {}) {
   const { document, bin } = await readGlb(absolute, label);
   if (!Array.isArray(document.meshes)) fail(label, 'missing mesh inventory');
   const readComponent = (accessor, element, component = 0) => readAccessorComponent(document, bin, label, accessor, element, component);
@@ -131,5 +133,5 @@ export async function inspectGlb(absolute, label = absolute) {
       }
     }
   }
-  return { primitives, triangles, positionValuesChecked, indexValuesChecked, document, bin };
+  return { primitives, triangles, positionValuesChecked, indexValuesChecked, document, ...(includeBin ? { bin } : {}) };
 }
