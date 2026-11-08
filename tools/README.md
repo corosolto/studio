@@ -20,7 +20,8 @@ The public repository must not contain `.blend`, `.blend1`, `.glb`, `.fbx`, `.md
 ## Commands
 
 ```bash
-# Structure, JSON, public asset boundary and tool syntax
+# Structure, JSON, public asset boundary, tool syntax, and the synthetic character pack
+# and concept prompt contracts (tools/checks/character-*-check.mjs)
 npm run check
 
 # Source contracts without API calls
@@ -72,9 +73,13 @@ The gauntlet reads `collision/collision-boxes.json`, `navigation/nav-graph.json`
 
 The output directory must be absent and outside the public Studio worktree. Files are copied into a sibling temporary directory, the manifest is renamed into place, all copied bytes are validated, and only then is the complete candidate directory renamed to the requested output. A candidate is not owner-approved, runtime-promoted or deployed.
 
-The smoke suite rejects missing rooftop routes and cameras, absent/incomplete low captures, missing or hash-mutated route images, route-sidecar divergence, spawn/corner camera mismatches, spawns outside regions, unsafe preview paths, bad doors and stairs, narrow routes, low parapets, missing tank clearance, absent or non-shrinking LODs, primitive/triangle-budget overflows, GLB/report/sidecar mismatches, non-finite positions, out-of-bounds indices, solid-wall route blockage, insufficient 2.10 m head clearance, crate-obstructed spawns, missing declarations, duplicate and unsafe paths, undeclared files, executable JavaScript and shebangs, hash/size mutations and existing output directories. It also checks non-map schema v1 compatibility and that failed builds expose no candidate directory.
+The smoke suite rejects missing rooftop routes and cameras, absent/incomplete low captures, missing or hash-mutated route images, route-sidecar divergence, spawn/corner camera mismatches, spawns outside regions, unsafe preview paths, bad doors and stairs, narrow routes, low parapets, missing tank clearance, absent or non-shrinking LODs, primitive/triangle-budget overflows, GLB/report/sidecar mismatches, non-finite positions, out-of-bounds indices, solid-wall route blockage, insufficient 2.10 m head clearance, crate-obstructed spawns, missing declarations, duplicate and unsafe paths, undeclared files, executable JavaScript and shebangs, hash/size mutations and existing output directories. It also checks schema v1 compatibility for kinds without a role contract, rejects a character manifest without character roles, and checks that failed builds expose no candidate directory.
 
-`tools/gen-asset.mjs`, `gen-image.mjs` and `gen-character-concept-openrouter.mjs` can consume paid quota and require credentials. They are excluded from smoke checks and require explicit authorization.
+`tools/gen-asset.mjs`, `gen-image.mjs` and `gen-character-concept-openrouter.mjs` can consume paid quota and require credentials. They are excluded from smoke checks and require explicit authorization. `--dry-run` of the concept tool prints its preflight without reading credentials.
+
+### Character pack contract
+
+`node tools/validate-pack.mjs` applies the character contract in [docs/character-pack.md](../docs/character-pack.md) to `kind: "character"` manifests: meshy-28 skin, triangle and byte budgets, one clip per state named after it, image previews and rights. `gen-character-concept-openrouter.mjs --ficha <json>` composes the concept prompt from a character sheet; `openai/gpt-image-*` models use OpenRouter's Images API.
 
 ## Check ownership
 
