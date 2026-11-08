@@ -383,14 +383,14 @@ try {
     provenance: ['Negative smoke fixture'],
   }));
 
-  const nonMapRoot = path.join(directory, 'character-pack');
+  const nonMapRoot = path.join(directory, 'skin-pack');
   fs.mkdirSync(nonMapRoot);
   const bytes = Buffer.from('studio-smoke');
   fs.writeFileSync(path.join(nonMapRoot, 'asset.bin'), bytes);
   const nonMapManifest = {
     schemaVersion: 1,
-    kind: 'character',
-    id: 'smoke-character',
+    kind: 'skin',
+    id: 'smoke-skin',
     version: '0.1.0',
     source: { revision: 'abcdef1234567', provenance: ['CI smoke fixture'] },
     files: [{ path: 'asset.bin', sha256: createHash('sha256').update(bytes).digest('hex'), bytes: bytes.length }],
@@ -398,7 +398,10 @@ try {
   const nonMapManifestPath = path.join(nonMapRoot, 'manifest.json');
   writeJson(nonMapManifestPath, nonMapManifest);
   await validatePack({ manifestPath: nonMapManifestPath, packageRoot: nonMapRoot });
-  console.log('PASS Non-map schema v1 compatibility');
+  console.log('PASS Kind without role contract keeps schema v1 compatibility');
+  // Character packs have their own contract (tools/checks/character-pack-check.mjs).
+  writeJson(nonMapManifestPath, { ...nonMapManifest, kind: 'character', id: 'smoke-character' });
+  await expectRejection('Character pack without character roles', () => validatePack({ manifestPath: nonMapManifestPath, packageRoot: nonMapRoot }));
 } finally {
   fs.rmSync(directory, { recursive: true, force: true });
 }
