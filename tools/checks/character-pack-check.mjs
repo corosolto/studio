@@ -91,7 +91,9 @@ function modelGlb({ joints = meshy28Joints, triangles = 12, skin = true, weights
   ]);
 }
 
-function clipGlb(name, { target = 'Hips', path: channelPath = 'rotation', keyframes = 2, outputValues = keyframes } = {}) {
+// `morph` adds a second, morph-weights channel on a `Face` node: 'valid' (one morph
+// target), 'no-targets' (mesh without morph targets) or 'missing-mesh' (mesh index 999).
+function clipGlb(name, { target = 'Hips', path: channelPath = 'rotation', keyframes = 2, outputValues = keyframes, morph } = {}) {
   const nodes = skeletonNodes(meshy28Joints);
   if (target !== 'Hips') nodes.push({ name: target });
   const targetNode = nodes.findIndex(node => node.name === target);
@@ -101,11 +103,22 @@ function clipGlb(name, { target = 'Hips', path: channelPath = 'rotation', keyfra
     ...(keyframes ? [{ bytes: floats(Array.from({ length: keyframes }, (_, index) => index)) }] : []),
     ...(outputValues ? [{ bytes: floats(Array.from({ length: outputValues }, () => [0, 0, 0, 1]).flat()) }] : []),
   ];
+  const channels = [{ sampler: 0, target: { node: targetNode, ...(channelPath ? { path: channelPath } : {}) } }];
+  const samplers = [{ input: 0, output: 1, interpolation: 'LINEAR' }];
+  const morphDocument = {};
+  if (morph) {
+    nodes.push({ name: 'Face', mesh: morph === 'missing-mesh' ? 999 : 0 });
+    if (morph !== 'missing-mesh') morphDocument.meshes = [{ primitives: [{ attributes: {}, ...(morph === 'valid' ? { targets: [{}] } : {}) }] }];
+    output.push({ bufferView: 0, componentType: 5126, count: keyframes, type: 'SCALAR' });
+    samplers.push({ input: 0, output: 2, interpolation: 'LINEAR' });
+    channels.push({ sampler: 1, target: { node: nodes.length - 1, path: 'weights' } });
+  }
   return glb({
     scene: 0,
     scenes: [{ nodes: [0] }],
     nodes,
-    animations: [{ name, channels: [{ sampler: 0, target: { node: targetNode, ...(channelPath ? { path: channelPath } : {}) } }], samplers: [{ input: 0, output: 1, interpolation: 'LINEAR' }] }],
+    ...morphDocument,
+    animations: [{ name, channels, samplers }],
     accessors: [...input, ...output],
   }, chunks);
 }
@@ -169,6 +182,8 @@ try {
   console.log(`PASS Valid synthetic character pack (${valid.character.triangles} triangles, ${valid.character.joints} meshy-28 joints, ${valid.character.animations} state clips)`);
   const requiredOnly = await validateCase({ mutate: manifest => optionalCharacterStates.forEach(state => dropState(state)(manifest)) });
   console.log(`PASS Valid character pack with only the ${requiredOnly.character.animations} required states`);
+  await validateCase({ replace: { 'animations/idle.glb': clipGlb('idle', { morph: 'valid' }) } });
+  console.log('PASS Valid clip with a bone channel plus a morph-weights channel');
 
   for (const state of requiredCharacterStates) {
     await expectRejection(`Missing required state ${state}`, new RegExp(`must have required property '${state}'`), { mutate: dropState(state) });
@@ -181,6 +196,8 @@ try {
   await expectRejection('Clip drives no meshy-28 bone', /drives no meshy-28 bone/, { replace: { 'animations/run.glb': clipGlb('run', { target: 'mixamorig:Hips' }) } });
   await expectRejection('Clip channel without target path', /animation "shoot" has an invalid channel/, { replace: { 'animations/shoot.glb': clipGlb('shoot', { path: null }) } });
   await expectRejection('Clip with only morph weights on a bone', /animation "walk" has an invalid channel/, { replace: { 'animations/walk.glb': clipGlb('walk', { path: 'weights' }) } });
+  await expectRejection('Morph weights channel on a missing mesh', /animation "jump" has an invalid channel/, { replace: { 'animations/jump.glb': clipGlb('jump', { morph: 'missing-mesh' }) } });
+  await expectRejection('Morph weights channel on a mesh without morph targets', /animation "idle" has an invalid channel/, { replace: { 'animations/idle.glb': clipGlb('idle', { morph: 'no-targets' }) } });
   await expectRejection('Clip without keyframes', /animation "death" has no keyframes/, { replace: { 'animations/death.glb': clipGlb('death', { keyframes: 0 }) } });
   await expectRejection('Clip output count differs from keyframes', /output values that do not match its rotation keyframes/, { replace: { 'animations/crouch.glb': clipGlb('crouch', { keyframes: 2, outputValues: 1 }) } });
   await expectRejection('Same clip declared for two states', /Duplicate declared path/, { mutate: manifest => { manifest.animations.walk = manifest.animations.idle; } });

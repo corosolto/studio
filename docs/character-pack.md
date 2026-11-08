@@ -42,7 +42,7 @@ Every file in `files` must be declared by exactly one role (`model`, `animations
 - The model is a GLB 2 container with in-bounds buffer views and accessors, finite positions and in-range indices. Every primitive is a triangle list (mode 4), and the triangle count must not exceed `budgets.triangles`.
 - The model has exactly one skin, and `inverseBindMatrices` holds one float `MAT4` per joint. Every skinned primitive has a `JOINTS_0` unsigned byte/short `VEC4` and a float or normalized `WEIGHTS_0` `VEC4` per vertex, and every joint index stays inside the skin.
 - The skin is exactly meshy-28: 28 joints whose (name, nearest joint ancestor) pairs match the list below as a multiset.
-- Each animation GLB contains an animation named exactly as its state that drives at least one meshy-28 bone. Every channel targets a node with a `translation`, `rotation`, `scale` or `weights` path, and its sampler has at least one float keyframe time and the matching output type and count for its interpolation.
+- Each animation GLB contains an animation named exactly as its state that drives at least one meshy-28 bone through a `translation`, `rotation` or `scale` channel. A `weights` channel must target a mesh with morph targets. Every sampler has at least one float keyframe time and the output type and count that match its interpolation (and, for `weights`, the number of morph targets).
 - Each preview starts with the PNG, JPEG or WebP signature for its extension.
 
 ## meshy-28

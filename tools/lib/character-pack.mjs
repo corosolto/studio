@@ -126,8 +126,9 @@ function assertStateAnimation(document, state, label) {
     const sampler = animation.samplers[channel.sampler];
     const outputType = channelOutputTypes[channel.target?.path];
     const target = nodes[channel.target?.node];
-    // Morph `weights` need a mesh on the target node and never count as skeleton motion.
-    if (!sampler || !target || !outputType || (channel.target.path === 'weights' && target.mesh === undefined)) {
+    // Morph `weights` animate the target mesh's morph targets, never the skeleton.
+    const morphTargets = channel.target?.path === 'weights' ? document.meshes?.[target?.mesh]?.primitives?.[0]?.targets?.length ?? 0 : 1;
+    if (!sampler || !target || !outputType || morphTargets < 1) {
       throw new Error(`${label}: animation "${state}" has an invalid channel`);
     }
     const input = document.accessors[sampler.input];
@@ -135,10 +136,9 @@ function assertStateAnimation(document, state, label) {
     const interpolation = sampler.interpolation ?? 'LINEAR';
     if (!['LINEAR', 'STEP', 'CUBICSPLINE'].includes(interpolation)) throw new Error(`${label}: animation "${state}" has an invalid interpolation`);
     if (input.type !== 'SCALAR' || input.componentType !== 5126 || input.count < 1) throw new Error(`${label}: animation "${state}" has no keyframes`);
-    const normalizedRotation = channel.target.path === 'rotation' && [5120, 5121, 5122, 5123].includes(output.componentType) && output.normalized === true;
-    const keyframeValues = input.count * (interpolation === 'CUBICSPLINE' ? 3 : 1);
-    const countMatches = channel.target.path === 'weights' ? output.count > 0 && output.count % keyframeValues === 0 : output.count === keyframeValues;
-    if (output.type !== outputType || (output.componentType !== 5126 && !normalizedRotation) || !countMatches) {
+    const normalizedOutput = ['rotation', 'weights'].includes(channel.target.path) && [5120, 5121, 5122, 5123].includes(output.componentType) && output.normalized === true;
+    const expectedOutputs = input.count * (interpolation === 'CUBICSPLINE' ? 3 : 1) * morphTargets;
+    if (output.type !== outputType || (output.componentType !== 5126 && !normalizedOutput) || output.count !== expectedOutputs) {
       throw new Error(`${label}: animation "${state}" has output values that do not match its ${channel.target.path} keyframes`);
     }
   }
