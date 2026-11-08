@@ -12,7 +12,7 @@
 //   --id <nome>        nome do arquivo final, sem extensão      (obrigatório)
 //   --prompt "..."     o pedido                                  (obrigatório)
 //   --ref <arquivo>    imagem de referência; repetível (até 6)
-//   --model <id>       padrão google/gemini-3-pro-image
+//   --model <id>       padrão google/gemini-3-pro-image; `openai/gpt-image-*` uses the Images API
 //   --aspect W:H       proporção pedida ao modelo (padrão 1:1)
 //   --crop W:H         recorte central aplicado DEPOIS (padrão: o mesmo de --aspect)
 //   --w N              largura final em px (padrão 640)
@@ -44,6 +44,7 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import sharp from 'sharp';
+import { usesOpenRouterImagesApi } from './lib/openrouter-image.mjs';
 
 /* ---------------------------------- .env ---------------------------------- */
 function loadEnv(file = '.env') {
@@ -169,27 +170,37 @@ for (const p of FROM ? [] : REFS) {
   say(`  ref: ${basename(p)} (${(buf.length / 1024) | 0} KB no corpo)`);
 }
 
-const body = {
-  model: MODEL,
-  modalities: ['image', 'text'],
-  messages: [{ role: 'user', content }],
-};
+// The `openai/gpt-image-*` family only exists on OpenRouter's dedicated Images API
+// (/api/v1/images); through chat/completions those models finish with an error and no
+// image. References travel in the same image_url format.
+const IMAGES_API = usesOpenRouterImagesApi(MODEL);
+const body = IMAGES_API
+  ? { model: MODEL, prompt: content[0].text, aspect_ratio: ASPECT, quality: 'high', n: 1, input_references: content.slice(1) }
+  : { model: MODEL, modalities: ['image', 'text'], messages: [{ role: 'user', content }] };
 // `image_config` é o caminho oficial de aspect ratio dos modelos de imagem do Gemini via
 // OpenRouter. Se o modelo escolhido não o aceitar, a linha de texto do prompt continua
 // pedindo a proporção — e o --crop fecha a conta de qualquer jeito.
-if (ASPECT !== '1:1') body.image_config = { aspect_ratio: ASPECT };
+if (!IMAGES_API && ASPECT !== '1:1') body.image_config = { aspect_ratio: ASPECT };
 
 for (let i = 1; !FROM && i <= N; i++) {
   const t0 = Date.now();
-  const j = await apiFetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', body: JSON.stringify(body) });
-  const msg = j.choices?.[0]?.message ?? {};
-  const imgs = msg.images ?? [];
-  if (!imgs.length) {
-    die(`o modelo não devolveu imagem (finish_reason=${j.choices?.[0]?.finish_reason}). texto: ${String(msg.content ?? '').slice(0, 500)}`);
+  let raw;
+  if (IMAGES_API) {
+    const j = await apiFetch('https://openrouter.ai/api/v1/images', { method: 'POST', body: JSON.stringify(body) });
+    const b64 = j.data?.[0]?.b64_json;
+    if (!b64) die(`the Images API returned no image: ${JSON.stringify(j).slice(0, 500)}`);
+    raw = Buffer.from(b64, 'base64');
+  } else {
+    const j = await apiFetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', body: JSON.stringify(body) });
+    const msg = j.choices?.[0]?.message ?? {};
+    const imgs = msg.images ?? [];
+    if (!imgs.length) {
+      die(`o modelo não devolveu imagem (finish_reason=${j.choices?.[0]?.finish_reason}). texto: ${String(msg.content ?? '').slice(0, 500)}`);
+    }
+    const url = imgs[0].image_url?.url || imgs[0].url;
+    if (!url?.startsWith('data:')) die(`imagem veio como URL externa, não data: — ${String(url).slice(0, 120)}`);
+    raw = Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
   }
-  const url = imgs[0].image_url?.url || imgs[0].url;
-  if (!url?.startsWith('data:')) die(`imagem veio como URL externa, não data: — ${String(url).slice(0, 120)}`);
-  const raw = Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
   const rawPath = `${RAW_DIR}/${ID}${N > 1 ? `-v${i}` : ''}.png`;
   writeFileSync(rawPath, raw);
   const meta = await sharp(rawPath).metadata();
