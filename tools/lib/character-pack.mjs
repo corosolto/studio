@@ -125,7 +125,11 @@ function assertStateAnimation(document, state, label) {
   for (const channel of animation.channels) {
     const sampler = animation.samplers[channel.sampler];
     const outputType = channelOutputTypes[channel.target?.path];
-    if (!sampler || !nodes[channel.target?.node] || !outputType) throw new Error(`${label}: animation "${state}" has an invalid channel`);
+    const target = nodes[channel.target?.node];
+    // Morph `weights` need a mesh on the target node and never count as skeleton motion.
+    if (!sampler || !target || !outputType || (channel.target.path === 'weights' && target.mesh === undefined)) {
+      throw new Error(`${label}: animation "${state}" has an invalid channel`);
+    }
     const input = document.accessors[sampler.input];
     const output = document.accessors[sampler.output];
     const interpolation = sampler.interpolation ?? 'LINEAR';
@@ -138,7 +142,7 @@ function assertStateAnimation(document, state, label) {
       throw new Error(`${label}: animation "${state}" has output values that do not match its ${channel.target.path} keyframes`);
     }
   }
-  if (!animation.channels.some(channel => meshy28BoneNames.has(nodes[channel.target.node].name))) {
+  if (!animation.channels.some(channel => channel.target.path !== 'weights' && meshy28BoneNames.has(nodes[channel.target.node].name))) {
     throw new Error(`${label}: animation "${state}" drives no meshy-28 bone`);
   }
 }
@@ -165,7 +169,7 @@ export function characterDeclaredBytes(manifest) {
 // checked, nothing is loaded into a renderer or executed. The byte budget is enforced
 // earlier, by validateManifestStructure, before any payload is hashed.
 export async function validateCharacterPack(manifest, absolutes) {
-  const model = await inspectGlb(absolutes.get(manifest.model), manifest.model);
+  const model = await inspectGlb(absolutes.get(manifest.model), manifest.model, { includeBin: true });
   for (const mesh of model.document.meshes) {
     if (mesh.primitives.some(primitive => (primitive.mode ?? 4) !== 4)) throw new Error(`${manifest.model}: character primitives must be triangle lists (mode 4)`);
   }

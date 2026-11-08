@@ -180,6 +180,7 @@ try {
   await expectRejection('Clip name differs from its state', /no animation named "jump"/, { replace: { 'animations/jump.glb': clipGlb('Jump') } });
   await expectRejection('Clip drives no meshy-28 bone', /drives no meshy-28 bone/, { replace: { 'animations/run.glb': clipGlb('run', { target: 'mixamorig:Hips' }) } });
   await expectRejection('Clip channel without target path', /animation "shoot" has an invalid channel/, { replace: { 'animations/shoot.glb': clipGlb('shoot', { path: null }) } });
+  await expectRejection('Clip with only morph weights on a bone', /animation "walk" has an invalid channel/, { replace: { 'animations/walk.glb': clipGlb('walk', { path: 'weights' }) } });
   await expectRejection('Clip without keyframes', /animation "death" has no keyframes/, { replace: { 'animations/death.glb': clipGlb('death', { keyframes: 0 }) } });
   await expectRejection('Clip output count differs from keyframes', /output values that do not match its rotation keyframes/, { replace: { 'animations/crouch.glb': clipGlb('crouch', { keyframes: 2, outputValues: 1 }) } });
   await expectRejection('Same clip declared for two states', /Duplicate declared path/, { mutate: manifest => { manifest.animations.walk = manifest.animations.idle; } });
