@@ -81,7 +81,7 @@ Thresholds (`POSE_THRESHOLDS`): body and upper back ≤ 3.5× (the donor reaches
 | `mergeDistance` | Seam merge distance in metres (default 0.0001). |
 | `parts.skinColors`, `parts.skinTolerance` | Hex colours of bare hands; the wrist moves to where they start. |
 | `parts.handPartOffset`, `parts.armShoulderInset`, `parts.wristX` | Rigid hand start past the wrist (× height); how far the arm part reaches inside the armpit; wrist override (absolute x). |
-| `extras[]` | `{ name, select: { from, box: {min, max}, colors, tolerance, islandMaxFaces }, rigid \| bones \| kind }`; `kind` is `skirt` or `cape`. |
+| `extras[]` | `{ name, select: { from, box: {min, max}, colors, tolerance, islandMaxFaces }, rigid \| bones \| kind, measure }`; `kind` is `skirt` or `cape`; `measure: true` keeps the extra in the joint measurement (default for skirts; accessories are measured out). |
 | `joints.*` | Estimator ratios (`shoulderInset`, `shoulderRaise`, `clavicleRatio`, `elbowRatio`, `hipAboveCrotch`, `hipsAboveUpLeg`, `kneeRatio`, `kneeBendMin`, `kneeForward`, `ankleWindow`, `toeRatio`, `toeHeightRatio`, `spineBelowShoulder`, `neckRatio`, `headAboveNeck`, `headfrontForward`). |
 | `jointsOverride` | Override file relative to the config (default `joints.json`). |
 | `weights.*` | `heatFailShare`, `voxelSize`, `headRigidAbove`, `rampLength`, `smoothRadius`, `smoothIterations`, `smoothJoints`, `linearBlends`, `groinBand`, `gradientRamp`, `gradientIterations`. |
