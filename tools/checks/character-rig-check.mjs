@@ -52,6 +52,11 @@ clause('R1 character rig configs are well formed', () => {
       assert(modes === 1, `${file}: extra ${extra.name} needs exactly one of rigid, bones or kind`);
       assert(!extra.kind || ['skirt', 'cape'].includes(extra.kind), `${file}: extra ${extra.name} has unknown kind ${extra.kind}`);
       assert(extra.measure === undefined || typeof extra.measure === 'boolean', `${file}: extra ${extra.name} measure must be true or false`);
+      const fp = extra.frontPanel;
+      const fpObject = fp !== null && typeof fp === 'object' && Object.keys(fp).every((k) => ['share', 'spread'].includes(k))
+        && (fp.share === undefined || (fp.share >= 0 && fp.share <= 1)) && (fp.spread === undefined || fp.spread > 0);
+      assert(fp === undefined || (Boolean(extra.kind) && (typeof fp === 'boolean' || fpObject)),
+        `${file}: extra ${extra.name} frontPanel must be a boolean or { share in [0, 1], spread > 0 } on a kind extra`);
       for (const bone of extra.rigid ? [extra.rigid] : extra.bones || []) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
       for (const from of extra.select?.from || []) assert(partNames.has(from) || names.has(from), `${file}: ${extra.name} selects from unknown part ${from}`);
       const grow = extra.select?.grow;

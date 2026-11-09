@@ -112,6 +112,11 @@ CLOTH_BONES = {
 # Share of a hanging cloth that follows the thighs at knee height: a skirt or a coat front
 # goes with the legs, a cape behind them only partly.
 CLOTH_LEG_SHARE = {"skirt": 0.8, "cape": 0.45}
+# Opt-in front panel of a cloth extra (``frontPanel`` on the extra, ``true`` or an object
+# overriding these): below the hip joints and in front of them the cloth follows both
+# thighs, split over ±spread x the hip half-width instead of ±1, with ``share`` on the legs
+# at knee height, like a skirt with less gain.
+FRONT_PANEL = {"share": 0.25, "spread": 3.0}
 
 
 def smoothstep(t):
@@ -119,14 +124,16 @@ def smoothstep(t):
     return t * t * (3 - 2 * t)
 
 
-def cloth_weights(points, kind, joints, bidx):
+def cloth_weights(points, kind, joints, bidx, front_panel=None):
     """Procedural weights for hanging cloth (coat skirts, skirts, capes).
 
     Above the hips the cloth follows the spine chain by height (piecewise linear between
     Hips, Spine02, Spine01, Spine and, for capes, neck).  Below the hip joints it fades into
     the thighs down to the knees, split left/right by x, with ``CLOTH_LEG_SHARE`` of the
     weight on the legs at knee height and the rest on Hips, so walking opens the cloth
-    instead of tearing it between Hips and a leg.
+    instead of tearing it between Hips and a leg.  ``front_panel`` (see ``FRONT_PANEL``)
+    blends the front of the cloth, from the hip joints forward over one hip half-width,
+    into a both-thighs split with its own leg share.
     """
     chain = ["Hips", "Spine02", "Spine01", "Spine"] + (["neck"] if kind == "cape" else [])
     zs = np.array([joints[b].z for b in chain])
@@ -142,8 +149,16 @@ def cloth_weights(points, kind, joints, bidx):
     hip_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
     knee_z = 0.5 * (joints["LeftLeg"].z + joints["RightLeg"].z)
     leg_x = 0.5 * (abs(joints["LeftUpLeg"].x) + abs(joints["RightUpLeg"].x))
-    legs = CLOTH_LEG_SHARE[kind] * smoothstep((hip_z - z[below]) / max(hip_z - knee_z, 1e-6))
+    drop = smoothstep((hip_z - z[below]) / max(hip_z - knee_z, 1e-6))
+    legs = CLOTH_LEG_SHARE[kind] * drop
     left = smoothstep((x[below] + leg_x) / (2 * leg_x))
+    if front_panel:
+        fp = {**FRONT_PANEL, **(front_panel if isinstance(front_panel, dict) else {})}
+        hip_y = 0.5 * (joints["LeftUpLeg"].y + joints["RightUpLeg"].y)
+        f = smoothstep((hip_y - points[below, 1]) / leg_x)
+        spread = fp["spread"] * leg_x
+        legs = (1 - f) * legs + f * fp["share"] * drop
+        left = (1 - f) * left + f * smoothstep((x[below] + spread) / (2 * spread))
     W[below, bidx["LeftUpLeg"]] = legs * left
     W[below, bidx["RightUpLeg"]] = legs * (1 - left)
     W[below, bidx["Hips"]] = 1 - legs
@@ -456,14 +471,21 @@ def main():
     landmarks = json.loads((args.work / "parts.json").read_text())["landmarks"]
     crotch_z = float(landmarks["crotchZ"])
     rigid_mask = np.array([r is not None for r in rigid])
+    # Vertices on a seam between two cloth extras (a coat cut into an upper and a lower
+    # extra) take the mean of their extras' cloth weights; left on heat they tore the seam
+    # (vlad death 4.05x: seam Hips 0.61 + RightUpLeg 0.28 next to cloth Hips 0.96).
+    cloth = {e["name"]: e for e in cfg.get("extras", []) if e.get("kind") in CLOTH_BONES}
+    on_cloth = np.array([bool(vparts[v]) and vparts[v] <= cloth.keys() for v in range(n)]) & ~rigid_mask
     cloth_vertices = {}
-    for extra in cfg.get("extras", []):
-        kind = extra.get("kind")
-        if kind not in CLOTH_BONES:
-            continue
-        only = np.array([vparts[v] == {extra["name"]} for v in range(n)]) & ~rigid_mask
-        W[only] = cloth_weights(co[only], kind, joints, bidx)
-        cloth_vertices[extra["name"]] = int(only.sum())
+    if on_cloth.any():
+        Wc = np.zeros((n, len(bidx)))
+        share = np.array([len(vparts[v]) for v in range(n)], dtype=float)
+        for name, extra in cloth.items():
+            mask = on_cloth & np.array([name in vparts[v] for v in range(n)])
+            Wc[mask] += cloth_weights(co[mask], extra["kind"], joints, bidx, extra.get("frontPanel")) / share[mask, None]
+            cloth_vertices[name] = int((mask & (share == 1)).sum())
+        W[on_cloth] = Wc[on_cloth]
+        cloth_vertices["seam"] = int((on_cloth & (share > 1)).sum())
 
     # ---------------------------------------------------------------- 4c'. band models
     # Opt-in replacements for heat where crouch and death tear a junction whose heat
