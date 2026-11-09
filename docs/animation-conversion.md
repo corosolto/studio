@@ -165,7 +165,7 @@ The limits were set before the pilot from the client's gates (stretch, hands) an
 
 ## Check (`npm run check`)
 
-`tools/checks/animation-conversion-check.mjs` builds Mixamo-like bone trees (FBXLoader naming, scrambled rest frames, optional duplicate leaves, three prefixes, −Z facing) and a UAL-like glTF (Z-up `root`) in code, and a synthetic skinned body (`tools/checks/lib/synthetic-humanoid.mjs`, shared with the rig check). Clauses: maps and hierarchy (A1), rig detection (A2), rest identity (A3), world-delta transfer within 1 mm (A4), spine order (A5), root-motion modes (A6), 24 → 30 fps resampling, trim and re-sampling a source after a full pass (A7), facing (A8), FBX duplicates and prefixes (A9), UAL (A10), ground contact + IK on shorter shins (A11: 0.00 cm with, 4.5 cm slide / 2.9 cm height without) and loop-wrapped IK ramps (A11), rest alignment (A12: knee straight with, 18° without) and a leg bound at 68° kept (A13), bake rules (B1, B2), the two-hand grip hold (B3: 4.8 cm drift to 1.9 cm), the QA gates on a clean clip plus one mutant per gate including the heel limit (Q1, Q2), the CLI end to end with `--strict` and a torn-hand body (Q3), the floor clamp on sunk toes, heels, whole feet, hands and body and the drop of a hanging body (Q4), the FBX footer fallback on 32- and 64-bit node records (L1), the library plan and key rules (L2, L3), and packs (P1: int16 rotations within 0.003°, a third of the uncompressed bytes).
+`tools/checks/animation-conversion-check.mjs` builds Mixamo-like bone trees (FBXLoader naming, scrambled rest frames, optional duplicate leaves, three prefixes, −Z facing) and a UAL-like glTF (Z-up `root`) in code, and a synthetic skinned body (`tools/checks/lib/synthetic-humanoid.mjs`, shared with the rig check). Clauses: maps and hierarchy (A1), rig detection (A2), rest identity (A3), world-delta transfer within 1 mm (A4), spine order (A5), root-motion modes (A6), 24 → 30 fps resampling, trim and re-sampling a source after a full pass (A7), facing (A8), FBX duplicates and prefixes (A9), UAL (A10), ground contact + IK on shorter shins (A11: 0.00 cm with, 4.5 cm slide / 2.9 cm height without) and loop-wrapped IK ramps (A11), rest alignment (A12: knee straight with, 18° without) and a leg bound at 68° kept (A13), bake rules (B1, B2), the two-hand grip hold (B3: 4.8 cm drift to 1.9 cm), the QA gates on a clean clip plus one mutant per gate including the heel limit (Q1, Q2), the CLI end to end with `--strict` and a torn-hand body (Q3), the floor clamp on sunk toes, heels, whole feet, hands and body and the drop of a hanging body (Q4), the FBX footer fallback on 32- and 64-bit node records (L1), the library plan and key rules (L2, L3), and packs (P1: int16 rotations within 0.003°, meshopt-encoded, loaded by three.js's GLTFLoader within 3e-6° of the Studio reader, family split).
 
 ## Pilot (2026-11-09)
 
@@ -217,44 +217,45 @@ Library gauntlet (419 converted, 18 skipped, 0 failed; mst and capitao-caveira):
 
 - round 1: 295/419 and 298/419 pass. Systematic: bodies through the floor in lying, rolling and handstand clips (103 failures), floating in running and dance flight phases (69), slide on pivots (48), loops whose seam the 3 cm/10° detector accepted but the gate did not (9), and 23 FBX files FBXLoader could not read (a footer it misreads; now re-parsed with a padded footer);
 - round 2: body lift, source-relative floating and hips gates, 1.25× slide ratio, seam detection at the gate limit: 355/419 and 354/419;
-- round 3: whole-body lift/drop, limb IK for hands under straight arms. Pinning the ball while the heel is up was tried and reverted (a differently proportioned leg cannot reach it at push-off, so the ball dragged: walk-forward on mst went from 1.6 to 9.6 cm of slide). Final: **372/419 (mst) and 367/419 (capitao-caveira)**.
+- round 3: whole-body lift/drop, limb IK for hands under straight arms. Pinning the ball while the heel is up was tried and reverted (a differently proportioned leg cannot reach it at push-off, so the ball dragged: walk-forward on mst went from 1.6 to 9.6 cm of slide). 372/419 and 367/419;
+- round 4 (the converter after the packed run: grip hold, bent-bound legs left unaligned, the flight-phase drop): **381/419 (mst) and 383/419 (capitao-caveira)**. Evidence (private): `csbrasil/local/anim-conv-20261109/library-r4/`.
 
 | category | clips | mst pass | capitao-caveira pass | failure kinds (count over mst + capitao-caveira) |
 | --- | --- | --- | --- | --- |
 | aim-pose | 3 | 3/3 | 3/3 | n/a |
 | climb-vault | 7 | 7/7 | 6/7 | skin stretch (1) |
 | cover | 9 | 8/9 | 9/9 | skin stretch (1), back stretch (1) |
-| dance-breakdance | 34 | 16/34 | 24/34 | skin stretch (18), back stretch (14), foot slide (12) |
-| dance-capoeira | 39 | 29/39 | 28/39 | skin stretch (14), foot slide (13), back stretch (6) |
-| death | 10 | 8/10 | 7/10 | skin stretch (3), back stretch (2), floats (1) |
+| dance-breakdance | 34 | 20/34 | 29/34 | skin stretch (18), back stretch (14), foot slide (1) |
+| dance-capoeira | 39 | 32/39 | 32/39 | skin stretch (13), back stretch (5), foot slide (2) |
+| death | 10 | 8/10 | 9/10 | skin stretch (3), back stretch (2) |
 | draw-holster | 2 | 2/2 | 2/2 | n/a |
 | emote | 8 | 8/8 | 8/8 | n/a |
 | fire | 5 | 5/5 | 5/5 | n/a |
-| gesture | 18 | 18/18 | 17/18 | loop seam (1) |
+| gesture | 18 | 18/18 | 18/18 | n/a |
 | grenade | 5 | 5/5 | 4/5 | skin stretch (1) |
 | hit-reaction | 16 | 15/16 | 15/16 | skin stretch (2), back stretch (1) |
 | idle | 13 | 13/13 | 13/13 | n/a |
-| injured | 20 | 19/20 | 19/20 | foot slide (2) |
+| injured | 20 | 20/20 | 20/20 | n/a |
 | interaction-prop | 21 | 21/21 | 21/21 | n/a |
 | jump | 16 | 15/16 | 16/16 | skin stretch (1), back stretch (1) |
 | knife-melee | 4 | 4/4 | 4/4 | n/a |
 | locomotion-pistol | 14 | 13/14 | 14/14 | skin stretch (1), back stretch (1) |
-| locomotion-rifle | 19 | 18/19 | 18/19 | skin stretch (1), back stretch (1), two-hand grip drifts (1) |
+| locomotion-rifle | 19 | 18/19 | 19/19 | skin stretch (1), back stretch (1) |
 | locomotion-rifle-8way | 32 | 31/32 | 32/32 | skin stretch (1), back stretch (1) |
 | locomotion-unarmed | 6 | 6/6 | 6/6 | n/a |
-| melee | 19 | 17/19 | 17/19 | skin stretch (2), foot slide (2), back stretch (1) |
-| prone | 12 | 9/12 | 1/12 | skin stretch (14), back stretch (3), floats (1) |
-| reload | 5 | 5/5 | 4/5 | skin stretch (1) |
+| melee | 19 | 18/19 | 17/19 | skin stretch (2), back stretch (1), foot slide (1) |
+| prone | 12 | 9/12 | 1/12 | skin stretch (14), back stretch (3) |
+| reload | 5 | 4/5 | 4/5 | foot slide (1), skin stretch (1) |
 | roll-slide | 4 | 4/4 | 4/4 | n/a |
-| soccer | 54 | 50/54 | 48/54 | skin stretch (9), back stretch (5), foot slide (1) |
+| soccer | 54 | 50/54 | 49/54 | skin stretch (9), back stretch (5) |
 | spell | 4 | 4/4 | 4/4 | n/a |
 | stance-transition | 4 | 4/4 | 4/4 | n/a |
-| turn | 9 | 8/9 | 8/9 | foot slide (2) |
+| turn | 9 | 9/9 | 9/9 | n/a |
 | victory-defeat | 4 | 4/4 | 3/4 | skin stretch (1) |
 | zombie | 3 | 3/3 | 3/3 | n/a |
-| **total** | 419 | 372/419 | 367/419 | |
+| **total** | 419 | 381/419 | 383/419 | |
 
-Of the remaining failures, 32 (mst) and 30 (capitao-caveira) are skin stretch only: breakdance, capoeira and prone poses past what the donor's and the Blender rig's weights hold (worst 4.12× on mst `breakdance-footwork-to-freeze`, 4.57× on capitao-caveira `prone-left-turn`); that is rig repair (P4), not conversion. The rest is foot slide on spins and pivots in dances, turns and a few melee/injured clips (4.1 to 14 cm against 4 to 11 cm limits), two capitao-caveira death/prone frames floating 4 to 5 cm, one loop seam (1.69 cm) and one grip drift (3.03 cm). Among keyed primaries, four mst clips fail on stretch only (`run_pistol`, `death_right`, `death_front`, `crouchwalk_fwd_left`) and capitao-caveira's `death_front` slides 6.2 cm.
+Of the remaining failures, 36 (mst) and 33 (capitao-caveira) are skin stretch only: breakdance, capoeira and prone poses past what the donor's and the Blender rig's weights hold; that is rig repair (P4), not conversion. The rest is foot slide: capoeira esquiva-3 (6.5 and 11.2 cm), Reloading on mst (4.4 cm), breakdance flair-3 and the UAL heavy sword combo on capitao-caveira (4.5 and 5.4 cm). Among keyed primaries, four mst clips fail on stretch only (`run_pistol`, `death_right`, `death_front`, `crouchwalk_fwd_left`).
 
 ## Spine map
 
@@ -296,7 +297,7 @@ Today's clips fail mostly on floor contact (465 failures: feet through the floor
 
 No state passes as a shared clip on more than 35 of 100 rigs, so every state is baked per character: about 255 KB merged for the 11 states (53 KB gzip after resampling and int16 rotations) and 653 KB for the 21 extras (207 KB gzip), against 372 KB for today's per-character merged states.
 
-**Packed run (130 characters).** The 100 legacy rigs plus the 30 Blender-rigged characters that pass the v4 pose test (`csbrasil/local/rig-blender-20261109/v4`), each baked with the 11 states and the 66 contract extras the library has (all of them but `draw_pistol` and `holster_pistol`, which have no source), packed and gated as stored. Evidence (private): `csbrasil/local/anim-conv-20261109/legacy-out/` (`<id>/{states.glb,extra.glb,manifest.json,qa-*.json}`, `summary.md`, `summary.json`, round 1 in `_round1/`).
+**Packed run (130 characters).** The 100 legacy rigs plus the 30 Blender-rigged characters that pass the v4 pose test (`csbrasil/local/rig-blender-20261109/v4`), each baked with the 11 states and the 66 contract extras the library has (all of them but `draw_pistol` and `holster_pistol`, which have no source), packed and gated as stored. Evidence (private): `csbrasil/local/anim-conv-20261109/legacy-out/` (`<id>/{states,loco,combat,ceremony}.glb`, `<id>/emotes/`, `<id>/manifest.json`, `<id>/qa-*.json`, `summary.md`, `summary.json`, rounds 1 and 2 in `_round1/`, `_round2/`).
 
 | packed clips | pass | rig weights only | clip failures |
 | --- | --- | --- | --- |
@@ -309,20 +310,39 @@ No state passes as a shared clip on more than 35 of 100 rigs, so every state is 
 
 ## Packs
 
-`tools/animations/pack-character.mjs --clips=<baked dir> --out=<dir> --id=<id> --model=<character.glb>` packs one character's baked clips for the client:
+`tools/animations/pack-character.mjs --clips=<baked dir> --out=<dir> --id=<id> --model=<character.glb> --emotes=<emote_a,...>` packs one character's baked clips for the client, split so a match loads only what it needs (`packFamily` in `tools/lib/clip-pack.mjs`):
 
-- `states.glb`: the 11 runtime states, one animation each, named by state;
-- `extra.glb`: every contract extra name (`extraClipNames` in `tools/lib/character-pack.mjs`) present in the baked dir, named by its key; loaded lazily;
-- `manifest.json` (`coro-solto/character-clips@1`): model file and sha256, per file sha256, bytes, gzip bytes and clip list, per clip its file, duration, loop, hold, airborne, root speed (m/s at this character's scale) and velocity, and provenance (the studio-assets catalog id and take).
+- `states.glb`: the 11 runtime states, named by state;
+- `loco.glb`: directional walk, run, sprint and crouch-walk, strafes, turns, jump phases, pistol locomotion, `idle_aim`, `crouch_aim`, `crouch_pistol` (45 clips);
+- `combat.glb`: `reload_*`, `draw_*`/`holster_*`, `hit_*`, `grenade_throw`, `knife_*`, `shoot_*` variants (14);
+- `ceremony.glb`: `victory`, `defeat`, `death_*` (7);
+- `emotes/<key>.glb`: one file per curated emote; emotes never go into a family pack;
+- `manifest.json` (`coro-solto/character-clips@2`): model file and sha256, per file sha256, bytes, gzip bytes and clip list, per clip its file, duration, loop, hold, airborne, root speed (m/s at this character's scale) and velocity, and provenance (the studio-assets catalog id and take).
 
-Packing (`tools/lib/clip-pack.mjs`) drops redundant keys (`resample`, tolerance 1e-4), shares identical accessors (`dedup`) and stores rotation outputs as normalized int16 quaternions. Both are core glTF 2.0 (rotation sampler outputs may be normalized SHORT): the client's `GLTFLoader` dequantizes them in `_getArrayFromAccessor`, with no extension or decoder. `clip-qa --pack=<pack.glb>` gates every clip of a pack as stored, and the readers (`clipSampler`, `gltfPoseSource`) dequantize normalized outputs like three.js (`accessorFloats`).
+Every clip is named by its state or vocabulary key (`extraClipNames` in `tools/lib/character-pack.mjs`). Packing drops redundant keys (`resample`, tolerance 1e-4), shares identical accessors (`dedup`), stores rotation outputs as normalized int16 quaternions (core glTF: the client's `GLTFLoader` dequantizes them in `_getArrayFromAccessor`) and encodes the buffer views with `EXT_meshopt_compression` in its lossless mode (no filters). The client's `GLTFLoader` registers `MeshoptDecoder` by default (`public/vendor/meshopt_decoder.module.js`, 29 KB, already shipped); Studio reads packs through `packIO()` (the `meshoptimizer` package). `clip-qa --pack=<a.glb,b.glb,...>` gates every clip of the packs as stored. The Studio readers interpolate with `Quaternion.slerpFlat` like three.js's `QuaternionLinearInterpolant` (`Quaternion#slerp` returned the earlier key for near-identical dequantized keys, up to 0.9° off what the client plays); clause P1 loads a pack with three.js's `GLTFLoader` and finds it within 3e-6° of the Studio reader.
 
-| per character (130 characters) | uncompressed | packed |
-| --- | --- | --- |
-| `states.glb` (11 clips) | 329 KB, 162 KB gzip | 144 to 148 KB, 52 to 54 KB gzip |
-| `extra.glb` (66 clips) | 2.06 MB, 1.01 MB gzip | 1.05 to 1.07 MB, 439 to 450 KB gzip |
+Curated emotes (all pass on mst and capitao-caveira; chosen for a Brazilian FPS lobby and kill-cam):
 
-Packing lost no pass: on all 130 characters and 77 clips the packed QA passes every clip the uncompressed one does (one more, a walk_back_left slide on oakley at the limit). `EXT_meshopt_compression` would take another 15% (states) to 25% (extras) off the gzip size; the client already registers `MeshoptDecoder` (`public/vendor/meshopt_decoder.module.js`, 29 KB) in its `GLTFLoader`, but the Studio readers would need the decoder too, so packs stay core glTF for now.
+| key | why |
+| --- | --- |
+| `emote_capoeira_capoeira` | the ginga loop, the most recognisable capoeira movement; stands in place |
+| `emote_capoeira_meia_lua_de_frente` | the signature crescent kick, a taunt readable at distance (the `de_compasso` take slides 4.7 to 5 cm) |
+| `emote_capoeira_bencao` | short front push kick, 1.4 s |
+| `emote_breakdance_uprock` | standing toprock loop; no floor work, so no floor stretch |
+| `emote_breakdance_freeze_var_2` | a freeze to end a round on; the one freeze that passes on both rigs |
+| `emote_salute` | respect, team play |
+| `emote_being_cocky` | taunt after a kill |
+| `emote_happy_hand_gesture` | short celebration, upper body only |
+
+| per character (130 characters) | clips | uncompressed | packed (gzip min / mean / max) |
+| --- | --- | --- | --- |
+| `states.glb` | 11 | 329 KB, 162 KB gzip | 135 to 138 KB, 44 / 45 / 46 KB gzip |
+| `loco.glb` | 45 | | 509 to 517 KB, 161 / 163 / 167 KB gzip |
+| `combat.glb` | 14 | | 240 to 247 KB, 98 / 99 / 102 KB gzip |
+| `ceremony.glb` | 7 | | 181 to 188 KB, 94 / 96 / 98 KB gzip |
+| `emotes/*.glb` | 8 | | 204 to 223 KB together, 9 to 24 KB gzip each |
+
+The 66 extras were 2.06 MB (1.01 MB gzip) uncompressed and 1.06 MB (443 KB gzip) as one int16 pack before meshopt; the three family packs are 941 KB (358 KB gzip). Packing loses no pass: on 130 characters and 85 clips, the packed QA verdicts equal the uncompressed ones (0 lost, 0 gained).
 
 ## Limits and residual issues
 
