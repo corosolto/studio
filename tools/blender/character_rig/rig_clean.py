@@ -163,4 +163,4 @@ def main():
           f"merged={merged} flipped={flipped} loose={len(parts)} boundary={boundary}")
 
 
-main()
+C.run_main(main)

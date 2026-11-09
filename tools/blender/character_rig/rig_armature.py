@@ -88,4 +88,4 @@ def main():
     print(f"ARMATURE {len(arm_data.bones)} bones ({sum(b.use_deform for b in arm_data.bones)} deform)")
 
 
-main()
+C.run_main(main)

@@ -7,7 +7,9 @@
 //       order, the donor rest frames, and inverse bind matrices that reproduce the mesh;
 //   R4  the pose test passes a synthetic, well-skinned humanoid (programmatic tubes, no real
 //       asset bytes) and fails each mutant on the clause it breaks.
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { chmodSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Document } from '@gltf-transform/core';
@@ -336,6 +338,71 @@ clause('R4 a report without synthetic poses is rejected', () => {
   const failed = evaluatePoseReport({ bindError: 0, poses: [] });
   assert(failed.some((f) => /no synthetic poses/.test(f)), failed.join('; '));
 });
+
+// ------------------------------------------------------------------------------ R5 runner
+/* The runner never continues on missing or stale step outputs. Blender itself cannot run in
+   CI, so a fake Blender (a Node script with Blender's command line) writes each step's files;
+   FAKE_SKIP=<step> makes it exit 0 without writing (what Blender did when a Python step
+   raised before the steps called C.run_main), FAKE_FAIL=<step> makes it exit 1. */
+clause('R5 every Blender step exits non-zero on exceptions (C.run_main)', () => {
+  const dir = path.join(root, 'tools/blender/character_rig');
+  const steps = readdirSync(dir).filter((f) => /^rig_.*\.py$/.test(f));
+  for (const file of steps) assert(/\nC\.run_main\(main\)\s*$/.test(readFileSync(path.join(dir, file), 'utf8')), `${file} does not end with C.run_main(main)`);
+  assert(/os\._exit\(1\)/.test(readFileSync(path.join(dir, 'common.py'), 'utf8')), 'common.run_main does not exit 1');
+  return steps.join(', ');
+});
+{
+  const tmp = mkdtempSync(path.join(os.tmpdir(), 'rig-runner-'));
+  const fake = path.join(tmp, 'fake-blender.mjs');
+  writeFileSync(fake, `#!/usr/bin/env node
+import { writeFileSync } from 'node:fs';
+import path from 'node:path';
+const argv = process.argv.slice(2);
+const step = path.basename(argv[argv.indexOf('--python') + 1]).replace(/^rig_|\\.py$/g, '');
+const work = argv[argv.indexOf('--work') + 1];
+if (process.env.FAKE_FAIL === step) process.exit(1);
+if (process.env.FAKE_SKIP === step) process.exit(0);
+const files = { clean: ['clean.blend', 'clean.json'], parts: ['parts.blend', 'parts.json', 'parts-legend.json'], joints: ['joints-estimate.json'] }[step];
+for (const f of files) writeFileSync(path.join(work, f), step + Date.now());
+if (step === 'joints') writeFileSync(path.join(work, 'joints.json'), process.env.FAKE_JOINTS);
+`);
+  chmodSync(fake, 0o755);
+  const config = path.join(tmp, 'rig.json');
+  const source = path.join(tmp, 'source.glb');
+  writeFileSync(config, JSON.stringify({ id: 'fake', targetHeight: 1.7 }));
+  writeFileSync(source, 'mesh');
+  const work = path.join(tmp, 'work');
+  const runner = (from, env = {}) => spawnSync(process.execPath, [path.join(root, 'tools/characters/rig-character.mjs'),
+    `--config=${config}`, `--work=${work}`, `--source=${source}`, `--from=${from}`, '--to=joints', '--no-clips', '--skip-review', `--blender=${fake}`],
+  { encoding: 'utf8', env: { ...process.env, FAKE_JOINTS: JSON.stringify(baseJoints), ...env } });
+  const expectFail = (result, pattern) => {
+    assert(result.status !== 0, 'runner succeeded');
+    assert(pattern.test(result.stderr), `expected ${pattern}, got ${result.stderr.split('\n').find((l) => /Error/.test(l)) || result.stderr.slice(0, 200)}`);
+  };
+  clause('R5 runner records clean -> parts -> joints with input and output hashes', () => {
+    const result = runner('clean');
+    assert(result.status === 0, result.stderr);
+    const manifest = JSON.parse(readFileSync(path.join(work, 'run-manifest.json'), 'utf8'));
+    assert(['clean', 'parts', 'joints'].every((s) => manifest.steps[s]?.outputs), 'manifest lacks a step');
+    assert(manifest.steps.clean.inputs.source.sha256 && manifest.steps.joints.outputs['joints.json'], 'manifest lacks hashes');
+  });
+  clause('R5 mutant rejected: a step exits 0 without writing (stale joints.json is not reused)', () => {
+    expectFail(runner('joints', { FAKE_SKIP: 'joints' }), /joints did not write joints\.json/);
+    assert(!existsSync(path.join(work, 'joints.json')), 'the stale joints.json survived');
+  });
+  clause('R5 mutant rejected: a step exits 1', () => expectFail(runner('clean', { FAKE_FAIL: 'parts' }), /failed \(exit 1\)/));
+  clause('R5 mutant rejected: resuming after the config changed', () => {
+    assert(runner('clean').status === 0, 'baseline run failed');
+    writeFileSync(config, JSON.stringify({ id: 'fake', targetHeight: 1.6 }));
+    expectFail(runner('joints'), /config .* changed since clean ran/);
+  });
+  clause('R5 mutant rejected: resuming on a hand-edited upstream output', () => {
+    assert(runner('clean').status === 0, 'baseline run failed');
+    writeFileSync(path.join(work, 'parts.json'), '{}');
+    expectFail(runner('joints'), /parts\.json changed or vanished since parts ran/);
+  });
+  rmSync(tmp, { recursive: true, force: true });
+}
 
 if (failures) {
   console.error(`character-rig-check: ${failures} clause(s) failed`);

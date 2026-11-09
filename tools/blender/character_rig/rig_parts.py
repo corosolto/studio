@@ -155,4 +155,4 @@ def main():
     print("PARTS " + " ".join(f"{k}={v}" for k, v in counts.items()))
 
 
-main()
+C.run_main(main)
