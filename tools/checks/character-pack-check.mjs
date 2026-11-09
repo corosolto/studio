@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { assertExtraClipVocabulary, clipFamily, converterExtraClipNames, coreExtraClipNames, extraClipNames, meshy28Joints, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
+import { readGlb } from '../lib/glb-inspect.mjs';
 import { validatePack } from '../lib/pack.mjs';
 
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
@@ -13,7 +14,7 @@ const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const clone = value => JSON.parse(JSON.stringify(value));
 const pad4 = bytes => Buffer.concat([bytes, Buffer.alloc((4 - (bytes.length % 4)) % 4)]);
 
-function glb(document, chunks) {
+function glb(document, chunks, extraBuffers = []) {
   const views = [];
   const parts = [];
   let offset = 0;
@@ -24,7 +25,7 @@ function glb(document, chunks) {
     offset += padded.length;
   }
   const bin = Buffer.concat(parts);
-  const json = Buffer.from(JSON.stringify({ asset: { version: '2.0', generator: 'coro-solto-studio character-pack-check' }, ...document, buffers: [{ byteLength: bin.length }], bufferViews: views }));
+  const json = Buffer.from(JSON.stringify({ asset: { version: '2.0', generator: 'coro-solto-studio character-pack-check' }, ...document, buffers: [{ byteLength: bin.length }, ...extraBuffers], bufferViews: [...document.bufferViews ?? [], ...views] }));
   const paddedJson = Buffer.concat([json, Buffer.alloc((4 - (json.length % 4)) % 4, 0x20)]);
   const header = Buffer.alloc(20);
   header.writeUInt32LE(0x46546c67, 0);
@@ -148,6 +149,34 @@ function clipsGlb(names) {
   ]);
 }
 
+// The converter's EXT_meshopt_compression shape: buffer 0 holds the compressed stream (the
+// BIN chunk), buffer 1 is the virtual fallback buffer, and every bufferView lives in the
+// fallback with a compressed range pointing into buffer 0.
+function meshoptClipsGlb(names, { markFallback = true, overshootStream = false } = {}) {
+  const nodes = skeletonNodes(meshy28Joints);
+  const targetNode = nodes.findIndex(node => node.name === 'Hips');
+  const stream = Buffer.alloc(16, 7);
+  const secondHalf = overshootStream ? 16 : 8;
+  return glb({
+    scene: 0,
+    scenes: [{ nodes: [0] }],
+    nodes,
+    animations: names.map(name => ({
+      name,
+      channels: [{ sampler: 0, target: { node: targetNode, path: 'rotation' } }],
+      samplers: [{ input: 0, output: 1, interpolation: 'LINEAR' }],
+    })),
+    accessors: [
+      { bufferView: 0, componentType: 5126, count: 2, type: 'SCALAR', min: [0], max: [1] },
+      { bufferView: 1, componentType: 5126, count: 2, type: 'VEC4' },
+    ],
+    bufferViews: [
+      { buffer: 1, byteOffset: 0, byteLength: 8, extensions: { EXT_meshopt_compression: { buffer: 0, byteOffset: 0, byteLength: 8 } } },
+      { buffer: 1, byteOffset: 8, byteLength: 32, extensions: { EXT_meshopt_compression: { buffer: 0, byteOffset: secondHalf, byteLength: secondHalf === 16 ? 16 : 8 } } },
+    ],
+  }, [{ bytes: stream }], [{ byteLength: 40, ...(markFallback ? { extensions: { EXT_meshopt_compression: { fallback: true } } } : {}) }]);
+}
+
 const allStates = [...requiredCharacterStates, ...optionalCharacterStates];
 function validFiles() {
   const files = { 'model/fixture-character.glb': modelGlb(), 'previews/portrait.png': png };
@@ -257,6 +286,21 @@ try {
     },
   });
   console.log(`PASS Valid character pack with all ${statesPack.character.animations} states in one states.glb`);
+
+  // The converter's meshopt family packs (fallback buffer + compressed streams) validate as
+  // animation files, while the raw model read keeps the strict single-buffer container.
+  await validateCase({ replace: { 'animations/extra/loco.glb': meshoptClipsGlb(['strafe_left', 'walk_back']) } });
+  console.log('PASS Valid meshopt-compressed family pack accepted');
+  const meshoptShape = path.join(directory, 'meshopt-shape.glb');
+  fs.writeFileSync(meshoptShape, meshoptClipsGlb(['strafe_left']));
+  await readGlb(meshoptShape, 'meshopt-shape.glb', { allowMeshoptFallback: true });
+  try {
+    await readGlb(meshoptShape, 'meshopt-shape.glb');
+    throw new Error('Strict readGlb accepted the meshopt fallback layout');
+  } catch (caught) {
+    if (!/one self-contained buffer/.test(caught.message)) throw new Error(`Strict readGlb rejected for the wrong reason: ${caught.message}`);
+  }
+  console.log('PASS Strict readGlb still rejects the meshopt fallback layout (model path)');
 
   // Single-source vocabulary invariant: the contract vocabulary must equal the core names plus
   // the animation conversion library's proposed names (snapshot in character-pack.mjs).
@@ -398,6 +442,12 @@ try {
     mutate: manifest => {
       for (const state of allStates) manifest.animations[state] = 'animations/states.glb';
     },
+  });
+  await expectRejection('Second buffer without the meshopt fallback marker', /GLB validation failed for animations\/extra\/loco\.glb: GLB must contain one self-contained buffer/, {
+    replace: { 'animations/extra/loco.glb': meshoptClipsGlb(['strafe_left', 'walk_back'], { markFallback: false }) },
+  });
+  await expectRejection('Meshopt stream past the BIN chunk', /bufferView 1 has an out-of-bounds meshopt stream/, {
+    replace: { 'animations/extra/loco.glb': meshoptClipsGlb(['strafe_left', 'walk_back'], { overshootStream: true }) },
   });
   await expectRejection('Extra clip file is not a GLB', /animations\/extra\/strafe_left\/file must match pattern/, {
     mutate: manifest => { manifest.animations.extra.strafe_left.file = 'animations/extra/strafe-left.gltf'; },

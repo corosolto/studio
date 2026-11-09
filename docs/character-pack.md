@@ -44,6 +44,7 @@ Every file in `files` must be declared by at least one role (`model`, `animation
 
 `node tools/validate-pack.mjs <manifest.json> [package-root]` runs the schema, safe-path, role, size and SHA-256 checks shared by every pack. Before any payload is hashed, the sum of `files[].bytes` must not exceed `budgets.bytes`. It then reads the character bytes as data only (no renderer, no code execution):
 
+- Animation GLBs may use the converter's `EXT_meshopt_compression` layout: buffer 0 is the compressed stream inside the BIN chunk and a virtual fallback buffer carries the uncompressed view sizes. Every compressed stream range is bounds-checked against the BIN chunk. The model keeps the strict single-buffer container, because the validator reads its skin bytes raw.
 - The model is a GLB 2 container with in-bounds buffer views and accessors, finite positions and in-range indices. Every primitive is a triangle list (mode 4), and the triangle count must not exceed `budgets.triangles`.
 - The model has exactly one skin, and `inverseBindMatrices` holds one float `MAT4` per joint. Every skinned primitive has a `JOINTS_0` unsigned byte/short `VEC4` and a float or normalized `WEIGHTS_0` `VEC4` per vertex, and every joint index stays inside the skin.
 - The skin is exactly meshy-28: 28 joints whose (name, nearest joint ancestor) pairs match the list below as a multiset.
