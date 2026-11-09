@@ -71,10 +71,12 @@ DEFAULTS = {
     "clavicleFloor": None,     # fraction of Spine02 -> Spine01 height, e.g. 0.0 = Spine02
     # Band weight models (step 4c'), x height or null: the waist band reaches this far below
     # the hip joints, the neck band this far above Head; each fades out over half of it.  The
-    # flank band covers Hips -> Spine01 on the torso sides and fades out over half of it.
+    # flank band covers Hips -> Spine01 on the torso sides and fades out over half of it;
+    # flankFade (x height or null) lengthens its lower fade, which ends at the Hips joint.
     "waistBand": None,
     "neckBand": None,
     "flankBand": None,
+    "flankFade": None,
     # Spine-chain locality (step 2), x height or null: margin beyond the parent and child joints.
     "chainLocality": None,
     # Side exclusivity (step 2), x height or null: no opposite-side bones past this margin.
@@ -168,7 +170,7 @@ def cloth_weights(points, kind, joints, bidx, front_panel=None):
     return W
 
 
-def band_model(co, joints, bidx, kind, margin):
+def band_model(co, joints, bidx, kind, margin, fade_below=None):
     """Weights of the waist, neck or flank band model and their blend factor per vertex.
 
     waist: from ``margin`` below the hip joints up to Spine02.  The thighs take the sides
@@ -181,7 +183,8 @@ def band_model(co, joints, bidx, kind, margin):
     around the vertical through Hips from 0.5 to 0.9, so the belly front and the back keep
     their weights): only the spine chain by height (Hips -> Spine02 -> Spine01), no
     clavicle and no thigh, where heat put both on one flank of a big belly.
-    The blend factor is 1 inside the band and smoothsteps to 0 over margin / 2 beyond it.
+    The blend factor is 1 inside the band and smoothsteps to 0 over margin / 2 beyond it
+    (below it over ``fade_below`` when given).
     """
     x, y, z = co[:, 0], co[:, 1], co[:, 2]
     W = np.zeros((len(co), len(bidx)))
@@ -220,7 +223,8 @@ def band_model(co, joints, bidx, kind, margin):
         W[:, bidx["neck"]] = (1 - limb) * lower * (1 - upper)
         W[:, bidx["Head"]] = (1 - limb) * lower * upper
     fade = 0.5 * margin
-    alpha = smoothstep((z - (lo - fade)) / fade) * smoothstep(((hi + fade) - z) / fade) * side_of
+    below = fade_below or fade
+    alpha = smoothstep((z - (lo - below)) / below) * smoothstep(((hi + fade) - z) / fade) * side_of
     return W, alpha
 
 
@@ -515,7 +519,8 @@ def main():
     for kind, margin in (("waist", P["waistBand"]), ("neck", P["neckBand"]), ("flank", P["flankBand"])):
         if not margin:
             continue
-        Wm, alpha = band_model(co, joints, bidx, kind, margin * H)
+        fade_below = P["flankFade"] * H if kind == "flank" and P["flankFade"] else None
+        Wm, alpha = band_model(co, joints, bidx, kind, margin * H, fade_below)
         Wm = np.where(allowed, Wm, 0.0)
         sums = Wm.sum(axis=1)
         alpha = np.where(eligible & (sums > 1e-6), alpha, 0.0)
