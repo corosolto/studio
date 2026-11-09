@@ -80,7 +80,8 @@
         "LeftShoulder",
         "LeftArm",
         "LeftForeArm"
-      ]
+      ],
+      "measure": true
     },
     {
       "name": "right-shoulder-transition",
@@ -107,7 +108,8 @@
         "RightShoulder",
         "RightArm",
         "RightForeArm"
-      ]
+      ],
+      "measure": true
     }
   ]
 }

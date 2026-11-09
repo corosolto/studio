@@ -1,0 +1,71 @@
+{
+  "id": "assombracao-lanhouse",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.06
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ],
+    "gradientRamp": 0.04
+  },
+  "extras": [
+    {
+      "name": "hood",
+      "select": {
+        "from": [
+          "head",
+          "torso"
+        ],
+        "box": {
+          "min": [
+            null,
+            null,
+            1.43
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "rigid": "Head",
+      "measure": true
+    },
+    {
+      "name": "pelvis",
+      "select": {
+        "from": [
+          "torso",
+          "leg_L",
+          "leg_R"
+        ],
+        "box": {
+          "min": [
+            -0.15,
+            null,
+            0.72
+          ],
+          "max": [
+            0.15,
+            null,
+            0.83
+          ]
+        }
+      },
+      "rigid": "Hips"
+    }
+  ]
+}

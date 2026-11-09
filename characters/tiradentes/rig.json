@@ -1,0 +1,33 @@
+{
+  "id": "tiradentes",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.04
+  },
+  "weights": {
+    "smoothRadius": 0.08,
+    "smoothIterations": 3,
+    "smoothJoints": [
+      "LeftArm",
+      "RightArm",
+      "LeftLeg",
+      "RightLeg"
+    ],
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ]
+  },
+  "joints": {
+    "shoulderAt": "junction"
+  }
+}

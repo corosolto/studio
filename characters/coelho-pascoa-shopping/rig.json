@@ -1,0 +1,34 @@
+{
+  "id": "coelho-pascoa-shopping",
+  "forward": "-Y",
+  "targetHeight": 1.3,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.025
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.025
+      ],
+      [
+        "neck",
+        "Head",
+        0.04
+      ],
+      [
+        "Spine",
+        "neck",
+        0.04
+      ]
+    ],
+    "thighCeiling": 1.0,
+    "clavicleFloor": 0.0
+  }
+}

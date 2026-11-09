@@ -20,5 +20,8 @@
       ]
     ],
     "headRigidAbove": 1.0
+  },
+  "joints": {
+    "spineDepth": 0.15
   }
 }

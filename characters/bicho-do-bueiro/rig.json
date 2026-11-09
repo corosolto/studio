@@ -1,0 +1,71 @@
+{
+  "id": "bicho-do-bueiro",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ],
+    "gradientRamp": 0.04
+  },
+  "extras": [
+    {
+      "name": "left-arm-rags",
+      "select": {
+        "islandMaxFaces": 300,
+        "box": {
+          "min": [
+            0.15,
+            null,
+            1.05
+          ],
+          "max": [
+            0.65,
+            null,
+            1.35
+          ]
+        }
+      },
+      "bones": [
+        "LeftShoulder",
+        "LeftArm",
+        "LeftForeArm"
+      ]
+    },
+    {
+      "name": "right-arm-rags",
+      "select": {
+        "islandMaxFaces": 300,
+        "box": {
+          "min": [
+            -0.65,
+            null,
+            1.05
+          ],
+          "max": [
+            -0.15,
+            null,
+            1.35
+          ]
+        }
+      },
+      "bones": [
+        "RightShoulder",
+        "RightArm",
+        "RightForeArm"
+      ]
+    }
+  ]
+}
