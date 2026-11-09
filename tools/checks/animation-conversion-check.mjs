@@ -625,6 +625,23 @@ for (const [label, frames, region, lever, only] of floorCases) {
   });
 }
 
+await clause('Q4 a heel sinking under a planted ball turns about the ball, which stays put', async () => {
+  const doc = bodyClip(() => ({ deltas: { LeftFoot: Q(X, -50), RightFoot: Q(X, -50) }, hips: [0, -0.09, 0] }), { loop: false }, { duration: 0.2 });
+  const run = (contacts) => {
+    const r = retargetClip(gltfPoseSource(doc, doc.getRoot().listAnimations()[0], RIG_MAPS['meshy-28']), bodyGraph, { rootMotion: 'keep', footIk: false, footContact: false, alignLimbs: [] });
+    const ball = (i) => resultJointPositions(bodyGraph, r, i).get('LeftToeBase');
+    const frames = Array.from(r.times, (_, i) => i);
+    const before = frames.map(ball);
+    const stats = clampToFloor(bodyRig, r, { contacts });
+    const moved = Math.max(...frames.map((i) => { const d = ball(i).sub(before[i]); return Math.hypot(d.x, d.z); }));
+    return { moved, stats };
+  };
+  const pinned = run({ LeftToeBase: [[0, 6]], RightToeBase: [[0, 6]] }), free = run(null);
+  assert(pinned.stats.ballPivot.frames > 0 && pinned.moved < 0.002, `planted ball moved ${pinned.moved} m (${JSON.stringify(pinned.stats.ballPivot)})`);
+  assert(free.moved > 0.01, `without contacts the ankle pitch should sweep the ball (${free.moved} m)`);
+  return `ball ${(pinned.moved * 100).toFixed(2)} cm with the contact, ${(free.moved * 100).toFixed(1)} cm pitching about the ankle`;
+});
+
 await clause('Q4 a body hanging above the floor drops back where the source has a foot planted', async () => {
   const doc = bodyClip(() => ({ deltas: {}, hips: [0, 0.05, 0] }), { loop: false }, { duration: 0.2 });
   const graph = skeletonGraph(doc);

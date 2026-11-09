@@ -661,8 +661,8 @@ export const FLOAT_DROP = 0.02;
    knees (a kneeling thigh is vertical, so no rotation lifts the knee) and the rest of the
    body (`bones: null`: torso, head, upper limbs lying on the floor). */
 export const FLOOR_CLAMP_REGIONS = Object.freeze([
-  { name: 'heel', bones: ['LeftFoot'], pivots: ['LeftFoot'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
-  { name: 'heel', bones: ['RightFoot'], pivots: ['RightFoot'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
+  { name: 'heel', bones: ['LeftFoot'], pivots: ['LeftFoot'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'], ball: 'LeftToeBase' },
+  { name: 'heel', bones: ['RightFoot'], pivots: ['RightFoot'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'], ball: 'RightToeBase' },
   { name: 'toe', bones: ['LeftToeBase'], pivots: ['LeftToeBase'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
   { name: 'toe', bones: ['RightToeBase'], pivots: ['RightToeBase'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
   { name: 'hand', bones: ['LeftHand', 'Curl_L'], pivots: ['LeftForeArm', 'LeftArm'], limb: ['LeftArm', 'LeftForeArm', 'LeftHand'] },
@@ -712,11 +712,15 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
  * two-bone IK, and `lift` regions raise the hips by the depth. Up to 8 passes per frame; then
  * the whole body is lifted out of any remaining penetration, or dropped when it hangs more than
  * FLOAT_DROP above the source's lowest foot (`clearance`: extras.clip.footClearance, scaled).
+ * A heel that sinks while its ball is planted (`contacts`: frame windows per joint, e.g.
+ * result.contacts) turns about the ball instead of the ankle: the ankle moves by leg IK and the
+ * ball stays where the foot lock put it (pitching about the ankle swept a planted ball up to
+ * 3 cm forward on short-legged rigs in crouch-walks).
  * Rewrites `result.rotations` and `result.hips` in place. Returns per-region { frames, max }
  * (degrees for pivots, metres for lifts; `limbLift` for the IK) and the frames still
  * below the tolerance.
  */
-export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passes = 8, clearance = null } = {}) {
+export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passes = 8, clearance = null, contacts = null } = {}) {
   const bind = skinPositions(rig);
   let floor = Infinity;
   for (const b of bind) for (let v = 1; v < b.length; v += 3) floor = Math.min(floor, b[v]);
@@ -726,6 +730,8 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
   const stats = {};
   for (const r of regions) stats[r.name] ||= { frames: 0, max: 0 };
   stats.limbLift = { frames: 0, max: 0 };
+  stats.ballPivot = { frames: 0, max: 0 };
+  const planted = (name, i) => (contacts?.[name] || []).some(([a, b]) => i >= a && i <= b);
   stats.bodyShift = { frames: 0, max: 0 };
   let unresolved = 0;
   const hipsNode = node('Hips');
@@ -761,18 +767,19 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
         entry.depths.push(depth);
         legs.set(key, entry);
       });
-      const liftLimb = (limb, lift) => {
+      const pos = (n) => new THREE.Vector3().setFromMatrixPosition(world(n));
+      const rot = (n) => { const q = new THREE.Quaternion(); world(n).decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; };
+      // Two-bone IK of `limb` to put its end at `goal` with world rotation `endQ` (default: kept).
+      const placeLimb = (limb, goal, endQ = null) => {
         const [hip, knee, ankle] = limb.map(node);
         if (![hip, knee, ankle].every((n) => n && result.rotations.has(n.getName()))) return false;
-        const pos = (n) => new THREE.Vector3().setFromMatrixPosition(world(n));
-        const rot = (n) => { const q = new THREE.Quaternion(); world(n).decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; };
         const H = pos(hip), K = pos(knee), A = pos(ankle);
         const fallback = new THREE.Vector3(1, 0, 0).applyQuaternion(rot(hip));
-        const solved = solveTwoBone(H, K, A, A.clone().add(new THREE.Vector3(0, lift, 0)), rot(hip), rot(knee), fallback);
+        const solved = solveTwoBone(H, K, A, goal, rot(hip), rot(knee), fallback);
         const locals = [
           [hip, rot(rig.parent.get(hip)).invert().multiply(solved.hip)],
           [knee, solved.hip.clone().invert().multiply(solved.knee)],
-          [ankle, solved.knee.clone().invert().multiply(rot(ankle))],
+          [ankle, solved.knee.clone().invert().multiply(endQ || rot(ankle))],
         ];
         for (const [n, q] of locals) {
           q.normalize();
@@ -782,6 +789,10 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
           track.set(q.toArray(), i * 4);
           overrides.set(n, { ...overrides.get(n), r: q.toArray() });
         }
+        return true;
+      };
+      const liftLimb = (limb, lift) => {
+        if (!placeLimb(limb, pos(node(limb[2])).add(new THREE.Vector3(0, lift, 0)))) return false;
         stats.limbLift.max = Math.max(stats.limbLift.max, lift);
         touched.add('limbLift');
         return true;
@@ -806,6 +817,23 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
           return;
         }
         const V = new THREE.Vector3().fromArray(skinned[low[ri].at[0]], low[ri].at[1] * 3);
+        // Planted ball: turn the foot about the ball (the ankle follows by leg IK).
+        if (region.ball && node(region.ball) && planted(region.ball, i)) {
+          const B = pos(node(region.ball)), lever = V.clone().sub(B);
+          const axis = lever.clone().cross(new THREE.Vector3(0, 1, 0));
+          if (lever.length() > 1e-4 && axis.length() >= 0.2 * lever.length()) {
+            const angle = Math.min(Math.PI / 4, Math.asin(Math.min(1, depth / lever.length())) + 1e-3);
+            const turn = new THREE.Quaternion().setFromAxisAngle(axis.normalize(), angle);
+            const ankleNode = node(region.limb[2]);
+            const goal = B.clone().add(pos(ankleNode).sub(B).applyQuaternion(turn));
+            if (placeLimb(region.limb, goal, turn.clone().multiply(rot(ankleNode)))) {
+              stats.ballPivot.max = Math.max(stats.ballPivot.max, THREE.MathUtils.radToDeg(angle));
+              touched.add('ballPivot');
+              moved = true;
+              return;
+            }
+          }
+        }
         for (const pivotName of region.pivots) {
           const pivot = node(pivotName);
           if (!pivot || !result.rotations.has(pivotName)) continue;

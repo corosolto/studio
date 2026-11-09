@@ -68,7 +68,7 @@ for (const state of states) {
   // a bent-leg mascot whose shins meet the floor, would otherwise be hoisted); recorded in
   // bakedFor.passiveRegions so the QA gate reports them as the rig's instead of gating them.
   const regions = args.includes('--passive-knees') ? FLOOR_CLAMP_REGIONS.map((r) => (r.name === 'knee' ? { ...r, lift: false, passive: true } : r)) : FLOOR_CLAMP_REGIONS;
-  const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale), regions });
+  const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale), regions, contacts: result.contacts });
   // Two-handed holds: the support hand stays on the weapon (--no-grip switches it off).
   const grip = TWO_HAND_HOLDS.includes(meta.hold) && !args.includes('--no-grip') ? holdTwoHandGrip(rig, result) : null;
   if (meta.loop) closeLoop(result);
