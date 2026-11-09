@@ -77,6 +77,9 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
   const deform = rig.joints.filter((j, i) => rig.joints.findIndex((k) => k.getName() === j.getName()) === i && !/^Curl_|^head_end$|^headfront$/.test(j.getName()));
 
   const membership = vertexRegions(rig);
+  // Regions the bake declared passive for this rig (bakedFor.passiveRegions: e.g. knees of a
+  // mascot whose tail is skinned to a shin) are reported, not gated, like shoes.
+  const passiveRegions = meta.bakedFor?.passiveRegions || [];
   const regionLow = {};
   const lowest = [], lowestAll = [], lowestBone = [], hipsY = [], hands = [], feet = Object.fromEntries(FOOT_JOINTS.map((n) => [n, []]));
   const firstLast = [];
@@ -88,7 +91,7 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
     skinPositions(rig, overrides).forEach((p, pi) => {
       for (let v = 1; v < p.length; v += 3) {
         const r = membership[pi][(v - 1) / 3];
-        const passive = r != null && FLOOR_CLAMP_REGIONS[r].passive;
+        const passive = r != null && (FLOOR_CLAMP_REGIONS[r].passive || passiveRegions.includes(FLOOR_CLAMP_REGIONS[r].name));
         if (!passive && p[v] < low) { low = p[v]; lowAt = [pi, (v - 1) / 3]; }
         if (p[v] < lowAll) lowAll = p[v];
         const name = r == null ? 'body' : FLOOR_CLAMP_REGIONS[r].name;

@@ -22,7 +22,7 @@ import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { CLIP_FPS, clampToFloor, clipMetadata, closeLoop, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
+import { CLIP_FPS, FLOOR_CLAMP_REGIONS, clampToFloor, clipMetadata, closeLoop, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS } from '../lib/animation-sources.mjs';
 import { loadRig } from '../lib/character-rig.mjs';
 
@@ -63,7 +63,11 @@ for (const state of states) {
   const source = gltfPoseSource(doc, animation, RIG_MAPS['meshy-28']);
   const result = retargetClip(source, target, { fps: meta.fps || CLIP_FPS, rootMotion: 'keep', absoluteArms: true, footContact: !args.includes('--no-foot-contact'), footIk: !args.includes('--no-foot-ik'), contacts: meta.contacts || null, loop: Boolean(meta.loop), inPlaceVelocity: inPlaceVelocity(meta, target, source), alignLimbs: args.includes('--no-limb-align') ? [] : undefined });
   const scale = (v) => +(v * result.hipsScale).toFixed(4);
-  const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale) });
+  // --passive-knees: shins never lift the body (a rig with a tail or a robe skinned to a shin, or
+  // a bent-leg mascot whose shins meet the floor, would otherwise be hoisted); recorded in
+  // bakedFor.passiveRegions so the QA gate reports them as the rig's instead of gating them.
+  const regions = args.includes('--passive-knees') ? FLOOR_CLAMP_REGIONS.map((r) => (r.name === 'knee' ? { ...r, lift: false, passive: true } : r)) : FLOOR_CLAMP_REGIONS;
+  const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale), regions });
   if (meta.loop) closeLoop(result);
   const rm = meta.rootMotion;
   const frames = result.times.length;
@@ -72,7 +76,7 @@ for (const state of states) {
     contactSlide: meta.contactSlide != null ? scale(meta.contactSlide) : undefined,
     footClearance: meta.footClearance ? meta.footClearance.map(scale) : undefined,
     rootMotion: rm ? { ...rm, displacement: rm.displacement.map(scale), velocity: rm.velocity.map(scale), speed: scale(rm.speed) } : undefined,
-    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, unanimated: unanimated(result), footContact: result.contactCorrection, footIk: result.ik, floorClamp, alignedLimbs: result.aligned },
+    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, unanimated: unanimated(result), footContact: result.contactCorrection, footIk: result.ik, floorClamp, passiveRegions: args.includes('--passive-knees') ? ['knee'] : [], alignedLimbs: result.aligned },
   };
   await io.write(path.join(outDir, `${state}.glb`), writeClipDocument(target, result, state, extras));
   if (!reported) { console.log(`skin joints left at rest: ${unanimated(result).join(', ') || 'none'}`); reported = true; }

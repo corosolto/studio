@@ -13,7 +13,7 @@
 // sway around it.
 import { Document } from '@gltf-transform/core';
 import * as THREE from 'three';
-import { buildMeshy28Skeleton, skinPositions, worldMatrices } from './character-rig.mjs';
+import { accessorFloats, buildMeshy28Skeleton, skinPositions, worldMatrices } from './character-rig.mjs';
 
 export const CLIP_FPS = 30;
 export const CLIP_SCHEMA = 'coro-solto/clip@1';
@@ -160,7 +160,7 @@ export function gltfPoseSource(doc, animation, map, { rootJoint } = {}) {
     if (!entry || !s || !['translation', 'rotation', 'scale'].includes(path)) continue;
     const times = s.getInput().getArray();
     keyTimes.push(times);
-    channels.push({ entry, key: path === 'translation' ? 't' : path === 'rotation' ? 'r' : 's', times, values: s.getOutput().getArray(), n: path === 'rotation' ? 4 : 3, cubic: s.getInterpolation() === 'CUBICSPLINE', step: s.getInterpolation() === 'STEP' });
+    channels.push({ entry, key: path === 'translation' ? 't' : path === 'rotation' ? 'r' : 's', times, values: accessorFloats(s.getOutput()), n: path === 'rotation' ? 4 : 3, cubic: s.getInterpolation() === 'CUBICSPLINE', step: s.getInterpolation() === 'STEP' });
   }
   const startTime = Math.min(...channels.map((c) => c.times[0]));
   const duration = Math.max(0, ...channels.map((c) => c.times[c.times.length - 1])) - (Number.isFinite(startTime) ? startTime : 0);
@@ -635,7 +635,7 @@ export function retargetClip(source, target, {
 
 /** Penetration below the bind floor tolerated before the floor clamp acts (m). */
 export const FLOOR_CLAMP_TOLERANCE = 0.005;
-/** Height above the floor at which a body whose source has a foot planted is dropped back (m). */
+/** Height above the source's lowest foot at which a body is dropped back (m). */
 export const FLOAT_DROP = 0.02;
 
 /* Body regions the bake-time floor clamp keeps above the floor, in the order it treats them.
@@ -698,9 +698,8 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
  * floor, the region's pivot turns it up about the horizontal axis across the lever (at most 45°
  * per step), a foot whose heel and toes both sink (or a limb no pivot can lift) is raised by
  * two-bone IK, and `lift` regions raise the hips by the depth. Up to 8 passes per frame; then
- * the whole body is lifted out of any remaining penetration, or dropped back to the floor when
- * the source has a foot planted (`clearance`: extras.clip.footClearance, scaled) and this
- * character hangs more than FLOAT_DROP above it.
+ * the whole body is lifted out of any remaining penetration, or dropped when it hangs more than
+ * FLOAT_DROP above the source's lowest foot (`clearance`: extras.clip.footClearance, scaled).
  * Rewrites `result.rotations` and `result.hips` in place. Returns per-region { frames, max }
  * (degrees for pivots, metres for lifts; `limbLift` for the IK) and the frames still
  * below the tolerance.
@@ -833,8 +832,11 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
       if (region != null && (active[region] || regions[region].passive)) lowestAll = Math.min(lowestAll, y);
     }));
     lowest -= floor; lowestAll -= floor;
+    // Drop: the lowest point follows the source's lowest foot (clearance, scaled): a planted
+    // source puts it on the floor, a flight phase lets it rise as high as the source's feet.
+    const allowed = clearance && clearance[i] != null ? Math.max(0, clearance[i]) : null;
     const shift = lowest < -FLOOR_CLAMP_TOLERANCE ? -lowest
-      : clearance && clearance[i] != null && clearance[i] <= 0.01 && lowestAll > FLOAT_DROP ? -lowestAll : 0;
+      : allowed != null && lowestAll - allowed > FLOAT_DROP ? -(lowestAll - allowed) : 0;
     if (shift) {
       const world = worldMatrices(rig, overrides);
       const parent = rig.parent.get(hipsNode);

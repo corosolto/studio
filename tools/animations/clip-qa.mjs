@@ -5,6 +5,10 @@
 //
 //   node tools/animations/clip-qa.mjs --model=<character.glb> --clips=<dir> [--states=<a,b>]
 //        [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]
+//   node tools/animations/clip-qa.mjs --model=<character.glb> --pack=<states.glb|extra.glb> [same options]
+//
+// --pack gates every clip of a per-character pack (tools/lib/clip-pack.mjs) as stored: resampled
+// keys and int16 rotations, read the way three.js reads them.
 //
 // Clip metadata (extras.clip: loop, hold, airborne, rootMotion) selects the gates that apply.
 // --flags-from takes loop, hold and airborne from the same-named clip in another directory, for
@@ -19,16 +23,24 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { clipMetadata } from '../lib/animation-retarget.mjs';
 import { clipSampler, loadRig } from '../lib/character-rig.mjs';
+import { packClipNames, unpackClip } from '../lib/clip-pack.mjs';
 import { CLIP_QA_THRESHOLDS, evaluateClip, measureClip, stretchFromPoseReport } from '../lib/clip-qa.mjs';
 
 const args = process.argv.slice(2);
 const flag = (name) => args.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
-const model = flag('model'), clipsDir = flag('clips');
-if (!model || !clipsDir) {
-  console.error('usage: clip-qa.mjs --model=<character.glb> --clips=<dir> [--states=<a,b>] [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]');
+const model = flag('model');
+let clipsDir = flag('clips');
+const scratchPack = flag('pack') ? mkdtempSync(path.join(tmpdir(), 'clip-qa-pack-')) : null;
+if (!model || (!clipsDir && !scratchPack)) {
+  console.error('usage: clip-qa.mjs --model=<character.glb> --clips=<dir> | --pack=<pack.glb> [--states=<a,b>] [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]');
   process.exit(1);
 }
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
+if (scratchPack) {
+  const pack = await io.read(flag('pack'));
+  for (const name of packClipNames(pack)) await io.write(path.join(scratchPack, `${name}.glb`), unpackClip(pack, name));
+  clipsDir = scratchPack;
+}
 const states = flag('states')?.split(',').filter(Boolean)
   || readdirSync(clipsDir).filter((f) => f.endsWith('.glb')).map((f) => f.slice(0, -4)).sort();
 
@@ -63,13 +75,14 @@ for (const state of states) {
   clips.push({ name: state, loop: Boolean(meta.loop), hold: meta.hold || 'none', airborne: Boolean(meta.airborne), rootMotion: meta.rootMotion || null, metrics, failures });
 }
 const report = {
-  model: path.resolve(model), label: flag('label') || path.basename(model, '.glb'), clips: path.resolve(clipsDir),
+  model: path.resolve(model), label: flag('label') || path.basename(model, '.glb'), clips: flag('pack') ? path.resolve(flag('pack')) : path.resolve(clipsDir),
   thresholds: CLIP_QA_THRESHOLDS,
   synthetic: poseReport ? poseReport.summary.synthetic : null,
   clipCount: clips.length, failing: clips.filter((c) => c.failures.length).map((c) => c.name),
   results: clips,
 };
 if (flag('out')) writeFileSync(flag('out'), `${JSON.stringify(report, null, 2)}\n`);
+if (scratchPack) rmSync(scratchPack, { recursive: true, force: true });
 
 const v = (x) => (x == null ? '—' : x);
 console.log(`${report.label}: ${clips.length} clips, ${report.failing.length} failing`);

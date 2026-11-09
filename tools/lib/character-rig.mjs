@@ -237,16 +237,29 @@ export function syntheticOverrides(rig, pose) {
   return overrides;
 }
 
-/** Sampler over the first animation of a clip GLB document (LINEAR/STEP/CUBICSPLINE). */
-export function clipSampler(doc) {
-  const anim = doc.getRoot().listAnimations()[0];
+/**
+ * Float values of an accessor: normalized integer arrays (glTF allows normalized byte/short
+ * quaternion outputs in animations, which three.js's GLTFLoader dequantizes) are scaled back to
+ * [-1, 1] / [0, 1] the same way.
+ */
+export function accessorFloats(accessor) {
+  const a = accessor.getArray();
+  if (!accessor.getNormalized() || a instanceof Float32Array) return a;
+  const max = { Int8Array: 127, Uint8Array: 255, Int16Array: 32767, Uint16Array: 65535 }[a.constructor.name];
+  if (!max) throw new Error(`unsupported normalized component type ${a.constructor.name}`);
+  return Float32Array.from(a, (v) => Math.max(v / max, -1));
+}
+
+/** Sampler over an animation of a clip GLB document (the first by default; LINEAR/STEP/CUBICSPLINE). */
+export function clipSampler(doc, animation = null) {
+  const anim = animation || doc.getRoot().listAnimations()[0];
   if (!anim) return null;
   const channels = [];
   for (const ch of anim.listChannels()) {
     const s = ch.getSampler(), target = ch.getTargetNode();
     if (!s || !target || ch.getTargetPath() === 'weights') continue;
     const n = ch.getTargetPath() === 'rotation' ? 4 : 3;
-    channels.push({ name: target.getName(), path: ch.getTargetPath(), times: s.getInput().getArray(), values: s.getOutput().getArray(), n, cubic: s.getInterpolation() === 'CUBICSPLINE', step: s.getInterpolation() === 'STEP' });
+    channels.push({ name: target.getName(), path: ch.getTargetPath(), times: s.getInput().getArray(), values: accessorFloats(s.getOutput()), n, cubic: s.getInterpolation() === 'CUBICSPLINE', step: s.getInterpolation() === 'STEP' });
   }
   const duration = Math.max(0, ...channels.map((c) => c.times[c.times.length - 1]));
   const value = (c, t) => {
