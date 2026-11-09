@@ -12,6 +12,7 @@ import { isExtraClipName, meshy28Joints, optionalCharacterStates, requiredCharac
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildCharacterPack, BuildCharacterPackError, CONVERTER_SCHEMA } from '../characters/build-character-pack.mjs';
+import { readGlb } from '../lib/glb-inspect.mjs';
 import { validatePack } from '../lib/pack.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -191,6 +192,7 @@ function writeFixture(overrides = {}) {
     previews: [path.join(directory, 'previews/portrait-front.png')],
     allowQa: overrides.allowQa ?? [],
     rightsReferences: overrides.rightsReferences ?? [],
+    omitExtra: overrides.omitExtra ?? [],
     out: overrides.out ?? path.join(directory, 'out'),
   };
   return { directory, options: overrides.options ? overrides.options(defaultOptions) : defaultOptions };
@@ -213,7 +215,7 @@ async function expectSuccess(label, overrides, verify) {
   const { options } = writeFixture(overrides);
   const summary = await buildCharacterPack(options);
   if (!/^[0-9a-f]{64}$/.test(summary.manifestSha256)) throw new Error(`${label}: manifest sha256 missing`);
-  if (verify) verify(summary);
+  if (verify) await verify(summary);
   console.log(`PASS ${label}`);
   passed += 1;
   return summary;
@@ -325,6 +327,55 @@ try {
   await expectFailure('no preview', 'preview_missing', { options: defaults => ({ ...defaults, previews: [] }) });
   await expectFailure('bad revision', 'revision_invalid', { options: defaults => ({ ...defaults, revision: 'not-a-sha' }) });
   await expectFailure('bad version', 'version_invalid', { options: defaults => ({ ...defaults, version: '0.2' }) });
+
+  // Omitted extras (owner decision): the clip leaves its family pack and the manifest, its QA
+  // failure stops gating the build, and the provenance records the reason with the number.
+  const stretch = 'skin stretch 3.666\u00d7 @0.6364s > 3.5 [clip: Hips+RightUpLeg]';
+  await expectFailure('QA failure on a kept extra still refuses', 'qa_failure_not_allowed', {
+    qaResults: [{ name: 'walk_back', failures: [stretch] }],
+  });
+  await expectSuccess('omitted extra leaves its family pack', {
+    qaResults: [{ name: 'idle', failures: [] }, { name: 'walk_back', failures: [stretch] }],
+    omitExtra: [{ name: 'walk_back' }],
+  }, summary => {
+    const extra = summary.manifest.animations.extra;
+    if (extra.walk_back || extra.strafe_left?.file !== 'animations/loco.glb') throw new Error('walk_back still declared or strafe_left lost');
+    if (summary.files !== 7) throw new Error(`omitted build packed ${summary.files} files, expected 7`);
+    const line = summary.manifest.source.provenance.find(entry => entry.startsWith('omitted extra walk_back'));
+    if (!line?.includes('3.666\u00d7') || !line.includes('animations/loco.glb')) throw new Error(`omission not recorded with its QA number: ${line}`);
+    if (!summary.manifest.source.provenance[2].includes('11 states + 1 loco')) throw new Error('converter provenance still counts the omitted clip');
+    return readGlb(path.join(summary.directory, 'animations/loco.glb'), 'loco.glb', { allowMeshoptFallback: true }).then(({ document }) => {
+      const names = document.animations.map(animation => animation.name);
+      if (names.join() !== 'strafe_left') throw new Error(`rewritten loco.glb holds ${names.join(', ')}`);
+    });
+  });
+  await expectSuccess('omitted emote with an explicit reason drops its file', {
+    omitExtra: [{ name: 'emote_danca', reason: 'owner decision: lobby emote cut' }],
+  }, summary => {
+    if (summary.files !== 6 || summary.manifest.files.some(file => file.path.includes('emote_danca'))) throw new Error('omitted emote file still packed');
+    if (!summary.manifest.source.provenance.some(entry => entry.includes('omitted extra emote_danca') && entry.includes('owner decision: lobby emote cut'))) throw new Error('emote omission reason not recorded');
+  });
+  {
+    const { options } = writeFixture({ out: path.join(packRoot, 'cli-omit'), qaResults: [{ name: 'walk_back', failures: [stretch] }] });
+    const output = execFileSync(process.execPath, [
+      path.join(root, 'tools/characters/build-character-pack.mjs'),
+      `--id=${options.id}`, `--version=${options.version}`, `--model=${options.model}`, `--pose-test=${options.poseTest}`,
+      `--clips=${options.clips}`, `--qa=${options.qa}`, `--assets=${options.assets}`, `--revision=${options.revision}`,
+      `--preview=${options.previews[0]}`, `--out=${options.out}`, '--omit-extra=walk_back',
+    ], { encoding: 'utf8' });
+    if (!output.includes('triangles, omitted walk_back, manifest sha256')) throw new Error(`CLI did not report the omission: ${output.trim()}`);
+    console.log('PASS CLI --omit-extra builds without the clip');
+    passed += 1;
+  }
+  await expectFailure('omitting a required state', 'omit_extra_state', { omitExtra: [{ name: 'jump', reason: 'owner decision' }] });
+  await expectFailure('omitting an optional state', 'omit_extra_state', { omitExtra: [{ name: 'walkfire', reason: 'owner decision' }] });
+  await expectFailure('omitting a name outside the vocabulary', 'omit_extra_invalid', { omitExtra: [{ name: 'teleport', reason: 'owner decision' }] });
+  await expectFailure('omitting the same extra twice', 'omit_extra_invalid', { omitExtra: [{ name: 'victory', reason: 'a' }, { name: 'victory', reason: 'b' }] });
+  await expectFailure('omitting an extra the converter never baked', 'omit_extra_absent', {
+    clips: (() => { const clips = converterClips(); delete clips.walk_back; return clips; })(),
+    omitExtra: [{ name: 'walk_back', reason: 'owner decision' }],
+  });
+  await expectFailure('omission without a reason or QA failure', 'omit_reason_missing', { omitExtra: [{ name: 'strafe_left' }] });
 
   console.log(`PASS character pack builder check (${passed} cases)`);
 } finally {
