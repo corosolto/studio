@@ -258,13 +258,15 @@ export function objectPoseSource(group, clip, map, { baseName = mixamoBaseName }
 
 const UP = new THREE.Vector3(0, 1, 0);
 
-/** Rotation about +Y that turns the source's facing onto the target's (from the hip line). */
+/** Rotation about +Y (a multiple of 90°) that turns the source's facing onto the target's (from the hip line). */
 export function facingYaw(sourceRest, target) {
   const srcL = sourceRest.get('LeftUpLeg')?.p, srcR = sourceRest.get('RightUpLeg')?.p;
   const tgtL = target.byName.get('LeftUpLeg')?.restWorldP, tgtR = target.byName.get('RightUpLeg')?.restWorldP;
   if (!srcL || !srcR || !tgtL || !tgtR) return new THREE.Quaternion();
   const s = srcL.clone().sub(srcR), t = tgtL.clone().sub(tgtR);
-  const angle = Math.atan2(s.z, s.x) - Math.atan2(t.z, t.x);
+  // Snapped to quarter turns: rigs face an axis by convention, and a few degrees measured from
+  // asymmetric hip joints is noise that would turn the motion off the root velocity's line.
+  const angle = Math.round((Math.atan2(s.z, s.x) - Math.atan2(t.z, t.x)) / (Math.PI / 2)) * (Math.PI / 2);
   return new THREE.Quaternion().setFromAxisAngle(UP, angle);
 }
 
@@ -314,6 +316,12 @@ export const LEG_CHAINS = Object.freeze([
 ]);
 /** Frames over which foot IK blends in before and out after a contact window. */
 export const IK_BLEND_FRAMES = 4;
+
+/** Largest hips drop per frame that foot IK may ask for to reach a planted ankle (m). */
+export const MAX_REACH_DROP = 0.05;
+
+/** Largest rest-direction correction per limb bone (radians); see LIMB_ALIGNMENT. */
+export const MAX_REST_ALIGN = THREE.MathUtils.degToRad(20);
 
 /* Limb bones aligned to the source's rest direction (bone -> the child it points at). Feet
    are not: ankle-to-ball slopes differ with foot shape, and both rests stand flat. */
@@ -428,7 +436,12 @@ export function retargetClip(source, target, {
     const tgtDir = c.restWorldP.clone().sub(e.restWorldP);
     const srcDir = srcRest.get(child).p.clone().sub(srcRest.get(bone).p).applyQuaternion(yaw);
     if (tgtDir.lengthSq() < 1e-12 || srcDir.lengthSq() < 1e-12) continue;
-    restAlign.set(e, new THREE.Quaternion().setFromUnitVectors(tgtDir.normalize(), srcDir.normalize()).multiply(e.restWorldQ));
+    // Capped: a rig whose rest limb is bent far on purpose (a mascot crouching on bent legs)
+    // keeps the bend beyond MAX_REST_ALIGN_DEG instead of standing up straight.
+    const full = new THREE.Quaternion().setFromUnitVectors(tgtDir.normalize(), srcDir.normalize());
+    const angle = 2 * Math.acos(Math.min(1, Math.abs(full.w)));
+    const turn = angle > MAX_REST_ALIGN ? new THREE.Quaternion().slerp(full, MAX_REST_ALIGN / angle) : full;
+    restAlign.set(e, turn.multiply(e.restWorldQ));
   }
   // World matrices below the Hips for one frame's local rotations.
   const forward = (localQ, hipsPos, worldQ) => {
@@ -503,8 +516,35 @@ export function retargetClip(source, target, {
   const footClearance = Array.from({ length: frames }, (_, i) => (footNames.length ? +Math.min(...footNames.map((n) => footTracks[n][i].clear)).toFixed(3) : 0));
 
   // Pass 2: foot IK inside the contact windows.
-  const ik = { legs: 0, maxCorrection: 0, footAims: 0 };
+  const ik = { legs: 0, maxCorrection: 0, footAims: 0, hipsDrop: 0 };
   if (footIk) {
+    // Reach first: where a planted ankle's goal is farther from its hip than the leg can
+    // stretch (a short-legged character on a long-legged stride), lower the hips by the deficit
+    // so the IK can plant it instead of dragging it.
+    const legs = LEG_CHAINS.map((leg) => ({ leg, e: [leg.hip, leg.knee, leg.ankle].map((n) => target.byName.get(n)) }))
+      .filter(({ leg, e }) => e.every((x) => x && mappedSet.has(x)) && states[0].goals[leg.ankle]);
+    const reach = legs.map(({ e: [hip, knee, ankle] }) => knee.restWorldP.distanceTo(hip.restWorldP) + ankle.restWorldP.distanceTo(knee.restWorldP));
+    const legWeights = legs.map(({ leg }) => ikWeights(leg.contacts.flatMap((n) => contacts[n] || []), frames, loop));
+    for (let i = 0; i < frames; i += 1) {
+      for (let pass = 0; pass < 2; pass += 1) {
+        const { worldQ, localQ, goals } = states[i];
+        const at = forward(localQ, hipsT.restWorldP.clone().add(displacement[i]), worldQ);
+        let deficit = 0;
+        legs.forEach(({ leg, e: [hip, , ankle] }, k) => {
+          if (!(legWeights[k][i] >= 1)) return;
+          const goal = ankle.restWorldP.clone().add(goals[leg.ankle]);
+          const H = at(hip);
+          const over = goal.distanceTo(H) - reach[k] * 0.995;
+          const upright = (H.y - goal.y) / goal.distanceTo(H);
+          // Standing legs only (a lying body's legs are horizontal: lowering cannot help), at most
+          // MAX_REACH_DROP per frame.
+          if (over > 0 && upright >= 0.6) deficit = Math.max(deficit, Math.min(MAX_REACH_DROP, over / upright));
+        });
+        if (!(deficit > 1e-4)) break;
+        displacement[i].y -= deficit;
+        ik.hipsDrop = Math.max(ik.hipsDrop, deficit);
+      }
+    }
     for (const leg of LEG_CHAINS) {
       const [hip, knee, ankle] = [leg.hip, leg.knee, leg.ankle].map((n) => target.byName.get(n));
       if (![hip, knee, ankle].every((e) => e && mappedSet.has(e)) || ankle.parent !== knee || knee.parent !== hip || !states[0].goals[leg.ankle]) continue;
@@ -583,7 +623,7 @@ export function retargetClip(source, target, {
     times, rotations, hips, hipsScale, mapped: mapped.map((e) => e.name), contacts,
     contactCorrection: contact ? { min: round(correction.min), max: round(correction.max) } : null, sourceSlide: round(sourceSlide),
     sourceHipsRatio: [round(sourceHips.min), round(sourceHips.max)], aligned: [...restAlign.keys()].map((e) => e.name), airborneFrames, footClearance,
-    ik: footIk ? { legs: ik.legs, maxCorrection: round(ik.maxCorrection), footAims: ik.footAims } : null,
+    ik: footIk ? { legs: ik.legs, maxCorrection: round(ik.maxCorrection), footAims: ik.footAims, hipsDrop: round(ik.hipsDrop) } : null,
     rootMotion: {
       mode: rootMotion, extracted: rootMotion !== 'keep',
       displacement: [round(drift.x), round(drift.z)],

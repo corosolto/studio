@@ -20,7 +20,7 @@ import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import { clipSampler, deformJointNames, loadRig } from '../lib/character-rig.mjs';
 import {
-  FLOOR_CLAMP_REGIONS, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
+  FLOOR_CLAMP_REGIONS, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, facingYaw, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
   objectPoseSource, referenceSkeletonDocument, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mjs';
@@ -313,6 +313,16 @@ await clause('A8 a source facing -Z converts like one facing +Z', () => {
   let worst = 0;
   for (const i of [0, 15, 30]) { const pa = fk(reference, a, i), pb = fk(reference, b, i); for (const n of deformJointNames) worst = Math.max(worst, pa.get(n).distanceTo(pb.get(n))); }
   assert(worst < 1e-4, `facing changes the result by ${worst} m`);
+});
+
+await clause('A8 facing snaps to quarter turns (a few degrees of hip asymmetry is not a turn)', () => {
+  const rest = (deg) => {
+    const q = Q(Y, deg);
+    return new Map([['LeftUpLeg', { p: V([0.08, 0.9, 0]).applyQuaternion(q) }], ['RightUpLeg', { p: V([-0.08, 0.9, 0]).applyQuaternion(q) }]]);
+  };
+  const angle = (deg) => THREE.MathUtils.radToDeg(2 * Math.acos(Math.min(1, Math.abs(facingYaw(rest(deg), reference).w))));
+  assert(angle(4) < 1e-6 && angle(-4) < 1e-6, `4° of asymmetry turned the clip by ${angle(4)}°`);
+  assert(Math.abs(angle(180) - 180) < 1e-3 && Math.abs(angle(88) - 90) < 1e-3, `180° -> ${angle(180)}, 88° -> ${angle(88)}`);
 });
 
 await clause('A9 FBXLoader duplicate leaf bones and Mixamo prefixes do not change the result', () => {
