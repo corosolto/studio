@@ -81,7 +81,7 @@ Thresholds (`POSE_THRESHOLDS`): body and upper back ≤ 3.5× (the donor reaches
 
 ## Calibration
 
-The joint ratios were measured by running clean → parts → joints on the donor mesh itself (client `public/models/characters/mst.glb`, with its backpack and flag as extras) and comparing with the donor's joints: mean error 4.0 cm over the 24 skeleton joints. Knees, ankles, toes, elbows, wrists, `Head`, `head_end` and `headfront` land within 2.5 cm. The differences are front-to-back: the estimator puts the spine on the torso centroid, 7–9 cm in front of the donor's spine (which follows the anatomical spine near the back), the hips and `Hips` 5–7 cm forward, and the shoulders on the fitted arm line, 7 cm behind the donor's.
+The joint ratios were measured by running clean → parts → joints on the donor mesh itself (client `public/models/characters/mst.glb`, with its backpack and flag as extras) and comparing with the donor's joints: mean error 4.0 cm over the 24 skeleton joints. Knees, ankles, toes, elbows, wrists, `Head`, `head_end` and `headfront` land within 2.5 cm. The differences are front-to-back: the estimator puts the spine on the torso centroid, 7 to 9 cm in front of the donor's spine (which follows the anatomical spine near the back), the hips and `Hips` 5 to 7 cm forward, and the shoulders on the fitted arm line, 7 cm behind the donor's.
 
 ## Pilots (2026-11-09)
 
