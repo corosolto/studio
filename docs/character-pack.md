@@ -49,14 +49,22 @@ Every file in `files` must be declared by exactly one role (`model`, `animations
 
 ## Optional clips (`animations.extra`)
 
-`animations.extra` is an optional map of named clips beyond the states, for movement set, weapon handling, damage reactions, melee, round outcomes and emotes. Keys match `^[a-z][a-z0-9_]{1,40}$` and must be either a name from the fixed vocabulary below or an `emote_` prefix followed by at least one character. Anything else — including state names and the bare `emote_` prefix — is rejected. The vocabulary is `extraClipNames`/`extraClipPrefixes` in `tools/lib/character-pack.mjs`; the client mirrors it in `public/js/data/content-releases.js`.
+`animations.extra` is an optional map of named clips beyond the states, for movement set, weapon handling, damage reactions, melee, round outcomes and emotes. Keys match `^[a-z][a-z0-9_]{1,40}$` and must be either a name from the fixed vocabulary below or an `emote_` prefix followed by at least one character. Anything else — including state names and the bare `emote_` prefix — is rejected. The vocabulary is `extraClipNames`/`extraClipPrefixes` in `tools/lib/character-pack.mjs` (68 names: `coreExtraClipNames` plus `converterExtraClipNames`); the client mirrors it in `public/js/data/content-releases.js`.
 
-- Locomotion: `strafe_left`, `strafe_right`, `walk_back`, `run_back`, `strafe_left_pistol`, `strafe_right_pistol`, `walk_back_pistol`
+- Locomotion (cardinals and diagonals; diagonals follow `<gait>_<fwd|back>_<left|right>`): `strafe_left`, `strafe_right`, `walk_back`, `walk_fwd_left`, `walk_fwd_right`, `walk_back_left`, `walk_back_right`, `run_back`, `run_left`, `run_right`, `run_fwd_left`, `run_fwd_right`, `run_back_left`, `run_back_right`
+- Sprint: `sprint`, `sprint_back`, `sprint_left`, `sprint_right`, `sprint_fwd_left`, `sprint_fwd_right`, `sprint_back_left`, `sprint_back_right`
+- Crouched locomotion and aim: `crouchwalk_left`, `crouchwalk_right`, `crouchwalk_back`, `crouchwalk_fwd_left`, `crouchwalk_fwd_right`, `crouchwalk_back_left`, `crouchwalk_back_right`, `crouch_aim`, `crouch_pistol`, `crouch_turn_left`, `crouch_turn_right`
+- Turns (standing): `turn_left`, `turn_right`
+- Jump phases: `jump_start`, `jump_loop`, `jump_land`, `jump_pistol`
+- Aim, pistol and crouch fire: `idle_aim`, `shoot_pistol`, `shoot_crouch`, `run_pistol`, `run_back_pistol`, `strafe_left_pistol`, `strafe_right_pistol`, `walk_back_pistol`
 - Weapon handling: `reload_rifle`, `reload_pistol`, `draw_rifle`, `holster_rifle`, `draw_pistol`, `holster_pistol`
 - Damage reactions: `hit_front`, `hit_back`, `hit_left`, `hit_right`, `hit_head`
+- Death variants: `death_front`, `death_right`, `death_headshot_front`, `death_headshot_back`, `death_crouch`
 - Melee and utility: `grenade_throw`, `knife_idle`, `knife_stab`
 - Round outcomes: `victory`, `defeat`
 - Emotes: any key starting with `emote_` (for example `emote_danca`)
+
+The converter group (`converterExtraClipNames`) is a snapshot of the names proposed by the animation conversion library (branch `feat/animation-conversion-20261109`, `tools/lib/animation-library.mjs`, 2026-11-09; every name is used by at least one key of its `library/index.json`). `assertExtraClipVocabulary` in `tools/lib/character-pack.mjs` enforces the single source: the vocabulary must equal the core names plus the converter set, with no duplicates, no state collisions and no pattern breaks; `tools/checks/character-pack-check.mjs` proves it against the real exports and synthetic mutants. The conversion tooling must import `extraClipNames` from `tools/lib/character-pack.mjs` instead of maintaining its own name list.
 
 Each entry is an object with exactly five fields: `file` (a distinct `.glb` package path, declared in `files`), `duration` (seconds, positive), `loop` (boolean), `rootMotion` (boolean) and `source` (provenance string, for example the source animation and rig pipeline). `duration`, `loop` and `rootMotion` are declared metadata for the runtime; the GLB itself still carries the authoritative keyframes. A missing `extra` map is valid — optional means absent, not empty promises.
 

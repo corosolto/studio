@@ -8,14 +8,60 @@ export const optionalCharacterStates = Object.freeze(['idle1h', 'walk1h', 'walkf
 // Fixed names for locomotion, weapon handling, damage reactions, melee and round outcomes,
 // plus free-form emotes under the `emote_` prefix (at least one character after the prefix).
 // State names are never valid extra names, so the two key spaces stay disjoint.
-export const extraClipNames = Object.freeze([
+export const coreExtraClipNames = Object.freeze([
   'strafe_left', 'strafe_right', 'walk_back', 'run_back',
   'strafe_left_pistol', 'strafe_right_pistol', 'walk_back_pistol',
   'reload_rifle', 'reload_pistol', 'draw_rifle', 'holster_rifle', 'draw_pistol', 'holster_pistol',
   'hit_front', 'hit_back', 'hit_left', 'hit_right', 'hit_head',
   'grenade_throw', 'knife_idle', 'knife_stab', 'victory', 'defeat',
 ]);
+// Every name the animation conversion library proposes (branch feat/animation-conversion-20261109,
+// tools/lib/animation-library.mjs PROPOSED_EXTRA_NAMES; snapshot 2026-11-09 — each name is used
+// by at least one key of library/index.json). 8-way diagonals follow `<gait>_<fwd|back>_<left|right>`;
+// cardinal walk keeps strafe_left/strafe_right/walk_back and run backwards keeps run_back. Kept
+// sorted to diff against the converter's own sorted export. The converter must import
+// `extraClipNames` from this module as the single source instead of maintaining its own copy.
+export const converterExtraClipNames = Object.freeze([
+  'crouch_aim', 'crouch_pistol', 'crouch_turn_left', 'crouch_turn_right',
+  'crouchwalk_back', 'crouchwalk_back_left', 'crouchwalk_back_right',
+  'crouchwalk_fwd_left', 'crouchwalk_fwd_right', 'crouchwalk_left', 'crouchwalk_right',
+  'death_crouch', 'death_front', 'death_headshot_back', 'death_headshot_front', 'death_right',
+  'idle_aim', 'jump_land', 'jump_loop', 'jump_pistol', 'jump_start',
+  'run_back_left', 'run_back_pistol', 'run_back_right', 'run_fwd_left', 'run_fwd_right',
+  'run_left', 'run_pistol', 'run_right',
+  'shoot_crouch', 'shoot_pistol', 'sprint', 'sprint_back', 'sprint_back_left', 'sprint_back_right',
+  'sprint_fwd_left', 'sprint_fwd_right', 'sprint_left', 'sprint_right',
+  'turn_left', 'turn_right',
+  'walk_back_left', 'walk_back_right', 'walk_fwd_left', 'walk_fwd_right',
+]);
+export const extraClipNames = Object.freeze([...coreExtraClipNames, ...converterExtraClipNames]);
 export const extraClipPrefixes = Object.freeze(['emote_']);
+
+const extraClipKeyPattern = /^[a-z][a-z0-9_]{1,40}$/;
+const stateNameSet = new Set([...requiredCharacterStates, ...optionalCharacterStates]);
+
+// Single-source invariant: the published vocabulary must equal the core contract names plus the
+// converter set above. A name the converter proposes but the contract lacks, a dropped core name,
+// a name outside both sets, a duplicate, a state collision or a pattern break all fail here.
+// `tools/checks/character-pack-check.mjs` runs this against the real exports and against
+// synthetic mutants; the converter branch runs it with its own proposed names once it adopts
+// the import.
+export function assertExtraClipVocabulary({ vocabulary = extraClipNames, converter = converterExtraClipNames } = {}) {
+  const seen = new Set();
+  for (const name of vocabulary) {
+    if (seen.has(name)) throw new Error(`duplicate extra clip name in the vocabulary: ${name}`);
+    seen.add(name);
+    if (stateNameSet.has(name)) throw new Error(`extra clip name collides with a state name: ${name}`);
+    if (!extraClipKeyPattern.test(name)) throw new Error(`extra clip name breaks the key pattern: ${name}`);
+  }
+  const missing = converter.filter(name => !seen.has(name));
+  if (missing.length) throw new Error(`converter clip names missing from the vocabulary: ${missing.join(', ')}`);
+  const lostCore = coreExtraClipNames.filter(name => !seen.has(name));
+  if (lostCore.length) throw new Error(`core extra clip names missing from the vocabulary: ${lostCore.join(', ')}`);
+  const expected = new Set([...coreExtraClipNames, ...converter]);
+  const orphans = vocabulary.filter(name => !expected.has(name));
+  if (orphans.length) throw new Error(`extra clip names outside the core and converter sets: ${orphans.join(', ')}`);
+}
 
 export function isExtraClipName(name) {
   return extraClipNames.includes(name)
