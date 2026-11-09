@@ -72,6 +72,10 @@ DEFAULTS = {
     # the hip joints, the neck band this far above Head; each fades out over half of it.
     "waistBand": None,
     "neckBand": None,
+    # Spine-chain locality (step 2), x height or null: margin beyond the parent and child joints.
+    "chainLocality": None,
+    # Side exclusivity (step 2), x height or null: no opposite-side bones past this margin.
+    "sideExclusive": None,
 }
 
 ARM_BONES = {"LeftArm", "LeftForeArm", "LeftHand", "RightArm", "RightForeArm", "RightHand"}
@@ -352,6 +356,29 @@ def main():
         off_arms = np.array([not any(part.startswith(("arm_", "hand_")) for part in vparts[v]) for v in range(n)])
         for bone in ("LeftShoulder", "RightShoulder"):
             allowed[off_arms & below, bidx[bone]] = False
+    # Spine-chain locality (opt-in, chainLocality x height): on vertices of no limb part, a
+    # chain bone (Hips, Spine02, Spine01, Spine, neck) is allowed only between its parent
+    # joint and its child joint (where a linear blend along the chain would give it any
+    # weight), widened by the margin.  Heat on a coat or a big body can leave Hips weight
+    # 25 cm above the Hips joint, which a crouch then folds open.
+    if P["chainLocality"] is not None:
+        chain = ["Hips", "Spine02", "Spine01", "Spine", "neck", "Head"]
+        zs = [joints[b].z for b in chain]
+        margin = P["chainLocality"] * H
+        off_limbs = np.array([not any(p.startswith(("arm_", "hand_", "leg_")) for p in vparts[v]) for v in range(n)])
+        for i, bone in enumerate(chain[:-1]):
+            lo = zs[i - 1] - margin if i > 0 else -np.inf
+            hi = zs[i + 1] + margin
+            allowed[off_limbs & ((co[:, 2] < lo) | (co[:, 2] > hi)), bidx[bone]] = False
+    # Side exclusivity (opt-in, sideExclusive x height): a vertex more than the margin to
+    # one side of the midline carries no bone of the other side.  Heat through a collar,
+    # a cape or a fused chest can put RightShoulder weight on the left armpit.
+    if P["sideExclusive"] is not None:
+        margin = P["sideExclusive"] * H
+        for prefix, other_side in (("Right", co[:, 0] > margin), ("Left", co[:, 0] < -margin)):
+            for name in deform:
+                if name.startswith(prefix):
+                    allowed[other_side, bidx[name]] = False
     W = np.where(allowed, W, 0.0)
     nearest_fill = 0
     bone_heads = {name: joints[name.split(".")[0]] for name in deform}
