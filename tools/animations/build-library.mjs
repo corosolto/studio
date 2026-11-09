@@ -15,7 +15,7 @@ import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { CLIP_FPS, referenceSkeletonDocument, resultSeam, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
-import { LOOP_SEAM, PROPOSED_EXTRA_NAMES, planLibrary } from '../lib/animation-library.mjs';
+import { LIBRARY_EXTRA_NAMES, LOOP_SEAM, planLibrary } from '../lib/animation-library.mjs';
 import { openSource } from '../lib/animation-sources.mjs';
 
 const args = process.argv.slice(2);
@@ -73,7 +73,7 @@ for (const [n, c] of todo.entries()) {
 const index = {
   schema: 'coro-solto/animation-library@1', skeleton: 'meshy-28', fps: CLIP_FPS, catalog: catalog.schema,
   counts: { catalog: catalog.clips.length, converted: entries.length, skipped: plan.skipped.length, failed: errors.length },
-  proposedExtraNames: PROPOSED_EXTRA_NAMES,
+  libraryExtraNames: LIBRARY_EXTRA_NAMES,
   clips: entries, skipped: plan.skipped, failed: errors,
 };
 writeFileSync(path.join(outDir, 'index.json'), `${JSON.stringify(index, null, 2)}\n`);

@@ -4,12 +4,14 @@
 //
 // keyStatus:
 //   state       a candidate for one of the 11 runtime states (idle, walk, run, ...);
-//   vocabulary  a fixed `animations.extra` name of the pack contract;
+//   vocabulary  a fixed `animations.extra` name of the pack contract (extraClipNames in
+//               tools/lib/character-pack.mjs: the core names plus the converter names below,
+//               8-way diagonals, sprint, turns, jump phases, death variants);
 //   emote       an `emote_` extra name (open prefix of the contract);
-//   proposed    a name NOT in the contract yet (8-way diagonals, sprint, turns, ...), listed
-//               in PROPOSED_EXTRA_NAMES for the contract;
 //   library     converted and QA'd but without a pack key (soccer, prone, cover, ...).
 // Several clips may propose the same key; exactly one per key is `primary`.
+
+import { extraClipNames, optionalCharacterStates, requiredCharacterStates } from './character-pack.mjs';
 
 export const SKIPPED_CATEGORIES = Object.freeze({
   'utility-pose': 'T-pose reference, not a motion',
@@ -63,7 +65,7 @@ const vocabularyAlternates = {
   'ual/ual2/OverhandThrow': 'grenade_throw', 'mixamo/loose/double-dagger-stab': 'knife_stab', 'mixamo/loose/bayonet-stab': 'knife_stab',
   'mixamo/loose/victory-idle': 'victory', 'mixamo/loose/sad-idle': 'defeat',
 };
-/* Proposed extra names (not in the contract yet). 8-way: <gait>_<direction> with fwd/back and
+/* Converter extra names (the contract's converterExtraClipNames). 8-way: <gait>_<direction> with fwd/back and
    the diagonals fwd_left, fwd_right, back_left, back_right; the cardinal walk directions keep
    the contract's strafe_left/strafe_right/walk_back and run_back. */
 const proposed = {
@@ -96,15 +98,9 @@ const proposedAlternates = {
   'mixamo/basic-shooter-pack/turn-left': 'turn_left', 'mixamo/loose/turn-right': 'turn_right',
   'ual/ual1/Sprint_Loop': 'sprint', 'mixamo/pistol-handgun-locomotion-pack/pistol-jump-2': 'jump_pistol',
 };
-/* The pack contract's fixed extra names (corosolto/studio branch feat/pack-optional-clips-20261109,
-   tools/lib/character-pack.mjs#extraClipNames; import it from there once that PR lands). */
-export const CONTRACT_EXTRA_NAMES = Object.freeze([
-  'strafe_left', 'strafe_right', 'walk_back', 'run_back', 'strafe_left_pistol', 'strafe_right_pistol', 'walk_back_pistol',
-  'reload_rifle', 'reload_pistol', 'draw_rifle', 'holster_rifle', 'draw_pistol', 'holster_pistol',
-  'hit_front', 'hit_back', 'hit_left', 'hit_right', 'hit_head', 'grenade_throw', 'knife_idle', 'knife_stab', 'victory', 'defeat',
-]);
-export const RUNTIME_STATES = Object.freeze(['idle', 'walk', 'run', 'shoot', 'death', 'crouch', 'crouchwalk', 'jump', 'idle1h', 'walk1h', 'walkfire']);
-export const PROPOSED_EXTRA_NAMES = Object.freeze([...new Set([...Object.values(proposed), ...Object.values(proposedAlternates)])].sort());
+export const RUNTIME_STATES = Object.freeze([...requiredCharacterStates, ...optionalCharacterStates]);
+/** The library's own extra names beyond the core contract ones; must equal the contract's converterExtraClipNames. */
+export const LIBRARY_EXTRA_NAMES = Object.freeze([...new Set([...Object.values(proposed), ...Object.values(proposedAlternates)])].sort());
 const EMOTE_CATEGORIES = { emote: '', gesture: '', 'dance-breakdance': 'breakdance_', 'dance-capoeira': 'capoeira_' };
 
 const leaf = (id) => id.split('/').pop();
@@ -135,8 +131,8 @@ export function planLibrary(catalog) {
     else if (stateAlternates[c.id]) [key, keyStatus] = [stateAlternates[c.id], 'state'];
     else if (vocabulary[c.id]) [key, keyStatus, primary] = [vocabulary[c.id], 'vocabulary', true];
     else if (vocabularyAlternates[c.id]) [key, keyStatus] = [vocabularyAlternates[c.id], 'vocabulary'];
-    else if (proposed[c.id]) [key, keyStatus, primary] = [proposed[c.id], 'proposed', true];
-    else if (proposedAlternates[c.id]) [key, keyStatus] = [proposedAlternates[c.id], 'proposed'];
+    else if (proposed[c.id]) [key, keyStatus, primary] = [proposed[c.id], 'vocabulary', true];
+    else if (proposedAlternates[c.id]) [key, keyStatus] = [proposedAlternates[c.id], 'vocabulary'];
     else if (EMOTE_CATEGORIES[c.category] != null || c.id === 'ual/ual1/Dance_Loop') {
       const base = snake(leaf(c.id).replace(/_Loop$/i, ''));
       let name = `emote_${(EMOTE_CATEGORIES[c.category] || '') + base.replace(/^breakdance_/, '')}`.slice(0, 41).replace(/_$/, '');

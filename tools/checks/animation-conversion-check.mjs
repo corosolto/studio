@@ -24,7 +24,8 @@ import {
   objectPoseSource, referenceSkeletonDocument, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mjs';
-import { CONTRACT_EXTRA_NAMES, PROPOSED_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
+import { LIBRARY_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
+import { converterExtraClipNames, extraClipNames } from '../lib/character-pack.mjs';
 import { evaluateClip, measureClip, stretchCause } from '../lib/clip-qa.mjs';
 import { J, synthDocument } from './lib/synthetic-humanoid.mjs';
 
@@ -683,22 +684,22 @@ await clause('L2 library plan: skips, same-take preference, UAL root-motion file
   assert(byId['mixamo/pro-rifle-pack/walk-left'].hold === 'rifle', 'rifle locomotion keeps the two-hand grip gate');
   assert(libraryName('mixamo/pro-rifle-pack/walk-left') === 'pro-rifle-pack--walk-left' && libraryName('ual/ual1/Walk_Loop') === 'ual1--walk-loop', 'library names');
 });
-await clause('L3 library keys: contract names, one primary per key, valid emote names, proposals outside the contract', () => {
+await clause('L3 library keys: contract names, one primary per key, valid emote names, converter names = contract', () => {
   const { clips } = planLibrary(miniCatalog);
   const key = (id) => clips.find((c) => c.id === id);
   assert(key('mixamo/pro-rifle-pack/walk-left').key === 'strafe_left' && key('mixamo/pro-rifle-pack/walk-left').primary, 'walk-left is the primary strafe_left');
-  assert(key('mixamo/pro-rifle-pack/walk-forward-left').key === 'walk_fwd_left' && key('mixamo/pro-rifle-pack/walk-forward-left').keyStatus === 'proposed', '8-way diagonal proposal');
+  assert(key('mixamo/pro-rifle-pack/walk-forward-left').key === 'walk_fwd_left' && key('mixamo/pro-rifle-pack/walk-forward-left').keyStatus === 'vocabulary', '8-way diagonal contract name');
   assert(key('mixamo/pro-rifle-pack/run-forward').key === 'run' && key('mixamo/pro-rifle-pack/run-forward').keyStatus === 'state', 'run-forward is the run state candidate');
   assert(key('mixamo/loose/standing-react-large-from-front').key === 'hit_front' && !key('mixamo/loose/standing-react-large-from-front').primary, 'large reaction is an alternate');
   assert(key('mixamo/soccer-game-pack/throw-in').key === null, 'soccer has no pack key');
   const emote = key('mixamo/capoeira-pack/meia-lua-de-compasso-back').key;
   assert(/^emote_[a-z0-9_]+$/.test(emote) && /^[a-z][a-z0-9_]{1,40}$/.test(emote), `emote key ${emote} breaks the contract pattern`);
-  for (const c of clips.filter((x) => x.keyStatus === 'vocabulary')) assert(CONTRACT_EXTRA_NAMES.includes(c.key), `${c.key} is not a contract extra name`);
+  for (const c of clips.filter((x) => x.keyStatus === 'vocabulary')) assert(extraClipNames.includes(c.key), `${c.key} is not a contract extra name`);
   for (const c of clips.filter((x) => x.keyStatus === 'state')) assert(RUNTIME_STATES.includes(c.key), `${c.key} is not a runtime state`);
-  for (const name of PROPOSED_EXTRA_NAMES) {
-    assert(!CONTRACT_EXTRA_NAMES.includes(name) && !RUNTIME_STATES.includes(name) && /^[a-z][a-z0-9_]{1,40}$/.test(name), `proposal ${name} collides or breaks the pattern`);
-  }
-  return `${PROPOSED_EXTRA_NAMES.length} proposed names`;
+  // Single source: the library's own names are exactly the contract's converter names.
+  assert(JSON.stringify(LIBRARY_EXTRA_NAMES) === JSON.stringify([...converterExtraClipNames].sort()), `library names differ from converterExtraClipNames: ${LIBRARY_EXTRA_NAMES.filter((n) => !converterExtraClipNames.includes(n)).concat(converterExtraClipNames.filter((n) => !LIBRARY_EXTRA_NAMES.includes(n))).join(', ')}`);
+  for (const name of LIBRARY_EXTRA_NAMES) assert(!RUNTIME_STATES.includes(name), `${name} collides with a state`);
+  return `${LIBRARY_EXTRA_NAMES.length} converter names = contract converterExtraClipNames`;
 });
 
 if (failures) {

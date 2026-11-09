@@ -16,7 +16,7 @@ export const coreExtraClipNames = Object.freeze([
   'grenade_throw', 'knife_idle', 'knife_stab', 'victory', 'defeat',
 ]);
 // Every name the animation conversion library proposes (branch feat/animation-conversion-20261109,
-// tools/lib/animation-library.mjs PROPOSED_EXTRA_NAMES; snapshot 2026-11-09 — each name is used
+// tools/lib/animation-library.mjs LIBRARY_EXTRA_NAMES; snapshot 2026-11-09 — each name is used
 // by at least one key of library/index.json). 8-way diagonals follow `<gait>_<fwd|back>_<left|right>`;
 // cardinal walk keeps strafe_left/strafe_right/walk_back and run backwards keeps run_back. Kept
 // sorted to diff against the converter's own sorted export. The converter must import
