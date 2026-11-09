@@ -45,11 +45,15 @@ if (from < 0 || to < 0 || to < from) throw new Error(`bad --from/--to: ${args.fr
 if (from === 0 && !args.source) throw new Error('--source is required when starting from clean');
 if (to === steps.length - 1 && !args['no-clips'] && !(args.retarget && args['clips-from'])) throw new Error('pass --clips-from and --retarget together (or --no-clips for synthetic poses only)');
 
-/* Files each step writes (relative to the work dir) and the inputs outside the work dir it reads. */
+/* Files each step writes (relative to the work dir) and the inputs outside the work dir it reads.
+   Orthographic renders come with a <png>.view.json sidecar (rig-review.mjs reads both); the
+   review sheets are outputs unless --skip-review, but are deleted before their step either way. */
+const renders = (prefix, views) => views.flatMap((view) => [`${prefix}-${view}.png`, `${prefix}-${view}.png.view.json`]);
+const REVIEWS = { parts: 'parts-review.png', joints: 'joints-review.png' };
 const OUTPUTS = {
-  clean: ['clean.blend', 'clean.json'],
-  parts: ['parts.blend', 'parts.json', 'parts-legend.json', ...(args['skip-review'] ? [] : ['parts-review.png'])],
-  joints: ['joints.json', 'joints-estimate.json', ...(args['skip-review'] ? [] : ['joints-review.png'])],
+  clean: ['clean.blend', 'clean.json', ...renders('clean', ['front', 'back', 'side'])],
+  parts: ['parts.blend', 'parts.json', 'parts-legend.json', ...renders('parts', ['front', 'back', 'side']), ...(args['skip-review'] ? [] : [REVIEWS.parts])],
+  joints: ['joints.json', 'joints-estimate.json', ...renders('joints', ['front', 'side']), ...(args['skip-review'] ? [] : [REVIEWS.joints])],
   armature: ['armature.blend'],
   weights: ['weights.blend', 'weights.json', 'blender-rig.glb'],
   assemble: [path.basename(model)],
@@ -85,7 +89,7 @@ for (const step of steps.slice(0, from)) {
 
 // Invalidate this run's steps and everything downstream before anything runs.
 for (const step of steps.slice(from)) {
-  for (const name of OUTPUTS[step]) rmSync(path.join(work, name), { force: true });
+  for (const name of [...OUTPUTS[step], ...(REVIEWS[step] ? [REVIEWS[step]] : [])]) rmSync(path.join(work, name), { force: true });
   for (const name of DIRS[step] || []) rmSync(path.join(work, name), { recursive: true, force: true });
   delete manifest.steps[step];
 }

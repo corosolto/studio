@@ -6,7 +6,9 @@
 //   R3  the meshy-28 skeleton the assembler builds has the contract's 28 joints in skin
 //       order, the donor rest frames, and inverse bind matrices that reproduce the mesh;
 //   R4  the pose test passes a synthetic, well-skinned humanoid (programmatic tubes, no real
-//       asset bytes) and fails each mutant on the clause it breaks.
+//       asset bytes) and fails each mutant on the clause it breaks;
+//   R5  every Blender step exits non-zero on exceptions, and the runner (with a fake Blender)
+//       records input/output hashes and never continues on missing, stale or edited files.
 import { spawnSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -49,6 +51,7 @@ clause('R1 character rig configs are well formed', () => {
       const modes = [Boolean(extra.rigid), Boolean(extra.bones), Boolean(extra.kind)].filter(Boolean).length;
       assert(modes === 1, `${file}: extra ${extra.name} needs exactly one of rigid, bones or kind`);
       assert(!extra.kind || ['skirt', 'cape'].includes(extra.kind), `${file}: extra ${extra.name} has unknown kind ${extra.kind}`);
+      assert(extra.measure === undefined || typeof extra.measure === 'boolean', `${file}: extra ${extra.name} measure must be true or false`);
       for (const bone of extra.rigid ? [extra.rigid] : extra.bones || []) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
       for (const from of extra.select?.from || []) assert(partNames.has(from) || names.has(from), `${file}: ${extra.name} selects from unknown part ${from}`);
     }
@@ -364,8 +367,10 @@ const step = path.basename(argv[argv.indexOf('--python') + 1]).replace(/^rig_|\\
 const work = argv[argv.indexOf('--work') + 1];
 if (process.env.FAKE_FAIL === step) process.exit(1);
 if (process.env.FAKE_SKIP === step) process.exit(0);
+const views = { clean: ['front', 'back', 'side'], parts: ['front', 'back', 'side'], joints: ['front', 'side'] }[step];
+const renders = views.flatMap((v) => [step + '-' + v + '.png', step + '-' + v + '.png.view.json']).filter((f) => f !== process.env.FAKE_NO_RENDER);
 const files = { clean: ['clean.blend', 'clean.json'], parts: ['parts.blend', 'parts.json', 'parts-legend.json'], joints: ['joints-estimate.json'] }[step];
-for (const f of files) writeFileSync(path.join(work, f), step + Date.now());
+for (const f of [...files, ...renders]) writeFileSync(path.join(work, f), step + Date.now());
 if (step === 'joints') writeFileSync(path.join(work, 'joints.json'), process.env.FAKE_JOINTS);
 `);
   chmodSync(fake, 0o755);
@@ -393,6 +398,11 @@ if (step === 'joints') writeFileSync(path.join(work, 'joints.json'), process.env
     assert(!existsSync(path.join(work, 'joints.json')), 'the stale joints.json survived');
   });
   clause('R5 mutant rejected: a step exits 1', () => expectFail(runner('clean', { FAKE_FAIL: 'parts' }), /failed \(exit 1\)/));
+  clause('R5 mutant rejected: a step leaves an old render behind', () => {
+    assert(runner('clean').status === 0, 'baseline run failed');
+    expectFail(runner('parts', { FAKE_NO_RENDER: 'parts-side.png' }), /parts did not write parts-side\.png/);
+    assert(!existsSync(path.join(work, 'parts-side.png')), 'the stale parts-side.png survived');
+  });
   clause('R5 mutant rejected: resuming after the config changed', () => {
     assert(runner('clean').status === 0, 'baseline run failed');
     writeFileSync(config, JSON.stringify({ id: 'fake', targetHeight: 1.6 }));

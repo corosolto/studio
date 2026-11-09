@@ -19,7 +19,7 @@ node tools/characters/rig-character.mjs \
 
 `--from=<step>` resumes at `clean`, `parts`, `joints`, `armature`, `weights`, `assemble` or `pose` (for example after adding a `joints.json` override); `--to=<step>` stops early. `--blender=<path>` or `BLENDER` selects the binary (default `/Applications/Blender.app/Contents/MacOS/Blender`).
 
-Every Blender step exits 1 on any Python exception (`C.run_main`; plain `blender --python` exits 0). Before a step runs, the runner deletes its outputs and those of every later step; afterwards each output must exist and be newer than the step, whatever the exit code. `<work>/run-manifest.json` records per step the SHA-256 of its inputs (source, config, joints override) and outputs, and `--from` refuses to resume when a skipped step's outputs or inputs changed since it ran. Each Blender step can also run alone:
+Every Blender step exits 1 on any Python exception (`C.run_main`; plain `blender --python` exits 0). Before a step runs, the runner deletes its outputs and those of every later step, including the orthographic renders, their `.view.json` sidecars and the review sheets (also with `--skip-review`); afterwards each output must exist and be newer than the step, whatever the exit code. `<work>/run-manifest.json` records per step the SHA-256 of its inputs (source, config, joints override) and outputs, and `--from` refuses to resume when a skipped step's outputs or inputs changed since it ran. Each Blender step can also run alone:
 
 ```bash
 Blender -b --factory-startup --python tools/blender/character_rig/rig_<step>.py -- --config characters/<id>/rig.json --work <dir> [--source <glb>]
