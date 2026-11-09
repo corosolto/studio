@@ -18,12 +18,20 @@
 //   --out           pack root; the pack lands in <out>/character/<id>/<version>/
 //   --allow-qa      explicit allowance "<clip|*>:<substring>" for a non-rig QA failure; repeatable
 //   --rights-reference  citation line for a public-domain character; repeatable, >= 1 required
+//   --omit-extra    "<extra key>[:<reason>]": drop that optional extra clip from the pack (its
+//                   family GLB is rewritten without it), skip its QA results and record the
+//                   omission with its reason and QA failures in the manifest provenance;
+//                   repeatable; states can never be omitted
 //
 // The pack is validated with the shared contract validator (tools/lib/pack.mjs) after it
 // is written; a pack that does not validate is not built. No file here is ever committed
 // to this repository: model, clips, previews and manifests carry private character bytes.
 import { createHash } from 'node:crypto';
 import { copyFileSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { Logger, NodeIO, PropertyType } from '@gltf-transform/core';
+import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
+import { prune } from '@gltf-transform/functions';
+import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { clipFamily, isExtraClipName, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
@@ -85,12 +93,14 @@ function readPoseGate(poseTestPath, id) {
 
 // Clip QA gate: failures tagged `[rig: ...]` point at rig weights (repair work tracked by
 // the rig stage, not the pack); every other failure must be covered by the allowlist.
-function checkClipQa(qaPath, allow, id) {
+// Omitted extras leave the pack, so their results no longer gate it.
+function checkClipQa(qaPath, allow, omissions, id) {
   const qa = readJson(requiredFile(qaPath, 'qa_report_missing', 'clip QA report'), 'qa_report_invalid', 'clip QA report');
   const results = qa.results;
   if (!Array.isArray(results)) throw new BuildCharacterPackError('qa_report_invalid', 'clip QA report has no results array');
   const disallowed = [];
   for (const result of results) {
+    if (omissions.has(result.name)) continue;
     for (const failure of result.failures ?? []) {
       if (String(failure).includes('[rig:')) continue;
       const covered = allow.some(({ clip, needle }) => (clip === '*' || clip === result.name) && String(failure).includes(needle));
@@ -100,6 +110,54 @@ function checkClipQa(qaPath, allow, id) {
   if (disallowed.length) {
     throw new BuildCharacterPackError('qa_failure_not_allowed', `${id}: clip QA has ${disallowed.length} non-rig failure(s) not on the allowlist:\n  ${disallowed.join('\n  ')}\nfix the conversion or pass --allow-qa=<clip|*>:<substring> for a reviewed exception`);
   }
+  return results;
+}
+
+// Omitted extras are an owner decision (for example a clip whose QA fails on this
+// character): the runtime falls back when an optional extra is missing, but the states are
+// its floor, so only contract extras can be omitted.
+function planOmissions(omitExtra, id) {
+  const omissions = new Map();
+  for (const { name, reason } of omitExtra) {
+    if (STATE_NAMES.includes(name)) {
+      throw new BuildCharacterPackError('omit_extra_state', `${id}: ${name} is a state; only optional extra clips can be omitted`);
+    }
+    if (!isExtraClipName(name)) throw new BuildCharacterPackError('omit_extra_invalid', `${id}: --omit-extra ${JSON.stringify(name)} is not a contract extra name`);
+    if (omissions.has(name)) throw new BuildCharacterPackError('omit_extra_invalid', `${id}: --omit-extra ${name} given twice`);
+    omissions.set(name, reason?.trim() ?? '');
+  }
+  return omissions;
+}
+
+// The recorded reason of each omission: the explicit reason plus every QA failure of that
+// clip, so the manifest carries the measured numbers that justified dropping it.
+function omissionRecords(omissions, results, id) {
+  return [...omissions].sort(([a], [b]) => a.localeCompare(b)).map(([name, reason]) => {
+    const failures = results.filter((result) => result.name === name).flatMap((result) => result.failures ?? []).map(String);
+    const why = [reason, failures.length ? `clip QA: ${failures.join('; ')}` : ''].filter(Boolean).join('; ');
+    if (!why) {
+      throw new BuildCharacterPackError('omit_reason_missing', `${id}: omitted extra ${name} has no QA failure to cite; pass --omit-extra=${name}:<reason>`);
+    }
+    return { name, reason: why };
+  });
+}
+
+// Rewrites a converter family pack without the omitted clips. The document keeps whatever
+// encoding it was read with (the converter's EXT_meshopt_compression included), only the
+// dropped clips' channels, samplers and now-unused accessors leave; skeleton nodes stay.
+async function dropClips(source, names, id) {
+  await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
+  const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'meshopt.decoder': MeshoptDecoder, 'meshopt.encoder': MeshoptEncoder });
+  const document = (await io.read(source)).setLogger(new Logger(Logger.Verbosity.WARN));
+  for (const name of names) {
+    const animation = document.getRoot().listAnimations().find((candidate) => candidate.getName() === name);
+    if (!animation) throw new BuildCharacterPackError('omit_extra_absent', `${id}: omitted extra ${name} is not in ${source}`);
+    for (const channel of animation.listChannels()) channel.dispose();
+    for (const sampler of animation.listSamplers()) sampler.dispose();
+    animation.dispose();
+  }
+  await document.transform(prune({ propertyTypes: [PropertyType.ACCESSOR], keepLeaves: true }));
+  return Buffer.from(await io.writeBinary(document));
 }
 
 // Rights come verbatim from the studio-assets PROVENANCE.md ## Rights section.
@@ -126,8 +184,9 @@ function parseRights(assetsDir, references, id) {
 // Layout of the converter output (character-clips@2): states share states.glb, extras share
 // one family pack per non-emote family, emotes keep one file each. The builder reproduces
 // that layout inside the pack and derives every family from the contract's own clipFamily,
-// so the manifest can never disagree with the validator mirror.
-function planClips(clipsDir, id) {
+// so the manifest can never disagree with the validator mirror. Omitted extras are left out
+// of the manifest; a family pack that loses clips is listed in droppedByFamily for rewriting.
+function planClips(clipsDir, id, omissions) {
   const converter = readJson(requiredFile(path.join(clipsDir, 'manifest.json'), 'converter_manifest_missing', 'converter manifest'), 'converter_manifest_invalid', 'converter manifest');
   if (converter.schema !== CONVERTER_SCHEMA) {
     throw new BuildCharacterPackError('converter_schema', `${id}: converter manifest schema is ${JSON.stringify(converter.schema)}, expected ${CONVERTER_SCHEMA}`);
@@ -161,6 +220,7 @@ function planClips(clipsDir, id) {
   const familyFiles = new Map();
   const emoteFiles = [];
   const catalogRoots = new Set();
+  const droppedByFamily = new Map();
   for (const [name, clip] of Object.entries(clips)) {
     if (STATE_NAMES.includes(name)) continue;
     if (!isExtraClipName(name)) {
@@ -168,6 +228,10 @@ function planClips(clipsDir, id) {
     }
     const family = clipFamily(name);
     if (family === 'states') throw new BuildCharacterPackError('extra_family_invalid', `${id}: clip ${name} classified as a state`);
+    if (omissions.has(name)) {
+      if (family !== 'emote') droppedByFamily.set(family, [...(droppedByFamily.get(family) ?? []), name]);
+      continue;
+    }
     const relative = family === 'emote' ? `animations/emotes/${name}.glb` : `animations/${family}.glb`;
     if (family === 'emote') emoteFiles.push([name, relative]);
     else familyFiles.set(family, `animations/${family}.glb`);
@@ -189,12 +253,15 @@ function planClips(clipsDir, id) {
     catalogRoots.add(clip.provenance.split('/').slice(0, 2).join('/'));
   }
   animations.extra = extra;
+  for (const name of omissions.keys()) {
+    if (!clips[name]) throw new BuildCharacterPackError('omit_extra_absent', `${id}: omitted extra ${name} is not in the converter clips`);
+  }
   // Every referenced source file must exist in the converter output before anything is copied.
   const requiredSources = [['states.glb', stateFiles.size > 0], ...FAMILIES.map((family) => [`${family}.glb`, familyFiles.has(family)]), ...emoteFiles.map(([name]) => [`emotes/${name}.glb`, true])];
   for (const [file, needed] of requiredSources) {
     if (needed) requiredFile(path.join(clipsDir, file), 'pack_file_missing', `converter pack file ${file}`);
   }
-  return { converter, animations, familyCounts, familyFiles, emoteFiles, catalogRoots: [...catalogRoots].sort(), stateCount: STATE_NAMES.filter((state) => animations[state]).length };
+  return { converter, animations, familyCounts, familyFiles, emoteFiles, droppedByFamily, catalogRoots: [...catalogRoots].sort(), stateCount: STATE_NAMES.filter((state) => animations[state]).length };
 }
 
 function planPreviews(previews, id) {
@@ -216,17 +283,19 @@ function planPreviews(previews, id) {
   });
 }
 
-export async function buildCharacterPack({ id, version, model, poseTest, clips, qa, assets, revision, previews = [], allowQa = [], rightsReferences = [], out }) {
+export async function buildCharacterPack({ id, version, model, poseTest, clips, qa, assets, revision, previews = [], allowQa = [], rightsReferences = [], omitExtra = [], out }) {
   if (!/^[a-z][a-z0-9-]{0,63}$/.test(id ?? '')) throw new BuildCharacterPackError('id_invalid', `id ${JSON.stringify(id)} must match ^[a-z][a-z0-9-]{0,63}$`);
   if (!/^\d+\.\d+\.\d+$/.test(version ?? '')) throw new BuildCharacterPackError('version_invalid', `version ${JSON.stringify(version)} must be semver x.y.z`);
   if (!/^[0-9a-f]{7,40}$/.test(revision ?? '')) throw new BuildCharacterPackError('revision_invalid', `revision ${JSON.stringify(revision)} must be a git sha`);
 
   const modelFile = requiredFile(model, 'model_missing', 'rigged GLB');
   const pose = readPoseGate(poseTest, id);
-  checkClipQa(qa, allowQa, id);
+  const omissions = planOmissions(omitExtra, id);
+  const qaResults = checkClipQa(qa, allowQa, omissions, id);
+  const omitted = omissionRecords(omissions, qaResults, id);
   const rights = parseRights(assets, rightsReferences, id);
   const plannedPreviews = planPreviews(previews, id);
-  const plan = planClips(clips, id);
+  const plan = planClips(clips, id, omissions);
 
   const modelSha = sha256(modelFile);
   if (plan.converter.model.sha256 !== modelSha) {
@@ -249,6 +318,11 @@ export async function buildCharacterPack({ id, version, model, poseTest, clips, 
         `studio-assets characters/${id} @ ${revision.slice(0, 8)}: ficha, concept, rights; rigged model sha256 ${modelSha}`,
         `Blender character rig pipeline${pose.label ? ` (${pose.label})` : ''}: clean+parts+joints+weights, meshy-28, pose gate PASS (0 failures)`,
         `${CONVERTER_SCHEMA}: ${plan.stateCount} states + ${counts.loco} loco + ${counts.combat} combat + ${counts.ceremony} ceremony + ${counts.emote} emotes; catalog: ${plan.catalogRoots.join(', ')}`,
+        ...omitted.map(({ name, reason }) => {
+          const family = clipFamily(name);
+          const where = family === 'emote' ? 'emote file not packed' : `dropped from animations/${family}.glb`;
+          return `omitted extra ${name} (${where}; the runtime falls back for a missing optional extra): ${reason}`;
+        }),
       ],
     },
     files: [],
@@ -272,11 +346,21 @@ export async function buildCharacterPack({ id, version, model, poseTest, clips, 
     copyFileSync(source, staged);
     entries.push({ path: relative, sha256: sha256(staged), bytes: statSync(staged).size });
   };
+  const putStagedBytes = (bytes, relative) => {
+    const staged = path.join(staging, relative);
+    mkdirSync(path.dirname(staged), { recursive: true });
+    writeFileSync(staged, bytes);
+    entries.push({ path: relative, sha256: sha256(staged), bytes: bytes.length });
+  };
   try {
     putStaged(modelFile, `model/${id}.glb`);
     if (plan.stateCount > 0) putStaged(path.join(clips, 'states.glb'), 'animations/states.glb');
     for (const family of FAMILIES) {
-      if (plan.familyFiles.has(family)) putStaged(path.join(clips, `${family}.glb`), `animations/${family}.glb`);
+      if (!plan.familyFiles.has(family)) continue;
+      const source = path.join(clips, `${family}.glb`);
+      const dropped = plan.droppedByFamily.get(family);
+      if (dropped) putStagedBytes(await dropClips(source, dropped, id), `animations/${family}.glb`);
+      else putStaged(source, `animations/${family}.glb`);
     }
     for (const [name] of plan.emoteFiles) putStaged(path.join(clips, 'emotes', `${name}.glb`), `animations/emotes/${name}.glb`);
     for (const { source, relative } of plannedPreviews) putStaged(source, relative);
@@ -316,6 +400,7 @@ export async function buildCharacterPack({ id, version, model, poseTest, clips, 
       triangles: pose.triangles,
       budgetTriangles,
       files: validation.manifest.files.length,
+      omitted: omitted.map(({ name }) => name),
       manifest,
     };
   } finally {
@@ -352,6 +437,11 @@ if (isInvocation) {
       return { clip: entry.slice(0, separator), needle: entry.slice(separator + 1) };
     }),
     rightsReferences: repeatable(argv, 'rights-reference'),
+    omitExtra: repeatable(argv, 'omit-extra').map((entry) => {
+      const separator = entry.indexOf(':');
+      return separator < 0 ? { name: entry } : { name: entry.slice(0, separator), reason: entry.slice(separator + 1) };
+    }),
   });
-  console.log(`PASS character/${summary.id}@${summary.version}: built ${summary.files} files, ${summary.totalBytes}/${BYTES_BUDGET} bytes, ${summary.triangles}/${summary.budgetTriangles} triangles, manifest sha256 ${summary.manifestSha256}`);
+  const omittedNote = summary.omitted.length ? `, omitted ${summary.omitted.join(', ')}` : '';
+  console.log(`PASS character/${summary.id}@${summary.version}: built ${summary.files} files, ${summary.totalBytes}/${BYTES_BUDGET} bytes, ${summary.triangles}/${summary.budgetTriangles} triangles${omittedNote}, manifest sha256 ${summary.manifestSha256}`);
 }
