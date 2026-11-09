@@ -59,12 +59,18 @@ export function validateManifestStructure(manifest) {
     fileIndexes.set(file.path, index);
   }
 
+  // One role kind per file. Many `animations.<state>` roles may share one state-pack file and
+  // many `animations.extra.<name>` roles may share one family-pack file, but a file can never mix
+  // state and extra clips, nor take a non-animation role on the side.
+  const roleKind = role => (role.startsWith('animations.extra.') ? 'animations.extra' : role.startsWith('animations.') ? 'animations.state' : role);
   const roleOwners = new Map();
   for (const entry of [...mapRoleEntries(manifest), ...characterRoleEntries(manifest)]) {
     assertPackageRelativePath(entry.path, `${entry.role} path`);
     assertNotExecutableJavaScript(entry.path);
-    if (roleOwners.has(entry.path)) {
-      throw new Error(`Duplicate declared path: ${entry.path} (${roleOwners.get(entry.path)} and ${entry.role})`);
+    const kind = roleKind(entry.role);
+    const owner = roleOwners.get(entry.path);
+    if (owner !== undefined && roleKind(owner) !== kind) {
+      throw new Error(`Duplicate declared path: ${entry.path} (${owner} and ${entry.role})`);
     }
     if (!fileIndexes.has(entry.path)) throw new Error(`Declared path is missing from files: ${entry.path}`);
     roleOwners.set(entry.path, entry.role);

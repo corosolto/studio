@@ -40,6 +40,23 @@ export const extraClipPrefixes = Object.freeze(['emote_']);
 const extraClipKeyPattern = /^[a-z][a-z0-9_]{1,40}$/;
 const stateNameSet = new Set([...requiredCharacterStates, ...optionalCharacterStates]);
 
+// Clip family of a name, mirroring the converter's `packFamily` (branch
+// feat/animation-conversion-20261109, tools/lib/clip-pack.mjs). That branch is stacked on this
+// one, so it cannot be imported here without a circular dependency; the mirror is kept honest by
+// a snapshot parity check in tools/checks/character-pack-check.mjs, and the converter must import
+// `clipFamily` from this module once it rebases. Two deliberate vocabulary differences: the
+// contract says `emote` where the converter's pack id is `emotes` (emotes are never packed as a
+// family file), and `states` is a valid answer here even though only the converter emits it.
+export const extraClipFamilies = Object.freeze(['loco', 'combat', 'ceremony', 'emote']);
+export function clipFamily(name) {
+  if (stateNameSet.has(name)) return 'states';
+  if (name.startsWith('emote_')) return 'emote';
+  if (/^(victory|defeat|death_)/.test(name)) return 'ceremony';
+  if (/^(reload_|draw_|holster_|hit_|grenade_|knife_|shoot_)/.test(name)) return 'combat';
+  return 'loco';
+}
+
+
 // Single-source invariant: the published vocabulary must equal the core contract names plus the
 // converter set above. A name the converter proposes but the contract lacks, a dropped core name,
 // a name outside both sets, a duplicate, a state collision or a pattern break all fail here.
@@ -105,16 +122,31 @@ export function characterRoleEntries(manifest) {
 }
 
 // Extra-clip role entries. This is also the structural gate that rejects names outside the
-// vocabulary (bare prefixes, state names, anything else) during validateManifestStructure,
-// before any payload is hashed.
+// vocabulary (bare prefixes, state names, anything else), wrong `family` declarations and illegal
+// file sharing during validateManifestStructure, before any payload is hashed. Non-emote keys may
+// share one family-pack file (all of them must belong to a single family, exactly like the
+// converter packs them); emote keys always keep one file per key.
 export function characterExtraEntries(manifest) {
   const extras = manifest.animations?.extra;
   if (extras === undefined) return [];
   if (typeof extras !== 'object' || Array.isArray(extras)) throw new Error('animations.extra must be an object keyed by extra clip name');
   const entries = [];
+  const namesByFile = new Map();
   for (const [name, entry] of Object.entries(extras)) {
     if (!isExtraClipName(name)) throw new Error(`animations.extra has an unknown clip name: ${name}`);
+    if (entry?.family !== undefined && entry.family !== clipFamily(name)) {
+      throw new Error(`animations.extra.${name} declares family "${entry.family}" but its name belongs to "${clipFamily(name)}"`);
+    }
     entries.push({ role: `animations.extra.${name}`, path: entry?.file });
+    namesByFile.set(entry?.file, [...(namesByFile.get(entry?.file) || []), name]);
+  }
+  for (const [file, names] of namesByFile) {
+    if (names.length < 2) continue;
+    if (names.some(name => name.startsWith('emote_'))) {
+      throw new Error(`animations.extra: emote clips keep one file per clip, but ${file} is shared by ${names.join(', ')}`);
+    }
+    const families = [...new Set(names.map(clipFamily))];
+    if (families.length > 1) throw new Error(`animations.extra: ${file} mixes clip families (${families.join(' and ')})`);
   }
   return entries;
 }
@@ -261,14 +293,19 @@ export async function validateCharacterPack(manifest, absolutes) {
     throw new Error(`${manifest.model}: ${model.triangles} triangles, over the ${manifest.budgets.triangles}-triangle budget`);
   }
 
+  // States may share one states.glb and extras may share one family-pack file, so every
+  // animation GLB is read once per file, not once per clip that points at it.
+  const documents = new Map();
+  const animationDocument = async file => {
+    if (!documents.has(file)) documents.set(file, (await readGlb(absolutes.get(file), file)).document);
+    return documents.get(file);
+  };
   for (const [state, file] of Object.entries(manifest.animations)) {
     if (state === 'extra') continue;
-    const { document } = await readGlb(absolutes.get(file), file);
-    assertStateAnimation(document, state, file);
+    assertStateAnimation(await animationDocument(file), state, file);
   }
   for (const [name, entry] of Object.entries(manifest.animations.extra || {})) {
-    const { document } = await readGlb(absolutes.get(entry.file), entry.file);
-    assertStateAnimation(document, name, entry.file);
+    assertStateAnimation(await animationDocument(entry.file), name, entry.file);
   }
   for (const file of manifest.previews) await assertImage(file, absolutes.get(file));
   const states = Object.keys(manifest.animations).filter(key => key !== 'extra').length;

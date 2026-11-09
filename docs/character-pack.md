@@ -10,13 +10,13 @@ On top of the common fields (`schemaVersion`, `kind`, `id`, `version`, `source`,
 | --- | --- |
 | `model` | One package path ending in `.glb`: the rigged, skinned character. |
 | `skeleton` | `"meshy-28"` (see below). |
-| `animations` | Object keyed by state. Required: `idle`, `walk`, `run`, `shoot`, `death`, `crouch`, `crouchwalk`, `jump`. Optional: `idle1h`, `walk1h`, `walkfire`, plus one optional `extra` map of named clips (see below). No other keys. Each state value is a distinct `.glb` path. |
+| `animations` | Object keyed by state. Required: `idle`, `walk`, `run`, `shoot`, `death`, `crouch`, `crouchwalk`, `jump`. Optional: `idle1h`, `walk1h`, `walkfire`, plus one optional `extra` map of named clips (see below). No other keys. Each state value is a `.glb` path; states may each have their own file (the clip inside named exactly as the state) or all share one `states.glb` whose clip names are the state names. |
 | `previews` | At least one portrait image path (`.png`, `.jpg`, `.jpeg` or `.webp`). |
 | `rights` | `{ "status": "original" \| "public-domain" \| "political-satire", "basis": "<why this is clear>", "references": ["<citation>", ...] }`; `references` is optional. |
 | `budgets` | `{ "triangles": <int ≤ 15000>, "bytes": <int ≤ 16777216> }`. `triangles` bounds the model; `bytes` bounds the sum of every `files[].bytes`. |
 | `evidence` | Optional extra paths (for example a provenance sidecar). |
 
-Every file in `files` must be declared by exactly one role (`model`, `animations.<state>`, `animations.extra.<name>`, `previews`, `evidence`) and every declared path must appear in `files`. Extra-clip files count toward `budgets.bytes` like any other file.
+Every file in `files` must be declared by at least one role (`model`, `animations.<state>`, `animations.extra.<name>`, `previews`, `evidence`) and every declared path must appear in `files`. One role *kind* per file: several `animations.<state>` roles may share one states-pack file, several `animations.extra.<name>` roles may share one family-pack file, but a file can never be both a state file and an extra file, nor carry a non-animation role besides. Extra-clip files count toward `budgets.bytes` like any other file.
 
 ```json
 {
@@ -28,8 +28,12 @@ Every file in `files` must be declared by exactly one role (`model`, `animations
   "files": [{ "path": "model/capitao-caveira.glb", "sha256": "…", "bytes": 1 }],
   "model": "model/capitao-caveira.glb",
   "skeleton": "meshy-28",
-  "animations": { "idle": "animations/idle.glb", "walk": "animations/walk.glb", "…": "…",
-    "extra": { "strafe_left": { "file": "animations/extra/strafe-left.glb", "duration": 0.9, "loop": true, "rootMotion": false, "source": "Mixamo Strafe Left retargeted to meshy-28" } } },
+  "animations": { "idle": "animations/states.glb", "walk": "animations/states.glb", "…": "…",
+    "extra": {
+      "strafe_left": { "file": "animations/extra/loco.glb", "duration": 0.9, "loop": true, "rootMotion": false, "source": "Mixamo Strafe Left retargeted to meshy-28", "family": "loco" },
+      "walk_back": { "file": "animations/extra/loco.glb", "duration": 1.2, "loop": true, "rootMotion": false, "source": "Mixamo Walk Back retargeted to meshy-28" },
+      "emote_salute": { "file": "animations/extra/emote-salute.glb", "duration": 2.0, "loop": false, "rootMotion": false, "source": "Mixamo Salute retargeted to meshy-28", "family": "emote" }
+    } },
   "previews": ["previews/portrait.jpg"],
   "rights": { "status": "original", "basis": "Invented character; concept prompt forbids likeness of real people and existing characters." },
   "budgets": { "triangles": 6000, "bytes": 8388608 }
@@ -43,7 +47,7 @@ Every file in `files` must be declared by exactly one role (`model`, `animations
 - The model is a GLB 2 container with in-bounds buffer views and accessors, finite positions and in-range indices. Every primitive is a triangle list (mode 4), and the triangle count must not exceed `budgets.triangles`.
 - The model has exactly one skin, and `inverseBindMatrices` holds one float `MAT4` per joint. Every skinned primitive has a `JOINTS_0` unsigned byte/short `VEC4` and a float or normalized `WEIGHTS_0` `VEC4` per vertex, and every joint index stays inside the skin.
 - The skin is exactly meshy-28: 28 joints whose (name, nearest joint ancestor) pairs match the list below as a multiset.
-- Each animation GLB contains an animation named exactly as its state that drives at least one meshy-28 bone through a `translation`, `rotation` or `scale` channel. A `weights` channel must target a mesh with morph targets. Every sampler has at least one float keyframe time and the output type and count that match its interpolation (and, for `weights`, the number of morph targets). The same rules apply to every `animations.extra` clip, with the animation named exactly as its key.
+- Each animation GLB contains an animation named exactly as its state (or extra key) that drives at least one meshy-28 bone through a `translation`, `rotation` or `scale` channel. A `weights` channel must target a mesh with morph targets. Every sampler has at least one float keyframe time and the output type and count that match its interpolation (and, for `weights`, the number of morph targets). When several states share one `states.glb`, or several extras share one family-pack file, each declared name must exist as an animation inside that shared GLB, and the GLB is read once per file, not once per clip.
 - Each preview starts with the PNG, JPEG or WebP signature for its extension.
 
 
@@ -66,7 +70,15 @@ Every file in `files` must be declared by exactly one role (`model`, `animations
 
 The converter group (`converterExtraClipNames`) is a snapshot of the names proposed by the animation conversion library (branch `feat/animation-conversion-20261109`, `tools/lib/animation-library.mjs`, 2026-11-09; every name is used by at least one key of its `library/index.json`). `assertExtraClipVocabulary` in `tools/lib/character-pack.mjs` enforces the single source: the vocabulary must equal the core names plus the converter set, with no duplicates, no state collisions and no pattern breaks; `tools/checks/character-pack-check.mjs` proves it against the real exports and synthetic mutants. The conversion tooling must import `extraClipNames` from `tools/lib/character-pack.mjs` instead of maintaining its own name list.
 
-Each entry is an object with exactly five fields: `file` (a distinct `.glb` package path, declared in `files`), `duration` (seconds, positive), `loop` (boolean), `rootMotion` (boolean) and `source` (provenance string, for example the source animation and rig pipeline). `duration`, `loop` and `rootMotion` are declared metadata for the runtime; the GLB itself still carries the authoritative keyframes. A missing `extra` map is valid — optional means absent, not empty promises.
+Each entry is an object with exactly six fields: `file` (a `.glb` package path, declared in `files`), `duration` (seconds, positive), `loop` (boolean), `rootMotion` (boolean), `source` (provenance string, for example the source animation and rig pipeline) and the optional `family` (`"loco"`, `"combat"`, `"ceremony"` or `"emote"`). `duration`, `loop` and `rootMotion` are declared metadata for the runtime; the GLB itself still carries the authoritative keyframes. A missing `extra` map is valid — optional means absent, not empty promises.
+
+### Family packs
+
+Extras arrive the way the animation converter packs them (`tools/lib/clip-pack.mjs`, `character-clips@2`): one GLB per family — `states.glb` (the 11 runtime states), `loco.glb`, `combat.glb`, `ceremony.glb` — plus one GLB per emote. The contract accepts both this layout and the older one-file-per-clip layout:
+
+- Several non-emote keys may point at the same `file`; every key must then exist as an animation name inside that GLB, and all keys sharing a file must belong to one single family (`clipFamily` in `tools/lib/character-pack.mjs`, which mirrors the converter's `packFamily`; the check suite proves the mirror against a snapshot of the converter's own answers). A declared `family` must match the name's family.
+- Emote keys always keep one file per key: an `emote_*` entry may never share its file with any other key.
+- States may all point at one `states.glb` whose clip names are the state names; the per-state layout remains valid, and the two cannot mix files (`animations.<state>` and `animations.extra.<name>` are different role kinds).
 
 ## meshy-28
 
@@ -86,7 +98,7 @@ Photos of real people never enter either repository.
 
 ## Checks
 
-`npm run check` builds a synthetic character pack (a programmatic 12-triangle skinned GLB, one-channel state clips and two extra clips, no real asset bytes), validates it, and requires each contract mutant to be rejected for its stated reason: missing states, unknown state, misnamed clip, clip driving no meshy-28 bone, clip channel without a path, clip without keyframes or with mismatched output, wrong skeleton id, renamed, reparented or missing bone, missing skin or weights, missing, mistyped or out-of-skin `JOINTS_0`, triangle strips, bad GLB magic or version, triangle and byte budgets (including the byte budget before hashing), bad rights, missing or invalid previews, undeclared files, hash or size mutations, and the extra-clip rules: unknown, pattern-violating, state-colliding or bare-prefix names, entries with missing or mistyped fields, non-GLB files, missing, duplicate or misnamed clip files, and extras pushing the pack over its byte budget.
+`npm run check` builds a synthetic character pack (a programmatic 12-triangle skinned GLB, one-channel state clips, a loco family pack shared by two extras and a per-file extra, no real asset bytes), validates it — once per layout, including all states in one `states.glb` — and requires each contract mutant to be rejected for its stated reason: missing states, unknown state, misnamed clip, clip driving no meshy-28 bone, clip channel without a path, clip without keyframes or with mismatched output, wrong skeleton id, renamed, reparented or missing bone, missing skin or weights, missing, mistyped or out-of-skin `JOINTS_0`, triangle strips, bad GLB magic or version, triangle and byte budgets (including the byte budget before hashing), bad rights, missing or invalid previews, undeclared files, hash or size mutations, and the extra-clip rules: unknown, pattern-violating, state-colliding or bare-prefix names, entries with missing or mistyped fields, non-GLB files, missing, duplicate or misnamed clip files, extras pushing the pack over its byte budget, a key missing inside the family pack, an emote sharing any file, a declared family mismatching the clip name, a family outside the enum, one file mixing families, and a states pack missing a state clip. It also proves the `clipFamily` mirror against a snapshot of the converter's `packFamily` answers, including a poisoned-mirror mutant.
 
 `npm run check` also runs `tools/checks/character-rig-check.mjs`, the deterministic half of the Blender rig pipeline that produces these models (configs, `joints.json` validation, meshy-28 assembly, the pose test on a synthetic humanoid, and the runner's step freshness with a fake Blender); see [character-rig.md](character-rig.md).
 
