@@ -4,6 +4,24 @@ import { inspectGlb, readAccessorComponent, readGlb } from './glb-inspect.mjs';
 export const requiredCharacterStates = Object.freeze(['idle', 'walk', 'run', 'shoot', 'death', 'crouch', 'crouchwalk', 'jump']);
 export const optionalCharacterStates = Object.freeze(['idle1h', 'walk1h', 'walkfire']);
 
+// Optional named clips a pack may carry beyond the states, as `animations.extra` entries.
+// Fixed names for locomotion, weapon handling, damage reactions, melee and round outcomes,
+// plus free-form emotes under the `emote_` prefix (at least one character after the prefix).
+// State names are never valid extra names, so the two key spaces stay disjoint.
+export const extraClipNames = Object.freeze([
+  'strafe_left', 'strafe_right', 'walk_back', 'run_back',
+  'strafe_left_pistol', 'strafe_right_pistol', 'walk_back_pistol',
+  'reload_rifle', 'reload_pistol', 'draw_rifle', 'holster_rifle', 'draw_pistol', 'holster_pistol',
+  'hit_front', 'hit_back', 'hit_left', 'hit_right', 'hit_head',
+  'grenade_throw', 'knife_idle', 'knife_stab', 'victory', 'defeat',
+]);
+export const extraClipPrefixes = Object.freeze(['emote_']);
+
+export function isExtraClipName(name) {
+  return extraClipNames.includes(name)
+    || extraClipPrefixes.some(prefix => name.length > prefix.length && name.startsWith(prefix));
+}
+
 // The shared Meshy humanoid skeleton every runtime clip is baked against: skin joint order
 // and the nearest joint ancestor of each joint (null for the root). Derived from the client
 // donor `public/models/characters/mst.glb` and the 37 offline-rigged lote30 characters; the
@@ -29,9 +47,28 @@ const imageMagic = [
 export function characterRoleEntries(manifest) {
   if (manifest.kind !== 'character') return [];
   const entries = [{ role: 'model', path: manifest.model }];
-  for (const [state, file] of Object.entries(manifest.animations || {})) entries.push({ role: `animations.${state}`, path: file });
+  for (const [state, file] of Object.entries(manifest.animations || {})) {
+    if (state === 'extra') continue;
+    entries.push({ role: `animations.${state}`, path: file });
+  }
+  entries.push(...characterExtraEntries(manifest));
   for (const role of ['previews', 'evidence']) {
     for (const file of manifest[role] || []) entries.push({ role, path: file });
+  }
+  return entries;
+}
+
+// Extra-clip role entries. This is also the structural gate that rejects names outside the
+// vocabulary (bare prefixes, state names, anything else) during validateManifestStructure,
+// before any payload is hashed.
+export function characterExtraEntries(manifest) {
+  const extras = manifest.animations?.extra;
+  if (extras === undefined) return [];
+  if (typeof extras !== 'object' || Array.isArray(extras)) throw new Error('animations.extra must be an object keyed by extra clip name');
+  const entries = [];
+  for (const [name, entry] of Object.entries(extras)) {
+    if (!isExtraClipName(name)) throw new Error(`animations.extra has an unknown clip name: ${name}`);
+    entries.push({ role: `animations.extra.${name}`, path: entry?.file });
   }
   return entries;
 }
@@ -179,9 +216,21 @@ export async function validateCharacterPack(manifest, absolutes) {
   }
 
   for (const [state, file] of Object.entries(manifest.animations)) {
+    if (state === 'extra') continue;
     const { document } = await readGlb(absolutes.get(file), file);
     assertStateAnimation(document, state, file);
   }
+  for (const [name, entry] of Object.entries(manifest.animations.extra || {})) {
+    const { document } = await readGlb(absolutes.get(entry.file), entry.file);
+    assertStateAnimation(document, name, entry.file);
+  }
   for (const file of manifest.previews) await assertImage(file, absolutes.get(file));
-  return { triangles: model.triangles, bytes: characterDeclaredBytes(manifest), joints: meshy28Joints.length, animations: Object.keys(manifest.animations).length };
+  const states = Object.keys(manifest.animations).filter(key => key !== 'extra').length;
+  return {
+    triangles: model.triangles,
+    bytes: characterDeclaredBytes(manifest),
+    joints: meshy28Joints.length,
+    animations: states,
+    extraClips: Object.keys(manifest.animations.extra || {}).length,
+  };
 }
