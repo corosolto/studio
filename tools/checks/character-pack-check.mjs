@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { assertExtraClipVocabulary, converterExtraClipNames, coreExtraClipNames, extraClipNames, meshy28Joints, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
+import { assertExtraClipVocabulary, clipFamily, converterExtraClipNames, coreExtraClipNames, extraClipNames, meshy28Joints, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
 import { validatePack } from '../lib/pack.mjs';
 
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
@@ -123,11 +123,38 @@ function clipGlb(name, { target = 'Hips', path: channelPath = 'rotation', keyfra
   }, chunks);
 }
 
+// A family pack (or a states pack): several named clips sharing one GLB, all driving the Hips
+// rotation channel, exactly how the converter merges per-clip GLBs into states/loco/combat/
+// ceremony files.
+function clipsGlb(names) {
+  const nodes = skeletonNodes(meshy28Joints);
+  const targetNode = nodes.findIndex(node => node.name === 'Hips');
+  return glb({
+    scene: 0,
+    scenes: [{ nodes: [0] }],
+    nodes,
+    animations: names.map(name => ({
+      name,
+      channels: [{ sampler: 0, target: { node: targetNode, path: 'rotation' } }],
+      samplers: [{ input: 0, output: 1, interpolation: 'LINEAR' }],
+    })),
+    accessors: [
+      { bufferView: 0, componentType: 5126, count: 2, type: 'SCALAR', min: [0], max: [1] },
+      { bufferView: 1, componentType: 5126, count: 2, type: 'VEC4' },
+    ],
+  }, [
+    { bytes: floats([0, 1]) },
+    { bytes: floats([0, 0, 0, 1, 0, 0, 0, 1]) },
+  ]);
+}
+
 const allStates = [...requiredCharacterStates, ...optionalCharacterStates];
 function validFiles() {
   const files = { 'model/fixture-character.glb': modelGlb(), 'previews/portrait.png': png };
   for (const state of allStates) files[`animations/${state}.glb`] = clipGlb(state);
-  files['animations/extra/strafe-left.glb'] = clipGlb('strafe_left');
+  // strafe_left and walk_back share the loco family pack; sprint_fwd_left keeps the old
+  // one-file-per-clip layout; the emote keeps its own file. Family declared on some keys only.
+  files['animations/extra/loco.glb'] = clipsGlb(['strafe_left', 'walk_back']);
   files['animations/extra/sprint-fwd-left.glb'] = clipGlb('sprint_fwd_left');
   files['animations/extra/emote-danca.glb'] = clipGlb('emote_danca');
   return files;
@@ -146,8 +173,9 @@ function manifestFor(files) {
     animations: {
       ...Object.fromEntries(allStates.map(state => [state, `animations/${state}.glb`])),
       extra: {
-        strafe_left: { file: 'animations/extra/strafe-left.glb', duration: 0.8, loop: true, rootMotion: false, source: 'Synthetic strafe-left fixture clip' },
-        emote_danca: { file: 'animations/extra/emote-danca.glb', duration: 2.5, loop: false, rootMotion: false, source: 'Synthetic emote fixture clip' },
+        strafe_left: { file: 'animations/extra/loco.glb', duration: 0.8, loop: true, rootMotion: false, source: 'Synthetic strafe-left fixture clip', family: 'loco' },
+        walk_back: { file: 'animations/extra/loco.glb', duration: 1.1, loop: true, rootMotion: false, source: 'Synthetic walk-back fixture clip' },
+        emote_danca: { file: 'animations/extra/emote-danca.glb', duration: 2.5, loop: false, rootMotion: false, source: 'Synthetic emote fixture clip', family: 'emote' },
         sprint_fwd_left: { file: 'animations/extra/sprint-fwd-left.glb', duration: 0.7, loop: true, rootMotion: false, source: 'Synthetic converter-vocabulary fixture clip' },
       },
     },
@@ -214,6 +242,22 @@ try {
   await validateCase({ replace: { 'animations/idle.glb': clipGlb('idle', { morph: 'valid' }) } });
   console.log('PASS Valid clip with a bone channel plus a morph-weights channel');
 
+  // Every state may also come from one shared states pack whose clip names are the state names.
+  const statesPack = await validateCase({
+    files: {
+      'model/fixture-character.glb': modelGlb(),
+      'previews/portrait.png': png,
+      'animations/states.glb': clipsGlb(allStates),
+      'animations/extra/loco.glb': clipsGlb(['strafe_left', 'walk_back']),
+      'animations/extra/sprint-fwd-left.glb': clipGlb('sprint_fwd_left'),
+      'animations/extra/emote-danca.glb': clipGlb('emote_danca'),
+    },
+    mutate: manifest => {
+      for (const state of allStates) manifest.animations[state] = 'animations/states.glb';
+    },
+  });
+  console.log(`PASS Valid character pack with all ${statesPack.character.animations} states in one states.glb`);
+
   // Single-source vocabulary invariant: the contract vocabulary must equal the core names plus
   // the animation conversion library's proposed names (snapshot in character-pack.mjs).
   assertExtraClipVocabulary();
@@ -231,6 +275,48 @@ try {
     vocabulary: [...extraClipNames, 'sprint'],
   });
 
+
+  // Family parity: the contract mirror must classify every name exactly like the converter's
+  // packFamily. Snapshot generated 2026-11-09 by importing packFamily from
+  // feat/animation-conversion-20261109 tools/lib/clip-pack.mjs over every state, vocabulary and
+  // sample emote name; the converter's pack id `emotes` is the contract family `emote`.
+  const converterPackFamilies = Object.freeze({
+    idle: 'states', walk: 'states', run: 'states', shoot: 'states', death: 'states', crouch: 'states',
+    crouchwalk: 'states', jump: 'states', idle1h: 'states', walk1h: 'states', walkfire: 'states',
+    strafe_left: 'loco', strafe_right: 'loco', walk_back: 'loco', run_back: 'loco', strafe_left_pistol: 'loco',
+    strafe_right_pistol: 'loco', walk_back_pistol: 'loco', reload_rifle: 'combat', reload_pistol: 'combat',
+    draw_rifle: 'combat', holster_rifle: 'combat', draw_pistol: 'combat', holster_pistol: 'combat',
+    hit_front: 'combat', hit_back: 'combat', hit_left: 'combat', hit_right: 'combat', hit_head: 'combat',
+    grenade_throw: 'combat', knife_idle: 'combat', knife_stab: 'combat', victory: 'ceremony', defeat: 'ceremony',
+    crouch_aim: 'loco', crouch_pistol: 'loco', crouch_turn_left: 'loco', crouch_turn_right: 'loco',
+    crouchwalk_back: 'loco', crouchwalk_back_left: 'loco', crouchwalk_back_right: 'loco', crouchwalk_fwd_left: 'loco',
+    crouchwalk_fwd_right: 'loco', crouchwalk_left: 'loco', crouchwalk_right: 'loco', death_crouch: 'ceremony',
+    death_front: 'ceremony', death_headshot_back: 'ceremony', death_headshot_front: 'ceremony', death_right: 'ceremony',
+    idle_aim: 'loco', jump_land: 'loco', jump_loop: 'loco', jump_pistol: 'loco', jump_start: 'loco',
+    run_back_left: 'loco', run_back_pistol: 'loco', run_back_right: 'loco', run_fwd_left: 'loco', run_fwd_right: 'loco',
+    run_left: 'loco', run_pistol: 'loco', run_right: 'loco', shoot_crouch: 'combat', shoot_pistol: 'combat',
+    sprint: 'loco', sprint_back: 'loco', sprint_back_left: 'loco', sprint_back_right: 'loco', sprint_fwd_left: 'loco',
+    sprint_fwd_right: 'loco', sprint_left: 'loco', sprint_right: 'loco', turn_left: 'loco', turn_right: 'loco',
+    walk_back_left: 'loco', walk_back_right: 'loco', walk_fwd_left: 'loco', walk_fwd_right: 'loco',
+    emote_salute: 'emotes', emote_danca: 'emotes', emote_breakdance_uprock: 'emotes', emote_capoeira_bencao: 'emotes',
+  });
+  const assertFamilyParity = (classifier, label) => {
+    for (const [name, converter] of Object.entries(converterPackFamilies)) {
+      const expected = converter === 'emotes' ? 'emote' : converter;
+      if (classifier(name) !== expected) throw new Error(`${label}: family of ${name} is ${classifier(name)}, converter says ${expected}`);
+    }
+  };
+  assertFamilyParity(clipFamily, 'Clip family mirror');
+  console.log(`PASS Clip family mirror matches the converter's packFamily for ${Object.keys(converterPackFamilies).length} names`);
+  try {
+    assertFamilyParity(name => (name === 'hit_head' ? 'loco' : clipFamily(name)), 'Poisoned family mirror');
+    throw new Error('Poisoned family mirror was not rejected');
+  } catch (caught) {
+    if (!/Poisoned family mirror: family of hit_head is loco, converter says combat/.test(caught.message)) {
+      throw new Error(`Poisoned family mirror rejected for the wrong reason: ${caught.message}`);
+    }
+    console.log('PASS Poisoned family mirror rejected');
+  }
   for (const state of requiredCharacterStates) {
     await expectRejection(`Missing required state ${state}`, new RegExp(`must have required property '${state}'`), { mutate: dropState(state) });
   }
@@ -246,7 +332,12 @@ try {
   await expectRejection('Morph weights channel on a mesh without morph targets', /animation "idle" has an invalid channel/, { replace: { 'animations/idle.glb': clipGlb('idle', { morph: 'no-targets' }) } });
   await expectRejection('Clip without keyframes', /animation "death" has no keyframes/, { replace: { 'animations/death.glb': clipGlb('death', { keyframes: 0 }) } });
   await expectRejection('Clip output count differs from keyframes', /output values that do not match its rotation keyframes/, { replace: { 'animations/crouch.glb': clipGlb('crouch', { keyframes: 2, outputValues: 1 }) } });
-  await expectRejection('Same clip declared for two states', /Duplicate declared path/, { mutate: manifest => { manifest.animations.walk = manifest.animations.idle; } });
+  await expectRejection('State pointed at another state per-state file', /animations\/idle\.glb: no animation named "walk"/, {
+    mutate: manifest => {
+      manifest.animations.walk = manifest.animations.idle;
+      manifest.files = manifest.files.filter(file => file.path !== 'animations/walk.glb');
+    },
+  });
   await expectRejection('Unknown extra clip name', /animations\.extra has an unknown clip name: moonwalk/, {
     replace: { 'animations/extra/moonwalk.glb': clipGlb('moonwalk') },
     mutate: manifest => { manifest.animations.extra.moonwalk = { file: 'animations/extra/moonwalk.glb', duration: 1, loop: false, rootMotion: false, source: 'Not in the vocabulary' }; },
@@ -262,8 +353,8 @@ try {
     replace: { 'animations/extra/Strafe-left.glb': clipGlb('strafe_left') },
     mutate: manifest => { manifest.animations.extra.Strafe_left = { file: 'animations/extra/Strafe-left.glb', duration: 1, loop: true, rootMotion: false, source: 'Uppercase key' }; },
   });
-  await expectRejection('Extra clip file missing from files', /Declared path is missing from files: animations\/extra\/strafe-left\.glb/, {
-    mutate: manifest => { manifest.files = manifest.files.filter(file => file.path !== 'animations/extra/strafe-left.glb'); },
+  await expectRejection('Family pack file missing from files', /Declared path is missing from files: animations\/extra\/loco\.glb/, {
+    mutate: manifest => { manifest.files = manifest.files.filter(file => file.path !== 'animations/extra/loco.glb'); },
   });
   await expectRejection('Extra clip file shared with a state', /Duplicate declared path: animations\/idle\.glb \(animations\.idle and animations\.extra\.strafe_left\)/, {
     mutate: manifest => { manifest.animations.extra.strafe_left.file = manifest.animations.idle; },
@@ -274,8 +365,39 @@ try {
       manifest.budgets.bytes = manifest.files.reduce((sum, file) => sum + file.bytes, 0) - extraBytes;
     },
   });
-  await expectRejection('Extra clip misnamed inside its GLB', /animations\/extra\/strafe-left\.glb: no animation named "strafe_left"/, {
-    replace: { 'animations/extra/strafe-left.glb': clipGlb('Strafe') },
+  await expectRejection('Extra clip misnamed inside its one-clip file', /animations\/extra\/sprint-fwd-left\.glb: no animation named "sprint_fwd_left"/, {
+    replace: { 'animations/extra/sprint-fwd-left.glb': clipGlb('SprintFwdLeft') },
+  });
+  await expectRejection('Key missing inside the family pack', /animations\/extra\/loco\.glb: no animation named "walk_back"/, {
+    replace: { 'animations/extra/loco.glb': clipsGlb(['strafe_left']) },
+  });
+  await expectRejection('Emote clip sharing a family-pack file', /emote clips keep one file per clip, but animations\/extra\/loco\.glb is shared by /, {
+    mutate: manifest => { manifest.animations.extra.emote_danca.file = 'animations/extra/loco.glb'; },
+  });
+  await expectRejection('Emote clips sharing one file', /emote clips keep one file per clip/, {
+    mutate: manifest => { manifest.animations.extra.emote_salute = { ...manifest.animations.extra.emote_danca, file: manifest.animations.extra.emote_danca.file }; },
+  });
+  await expectRejection('Declared family mismatching the clip name', /animations\.extra\.strafe_left declares family "combat" but its name belongs to "loco"/, {
+    mutate: manifest => { manifest.animations.extra.strafe_left.family = 'combat'; },
+  });
+  await expectRejection('Family outside the contract enum', /animations\/extra\/strafe_left\/family must be equal to one of the allowed values/, {
+    mutate: manifest => { manifest.animations.extra.strafe_left.family = 'states'; },
+  });
+  await expectRejection('Family pack mixing clip families', /animations\/extra\/loco\.glb mixes clip families \(loco and combat\)/, {
+    mutate: manifest => { manifest.animations.extra.reload_rifle = { file: 'animations/extra/loco.glb', duration: 2, loop: false, rootMotion: false, source: 'Combat clip in a loco pack' }; },
+  });
+  await expectRejection('States pack missing one state clip', /animations\/states\.glb: no animation named "walkfire"/, {
+    files: {
+      'model/fixture-character.glb': modelGlb(),
+      'previews/portrait.png': png,
+      'animations/states.glb': clipsGlb(allStates.filter(state => state !== 'walkfire')),
+      'animations/extra/loco.glb': clipsGlb(['strafe_left', 'walk_back']),
+      'animations/extra/sprint-fwd-left.glb': clipGlb('sprint_fwd_left'),
+      'animations/extra/emote-danca.glb': clipGlb('emote_danca'),
+    },
+    mutate: manifest => {
+      for (const state of allStates) manifest.animations[state] = 'animations/states.glb';
+    },
   });
   await expectRejection('Extra clip file is not a GLB', /animations\/extra\/strafe_left\/file must match pattern/, {
     mutate: manifest => { manifest.animations.extra.strafe_left.file = 'animations/extra/strafe-left.gltf'; },
