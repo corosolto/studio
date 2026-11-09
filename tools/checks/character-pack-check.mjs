@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { meshy28Joints, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
+import { assertExtraClipVocabulary, converterExtraClipNames, coreExtraClipNames, extraClipNames, meshy28Joints, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
 import { validatePack } from '../lib/pack.mjs';
 
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
@@ -128,6 +128,7 @@ function validFiles() {
   const files = { 'model/fixture-character.glb': modelGlb(), 'previews/portrait.png': png };
   for (const state of allStates) files[`animations/${state}.glb`] = clipGlb(state);
   files['animations/extra/strafe-left.glb'] = clipGlb('strafe_left');
+  files['animations/extra/sprint-fwd-left.glb'] = clipGlb('sprint_fwd_left');
   files['animations/extra/emote-danca.glb'] = clipGlb('emote_danca');
   return files;
 }
@@ -147,6 +148,7 @@ function manifestFor(files) {
       extra: {
         strafe_left: { file: 'animations/extra/strafe-left.glb', duration: 0.8, loop: true, rootMotion: false, source: 'Synthetic strafe-left fixture clip' },
         emote_danca: { file: 'animations/extra/emote-danca.glb', duration: 2.5, loop: false, rootMotion: false, source: 'Synthetic emote fixture clip' },
+        sprint_fwd_left: { file: 'animations/extra/sprint-fwd-left.glb', duration: 0.7, loop: true, rootMotion: false, source: 'Synthetic converter-vocabulary fixture clip' },
       },
     },
     previews: ['previews/portrait.png'],
@@ -170,6 +172,18 @@ async function validateCase({ files = validFiles(), replace = {}, mutate = () =>
   const manifestPath = path.join(packageRoot, 'manifest.json');
   fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   return validatePack({ manifestPath, packageRoot });
+}
+
+// Synchronous form of expectRejection for the pure vocabulary invariant (no pack fixture).
+function expectVocabularyFailure(label, pattern, options) {
+  try {
+    assertExtraClipVocabulary(options);
+  } catch (caught) {
+    if (!pattern.test(caught.message)) throw new Error(`${label} was rejected for the wrong reason: ${caught.message}`);
+    console.log(`PASS ${label} rejected`);
+    return;
+  }
+  throw new Error(`${label} was not rejected`);
 }
 
 async function expectRejection(label, pattern, options) {
@@ -199,6 +213,23 @@ try {
   console.log(`PASS Valid character pack with only the ${requiredOnly.character.animations} required states and ${requiredOnly.character.extraClips} extra clips`);
   await validateCase({ replace: { 'animations/idle.glb': clipGlb('idle', { morph: 'valid' }) } });
   console.log('PASS Valid clip with a bone channel plus a morph-weights channel');
+
+  // Single-source vocabulary invariant: the contract vocabulary must equal the core names plus
+  // the animation conversion library's proposed names (snapshot in character-pack.mjs).
+  assertExtraClipVocabulary();
+  console.log(`PASS Extra clip vocabulary covers the conversion library (${extraClipNames.length} names = ${coreExtraClipNames.length} core + ${converterExtraClipNames.length} converter)`);
+  expectVocabularyFailure('Converter key missing from the vocabulary', /converter clip names missing from the vocabulary: vault_low/, {
+    converter: [...converterExtraClipNames, 'vault_low'],
+  });
+  expectVocabularyFailure('Vocabulary name outside the core and converter sets', /extra clip names outside the core and converter sets: moonwalk/, {
+    vocabulary: [...extraClipNames, 'moonwalk'],
+  });
+  expectVocabularyFailure('Core name dropped from the vocabulary', /core extra clip names missing from the vocabulary: victory/, {
+    vocabulary: extraClipNames.filter(name => name !== 'victory'),
+  });
+  expectVocabularyFailure('Duplicate vocabulary entry', /duplicate extra clip name in the vocabulary: sprint/, {
+    vocabulary: [...extraClipNames, 'sprint'],
+  });
 
   for (const state of requiredCharacterStates) {
     await expectRejection(`Missing required state ${state}`, new RegExp(`must have required property '${state}'`), { mutate: dropState(state) });
