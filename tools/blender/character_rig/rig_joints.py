@@ -285,19 +285,8 @@ def main():
     extra_co = co[sorted(extra_v)] if extra_v else np.zeros((0, 3))
     body_co = co[sorted(body_v)]
 
-    def torso_section(z, half=None):
-        """Torso centroid at height z without extras.
-
-        Removing a backpack fused to the back leaves a hole, so rays that miss their exit
-        fall back to the full mesh clipped in front of the extras at this height.
-        """
-        half = half or lm["torsoHalfWidth"] * 0.6
-        xs = np.arange(-half, half + 1e-9, 0.005)
-        cen, _ = section_xy(bvh, xs, z, ymin, ymax)
-        if cen is not None:
-            return cen
-        near = extra_co[(np.abs(extra_co[:, 2] - z) < 0.03) & (np.abs(extra_co[:, 0]) < half)] if len(extra_co) else extra_co
-        y_cut = float(near[:, 1].min()) if len(near) else ymax
+    def full_section(xs, z, y_cut):
+        """Area centroid (x, y) of the full-mesh section at height z behind y_cut, or None."""
         total, acc = 0.0, np.zeros(2)
         for x in xs:
             for a, b in C.section_y(full_bvh, float(x), float(z), ymin, ymax):
@@ -305,13 +294,33 @@ def main():
                 if yb > ya:
                     total += yb - ya
                     acc += np.array([x, 0.5 * (ya + yb)]) * (yb - ya)
-        if total <= 0:
-            # Last resort: the mid-depth of the body vertices (extras left out) at this height.
-            near = body_co[np.abs(body_co[:, 2] - z) < 0.02]
-            if not len(near):
-                raise RuntimeError(f"no torso section or body vertices at z={z:.3f}")
+        return acc / total if total > 0 else None
+
+    def torso_section(z, half=None):
+        """Torso centroid at height z without extras.
+
+        Removing a backpack fused to the back leaves a hole, so rays that miss their exit
+        fall back to the full mesh clipped in front of the extras at this height, then to
+        the mid-depth of the body vertices there.  An extra that wraps the whole torso at
+        this height (vlad's coat-lower moved up to 0.95 m) leaves no body vertex and clips
+        every span away; the full-mesh section, unclipped, is the last resort.
+        """
+        half = half or lm["torsoHalfWidth"] * 0.6
+        xs = np.arange(-half, half + 1e-9, 0.005)
+        cen, _ = section_xy(bvh, xs, z, ymin, ymax)
+        if cen is not None:
+            return cen
+        near = extra_co[(np.abs(extra_co[:, 2] - z) < 0.03) & (np.abs(extra_co[:, 0]) < half)] if len(extra_co) else extra_co
+        cen = full_section(xs, z, float(near[:, 1].min()) if len(near) else ymax)
+        if cen is not None:
+            return cen
+        near = body_co[np.abs(body_co[:, 2] - z) < 0.02]
+        if len(near):
             return np.array([0.0, 0.5 * (near[:, 1].min() + near[:, 1].max())])
-        return acc / total
+        cen = full_section(xs, z, ymax)
+        if cen is None:
+            raise RuntimeError(f"no torso section or body vertices at z={z:.3f}")
+        return cen
 
     up_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
     hips_z = up_z + J["hipsAboveUpLeg"] * H

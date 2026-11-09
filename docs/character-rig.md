@@ -116,6 +116,7 @@ The plush mascot keeps human-like clip motion: idle, walk, run, crouch, crouchwa
 ## Limits
 
 - The arm-band test accepts arms down to 1.5× the torso half-width away from the body (A-poses); closer arms need a `joints.json` override. The crotch is measured on the full mesh in the parts step, because removing extras can open the mesh.
+- Where an unmeasured extra wraps the whole torso (vlad's `coat-lower` raised to 0.95 m), no torso section and no body vertex is left at that height; the spine axis then uses the full-mesh section through the extra, which sits on the coat's centroid rather than the body's. Mark such an extra `measure: true` or keep its box below the spine sections.
 - Joint positions are a first estimate: always look at `joints-review.png` and `parts-review.png`.
 - `shoulderAt: "junction"`, `spineDepth`, `thighCeiling`/`clavicleFloor` and a larger `gradientRamp` (0.04) are per-character levers, not defaults: on the 37-character set of 2026-11-09 each fixed some rigs and broke others when applied to all (junction shoulders: 7 passing rigs failed; `spineDepth` 0.4 worsened barbudo-creepy and bebezao-de-feira).
 - Heat weighting can fail on non-manifold meshes; the voxel proxy covers it, but check `weights.json` (`method`, `heat.unweightedVertices`).
