@@ -96,7 +96,7 @@ One core, `retargetClip(source, target, options)`, does both convert and bake. T
 
 **Rotations: world deltas.** Per bone and frame: `delta = srcWorld · srcRestWorld⁻¹`, `desiredWorld = delta · tgtRestWorld`, `tgtLocal = tgtParentWorld⁻¹ · desiredWorld`. No bone axis convention matters: the check builds its sources with scrambled rest frames. The source's facing is measured from its hip line and turned onto the target's in quarter turns (a source facing −Z converts like one facing +Z; the few degrees a rig's asymmetric hip joints suggest are ignored, they turned whole clips off the root velocity's line on legacy rigs). Consecutive quaternion keys are kept in the same hemisphere so LINEAR slerp never takes the long way.
 
-**Rest alignment (`LIMB_ALIGNMENT`).** Upper arm, forearm, thigh and shin: before the delta is applied, the target's rest frame is turned by the shortest arc that makes the bone point like the source's rest bone. Mixamo and UAL rest with straight arms and legs; the donor rests with bent knees (18°) and forearms swept back, which plain deltas would add to every pose (crouched walks, rifle hands pulled back). Feet are not aligned: both rests stand flat, and ankle-to-ball slopes differ with foot shape. The correction is capped at 20° per bone (`MAX_REST_ALIGN`), so a rig bent on purpose keeps the rest of its bend.
+**Rest alignment (`LIMB_ALIGNMENT`).** Upper arm, forearm, thigh and shin: before the delta is applied, the target's rest frame is turned by the shortest arc that makes the bone point like the source's rest bone. Mixamo and UAL rest with straight arms and legs; the donor rests with bent knees (18°) and forearms swept back, which plain deltas would add to every pose (crouched walks, rifle hands pulled back). Feet are not aligned: both rests stand flat, and ankle-to-ball slopes differ with foot shape. The correction is capped at 20° per bone (`MAX_REST_ALIGN`), so a rig bent on purpose keeps the rest of its bend. A leg bound with the knee bent past 45° (`MAX_ALIGN_KNEE_BEND`; thigh to shin) is not aligned at all: on the short mascot and robe rigs of the Blender set (padre-parapsicologo 93°, profeta-auditorio 61°, teletreco-sinal-fraco 55°) the knee joint sits off the leg line, and straightening it stood the character 13 to 30% above its bind height (clause A13).
 
 **Bake rule (port of the client's `retarget-glb.mjs`).** `LeftArm`/`LeftForeArm`/`LeftHand` and the right twins copy the clip's absolute world rotation (`absoluteArms`): an A-pose rig would otherwise hold every clip 30 to 40° off. The Blender rigs align those frames to the bones, so absolute frames point the bones where the clip points. Everything else uses deltas plus rest alignment on the legs. `Curl_*` are never animated. A target with fewer than 8 matching joints is refused (the client tool once wrote 11 empty clips and reported success).
 
@@ -118,9 +118,12 @@ One core, `retargetClip(source, target, options)`, does both convert and bake. T
 - when the heel and the toes of one foot both sink (the ankle is too low for this foot), or no pivot has a usable lever (a heel right under the ankle, a hand planted under a straight arm), two-bone IK raises that ankle or wrist by the depth;
 - knees and the rest of the body (torso, head, upper limbs lying on the floor) raise the hips;
 - shin-weighted vertices below the ankle in the bind pose (a shoe skinned to the shin, common in the legacy client rigs) are a passive `shoe` region: they move with the shin, no pivot can lift them, and lifting the body for them made cuca float, so the clamp leaves them and the QA reports them apart;
-- after up to 8 passes the whole body is lifted out of any remaining penetration, or dropped back to the floor where the source has a foot planted (`footClearance` ≤ 1 cm) and the character hangs more than 2 cm above it.
+- after up to 8 passes the whole body is lifted out of any remaining penetration, or dropped when its lowest point hangs more than 2 cm above the source's lowest foot (`footClearance`, scaled): on the floor where the source plants a foot, no higher than the source's feet in a flight phase;
+- `bake --passive-knees` makes the knee region passive like `shoe` (no lift, no penetration gate, recorded in `bakedFor.passiveRegions`): for rigs with geometry skinned to a shin that is not a shin. cuca's alligator tail is skinned to `RightLeg` (280 vertices reaching 1.3 m behind the hips), so every stride swung it into the floor and the clamp hoisted the body.
 
 Longer or differently shaped feet otherwise pushed toes 2.1 to 5.5 cm and heels up to 1.5 cm through the floor (pilot), the donor's longer arms put a hand 5.5 cm into the floor while kneeling (`grenade-throw`), and lying or handstand clips sank the torso up to 32 cm (library round 1).
+
+**Two-hand grip (bake, `holdTwoHandGrip`).** For `hold: rifle` clips, where the `LeftHand` to `RightHand` distance leaves 2 cm (`GRIP_TOLERANCE`) around its median, the left arm is solved by two-bone IK (the hand keeps its world rotation) to bring the support hand back along the same line, in up to three passes. Arms copy absolute world directions, so on other shoulder widths and spine lengths the hands drifted 3 to 5 cm apart over a run stride (run_back_left on 17 of 130 rigs). Clips drifting more than 8 cm (`GRIP_MAX_DRIFT`, a reload) are left alone (clause B3).
 
 **Sampling.** Output is resampled to 30 fps (`CLIP_FPS`) by sampling the source at `i/30` s, with the last frame exactly at the end (`frames = round(length · 30) + 1`). The FBX path samples through a `THREE.AnimationMixer` with `LoopOnce` + clamp (so the last frame is the real end pose); the glTF path samples LINEAR/STEP/CUBICSPLINE channels. FBXLoader adds a same-named leaf under each bone of a skinned Mixamo file; bones are resolved like the mixer resolves track names, so the animated bone is used (clause A9). The native key rate (most common key interval) is recorded as `source.nativeFps`.
 
@@ -135,7 +138,7 @@ Longer or differently shaped feet otherwise pushed toes 2.1 to 5.5 cm and heels 
 | `contacts`, `contactSlide`, `footClearance` | Source contact windows per foot joint (frame indices), the source's own slide inside them, and per frame how far the source's lowest foot joint is above its rest height (m, scaled per character). |
 | `hipsScale`, `footContact`, `footIk`, `alignedLimbs`, `sourceHipsRatio` | Conversion facts: hips-height ratio, hips correction range (m), IK legs and largest ankle correction (m), aligned bones, the source's hips height range as a fraction of its rest height. |
 | `source` | `{ id, rig, file, take, nativeFps, duration, start, end }`. |
-| `bakedFor` | Bake facts: `{ model, hipsScale, joints, footContact, footIk, floorClamp: { heel, toe, hand, knee, body, limbLift, bodyShift: { frames, max }, unresolvedFrames }, alignedLimbs }`. |
+| `bakedFor` | Bake facts: `{ model, hipsScale, joints, footContact, footIk, floorClamp: { heel, toe, hand, knee, body, limbLift, bodyShift: { frames, max }, unresolvedFrames }, grip: { frames, maxCm, driftCm }, passiveRegions, alignedLimbs }`. |
 | `library` | Library clips: `{ key, keyStatus, primary, category }` (see [Library](#library)). |
 
 The client loads these GLBs like its shared clips (skeleton nodes plus one animation, LINEAR); `extras` is ignored by three.js.
@@ -147,9 +150,9 @@ Every frame of every clip is skinned on the CPU (same maths as three.js) on the 
 | Gate | Measure | Limit (`CLIP_QA_THRESHOLDS`) |
 | --- | --- | --- |
 | Foot slide | Horizontal travel of each foot joint inside its contact windows, in the world (the clip's in-place root velocity added back). Windows come from `extras.clip.contacts`, else they are detected on the character with the same rule. | ≤ 4 cm, or ≤ 1.25 × the source's own slide + 1 cm |
-| Floor penetration | Lowest skinned vertex over the clip (passive `shoe` vertices reported apart), also per region (heel, toe, hand, knee, body, shoe). | ≥ −2 cm; heels ≥ −1 cm |
+| Floor penetration | Lowest skinned vertex over the clip (passive `shoe` vertices, and the regions in `bakedFor.passiveRegions`, reported apart), also per region (heel, toe, hand, knee, body, shoe). | ≥ −2 cm; heels ≥ −1 cm |
 | Floating | Per frame, the lowest vertex above the source's own lowest-foot clearance (`footClearance`); without it, the raw lowest vertex (not for `airborne`). | ≤ 3 cm |
-| Hips height | Hips height range / bind height; the source's range is reported next to it. | max ≤ 1.08, or the source's max + 0.08 (not for `airborne`) |
+| Hips height | Hips height range / bind height; the source's range is reported next to it. On a rig bound with a knee bent past 45° the bind height is not its standing height: the failure is tagged `[rig: knee bound bent N°]`. | max ≤ 1.08, or the source's max + 0.08 (not for `airborne`) |
 | Loop seam | First versus last frame (loops): joint positions and local rotations. | ≤ 1.5 cm, ≤ 5° |
 | Two-hand grip | `LeftHand` to `RightHand` distance, maximum deviation from its median (`hold: rifle`). | ≤ 3 cm |
 | Skin stretch | `tools/characters/rig-pose-test.mjs --clips=<dir> --states=<clips> --samples=12`: per clip, the worst edge, upper back and hands. Tagged `[rig: A+B]` when the worst vertex carries ≥ 15% on bones of opposite sides or three or more joints apart (a crotch on both thighs, an armpit on `Spine02`) and for opened UV seams, else `[clip]` (`stretchCause`). | `POSE_THRESHOLDS.clip`: 3.5×, 3.5×, 2.5×, seams 5 mm |
@@ -162,7 +165,7 @@ The limits were set before the pilot from the client's gates (stretch, hands) an
 
 ## Check (`npm run check`)
 
-`tools/checks/animation-conversion-check.mjs` builds Mixamo-like bone trees (FBXLoader naming, scrambled rest frames, optional duplicate leaves, three prefixes, −Z facing) and a UAL-like glTF (Z-up `root`) in code, and a synthetic skinned body (`tools/checks/lib/synthetic-humanoid.mjs`, shared with the rig check). Clauses: maps and hierarchy (A1), rig detection (A2), rest identity (A3), world-delta transfer within 1 mm (A4), spine order (A5), root-motion modes (A6), 24 → 30 fps resampling, trim and re-sampling a source after a full pass (A7), facing (A8), FBX duplicates and prefixes (A9), UAL (A10), ground contact + IK on shorter shins (A11: 0.00 cm with, 4.5 cm slide / 2.9 cm height without) and loop-wrapped IK ramps (A11), rest alignment (A12: knee straight with, 18° without), bake rules (B1, B2), the QA gates on a clean clip plus one mutant per gate including the heel limit (Q1, Q2), the CLI end to end with `--strict` and a torn-hand body (Q3), the floor clamp on sunk toes, heels, whole feet, hands and body and the drop of a hanging body (Q4), the FBX footer fallback on 32- and 64-bit node records (L1), and the library plan and key rules (L2, L3).
+`tools/checks/animation-conversion-check.mjs` builds Mixamo-like bone trees (FBXLoader naming, scrambled rest frames, optional duplicate leaves, three prefixes, −Z facing) and a UAL-like glTF (Z-up `root`) in code, and a synthetic skinned body (`tools/checks/lib/synthetic-humanoid.mjs`, shared with the rig check). Clauses: maps and hierarchy (A1), rig detection (A2), rest identity (A3), world-delta transfer within 1 mm (A4), spine order (A5), root-motion modes (A6), 24 → 30 fps resampling, trim and re-sampling a source after a full pass (A7), facing (A8), FBX duplicates and prefixes (A9), UAL (A10), ground contact + IK on shorter shins (A11: 0.00 cm with, 4.5 cm slide / 2.9 cm height without) and loop-wrapped IK ramps (A11), rest alignment (A12: knee straight with, 18° without) and a leg bound at 68° kept (A13), bake rules (B1, B2), the two-hand grip hold (B3: 4.8 cm drift to 1.9 cm), the QA gates on a clean clip plus one mutant per gate including the heel limit (Q1, Q2), the CLI end to end with `--strict` and a torn-hand body (Q3), the floor clamp on sunk toes, heels, whole feet, hands and body and the drop of a hanging body (Q4), the FBX footer fallback on 32- and 64-bit node records (L1), the library plan and key rules (L2, L3), and packs (P1: int16 rotations within 0.003°, a third of the uncompressed bytes).
 
 ## Pilot (2026-11-09)
 
@@ -293,13 +296,42 @@ Today's clips fail mostly on floor contact (465 failures: feet through the floor
 
 No state passes as a shared clip on more than 35 of 100 rigs, so every state is baked per character: about 255 KB merged for the 11 states (53 KB gzip after resampling and int16 rotations) and 653 KB for the 21 extras (207 KB gzip), against 372 KB for today's per-character merged states.
 
+**Packed run (130 characters).** The 100 legacy rigs plus the 30 Blender-rigged characters that pass the v4 pose test (`csbrasil/local/rig-blender-20261109/v4`), each baked with the 11 states and the 66 contract extras the library has (all of them but `draw_pistol` and `holster_pistol`, which have no source), packed and gated as stored. Evidence (private): `csbrasil/local/anim-conv-20261109/legacy-out/` (`<id>/{states.glb,extra.glb,manifest.json,qa-*.json}`, `summary.md`, `summary.json`, round 1 in `_round1/`).
+
+| packed clips | pass | rig weights only | clip failures |
+| --- | --- | --- | --- |
+| 100 legacy rigs, 11 states | 710 | 385 | 5 |
+| 100 legacy rigs, 66 extras | 4012 | 2530 | 58 |
+| 30 Blender rigs, 11 states | 317 | 11 | 2 |
+| 30 Blender rigs, 66 extras | 1790 | 119 | 71 |
+
+"Rig weights only": every failure is skin stretch on a rig that breaks the clip-free synthetic poses, or tagged `[rig]` (worst vertex weights, bent-knee bind), or on a clip the clean reference rigs (mst, capitao-caveira) carry without stretch. Round 1 had 686 clip failures; leaving bent-bound legs unaligned, the two-hand grip hold and the flight-phase drop took them to 136. cuca is baked with `--passive-knees`: states hips at most 1.037 of bind height, at most 2 cm above the source's feet, no gate failure besides the rig's stretch; its tail still sinks up to 29 cm, against 52 cm with today's clips.
+
+## Packs
+
+`tools/animations/pack-character.mjs --clips=<baked dir> --out=<dir> --id=<id> --model=<character.glb>` packs one character's baked clips for the client:
+
+- `states.glb`: the 11 runtime states, one animation each, named by state;
+- `extra.glb`: every contract extra name (`extraClipNames` in `tools/lib/character-pack.mjs`) present in the baked dir, named by its key; loaded lazily;
+- `manifest.json` (`coro-solto/character-clips@1`): model file and sha256, per file sha256, bytes, gzip bytes and clip list, per clip its file, duration, loop, hold, airborne, root speed (m/s at this character's scale) and velocity, and provenance (the studio-assets catalog id and take).
+
+Packing (`tools/lib/clip-pack.mjs`) drops redundant keys (`resample`, tolerance 1e-4), shares identical accessors (`dedup`) and stores rotation outputs as normalized int16 quaternions. Both are core glTF 2.0 (rotation sampler outputs may be normalized SHORT): the client's `GLTFLoader` dequantizes them in `_getArrayFromAccessor`, with no extension or decoder. `clip-qa --pack=<pack.glb>` gates every clip of a pack as stored, and the readers (`clipSampler`, `gltfPoseSource`) dequantize normalized outputs like three.js (`accessorFloats`).
+
+| per character (130 characters) | uncompressed | packed |
+| --- | --- | --- |
+| `states.glb` (11 clips) | 329 KB, 162 KB gzip | 144 to 148 KB, 52 to 54 KB gzip |
+| `extra.glb` (66 clips) | 2.06 MB, 1.01 MB gzip | 1.05 to 1.07 MB, 439 to 450 KB gzip |
+
+Packing lost no pass: on all 130 characters and 77 clips the packed QA passes every clip the uncompressed one does (one more, a walk_back_left slide on oakley at the limit). `EXT_meshopt_compression` would take another 15% (states) to 25% (extras) off the gzip size; the client already registers `MeshoptDecoder` (`public/vendor/meshopt_decoder.module.js`, 29 KB) in its `GLTFLoader`, but the Studio readers would need the decoder too, so packs stay core glTF for now.
+
 ## Limits and residual issues
 
 - **Hips sit 0.02 to 0.08 of the bind height above the source's** (pilot ratio columns). The reference skeleton's thigh/shin proportions differ from Mixamo's X Bot, and ground contact keeps the feet faithful, not the hips height; with straight-leg alignment, the same knee angle leaves the hips a little higher. Visually the character stands slightly taller in crouches (0.54 vs 0.48 of rest in the deepest `grenade-throw` kneel on capitao-caveira). The hips gate allows the source's height + 0.08 for this reason.
 - **Foot slide on spins and pivots** (dances, turns): the ankle is pinned, the ball follows the character's own foot length.
 - **Skin stretch in extreme poses** is the rigs' (P4).
-- **Grip distance is set by proportions.** `rifle` holds are stable over time (±0.1 to 0.6 cm) but the hands sit 29 to 30 cm apart; another weapon length needs the client's hand IK or a per-weapon arm adjustment.
+- **Grip distance is set by proportions.** `rifle` holds are held within 2 cm over time (`holdTwoHandGrip`) but the hands sit 29 to 30 cm apart on the reference; another weapon length needs the client's hand IK or a per-weapon arm adjustment.
 - **Root motion is a straight line.** Turning clips, curved paths and yaw are not extracted (hips yaw stays in the clip).
 - **Contacts need root motion.** In-place sources (UAL `*_Standard.glb`) yield no contact windows for locomotion; the library uses the `_RM` files.
 - **Floor clamp runs only in bake** (the reference skeleton has no mesh).
-- **Bent-leg mascots** (cuca): human locomotion drives the shins into the floor; the clamp lifts the body (hips 1.09 to 1.27× rest). Such characters need their own clips.
+- **Geometry skinned to a shin** (cuca's tail on `RightLeg`): `--passive-knees` keeps the body down, but the tail swings through the floor (up to 29 cm) until the rig's weights are repaired.
+- **Remaining clip failures (136 of 10010 packed clips):** hips 1.08 to 1.16 of bind height on run diagonals and death_front for short-legged Blender rigs (53), foot slide 4 to 8 cm on crouch-walk diagonals (42, half on boneca-da-cristaleira, whose rig breaks the synthetic poses at 24×), and skin stretch 3.5 to 4.9× on death_front, death_right, run_pistol and crouchwalk_fwd_left, clips that also stretch mst slightly (3.6×).
