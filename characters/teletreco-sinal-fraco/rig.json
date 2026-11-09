@@ -1,0 +1,23 @@
+{
+  "id": "teletreco-sinal-fraco",
+  "forward": "-Y",
+  "targetHeight": 1.3,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "linearBlends": [["LeftForeArm", "LeftHand", 0.025], ["RightForeArm", "RightHand", 0.025]]
+  },
+  "extras": [
+    {
+      "name": "antenna",
+      "select": { "islandMaxFaces": 100, "box": { "min": [null, null, 1.0], "max": [null, null, null] } },
+      "rigid": "Head"
+    },
+    {
+      "name": "tail",
+      "select": { "box": { "min": [-0.08, 0.05, 0.36], "max": [0.05, 0.2, 0.48] } },
+      "rigid": "Hips"
+    }
+  ]
+}
