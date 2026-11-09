@@ -28,6 +28,7 @@ const requiredFiles = [
   'tools/lib/animation-retarget.mjs',
   'tools/animations/manifests/pilot-20261109.json',
   'tools/lib/animation-sources.mjs',
+  'tools/lib/animation-library.mjs',
   'tools/lib/clip-qa.mjs',
   'tools/checks/animation-conversion-check.mjs',
   'tools/checks/lib/synthetic-humanoid.mjs',
