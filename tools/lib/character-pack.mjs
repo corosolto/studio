@@ -294,10 +294,12 @@ export async function validateCharacterPack(manifest, absolutes) {
   }
 
   // States may share one states.glb and extras may share one family-pack file, so every
-  // animation GLB is read once per file, not once per clip that points at it.
+  // animation GLB is read once per file, not once per clip that points at it. Animation packs
+  // accept the converter's EXT_meshopt_compression fallback-buffer layout; the model does not
+  // (its skin bytes are read raw, so it keeps the strict single-buffer container).
   const documents = new Map();
   const animationDocument = async file => {
-    if (!documents.has(file)) documents.set(file, (await readGlb(absolutes.get(file), file)).document);
+    if (!documents.has(file)) documents.set(file, (await readGlb(absolutes.get(file), file, { allowMeshoptFallback: true })).document);
     return documents.get(file);
   };
   for (const [state, file] of Object.entries(manifest.animations)) {

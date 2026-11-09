@@ -18,7 +18,11 @@ function integer(value) {
 
 // Parses and bounds-checks the GLB 2 container, buffer views and accessors without
 // interpreting any scene content. Returns the JSON document and the BIN chunk bytes.
-export async function readGlb(absolute, label = absolute) {
+// `allowMeshoptFallback` also accepts the EXT_meshopt_compression layout the animation
+// converter emits (buffer 0 = compressed stream in the BIN chunk, further buffers marked
+// `EXT_meshopt_compression.fallback` = virtual uncompressed views that exist only logically);
+// callers that read raw component bytes (the character model) keep the strict single buffer.
+export async function readGlb(absolute, label = absolute, { allowMeshoptFallback = false } = {}) {
   const handle = await open(absolute, 'r');
   try {
     const { size } = await handle.stat();
@@ -45,14 +49,32 @@ export async function readGlb(absolute, label = absolute) {
     if (!Array.isArray(document.accessors) || !Array.isArray(document.bufferViews) || !Array.isArray(document.buffers)) {
       fail(label, 'missing accessor, bufferView or buffer inventories');
     }
-    if (document.buffers.length !== 1 || document.buffers[0].uri !== undefined || !integer(document.buffers[0].byteLength) || document.buffers[0].byteLength > binBytes) {
+    const meshoptFallback = allowMeshoptFallback && document.buffers.slice(1).every(
+      buffer => buffer.uri === undefined && integer(buffer.byteLength)
+        && buffer.extensions?.EXT_meshopt_compression?.fallback === true,
+    );
+    if (document.buffers[0].uri !== undefined || !integer(document.buffers[0].byteLength) || document.buffers[0].byteLength > binBytes
+      || (document.buffers.length > 1 && !meshoptFallback)) {
       fail(label, 'GLB must contain one self-contained buffer within the BIN chunk');
     }
 
     for (const [index, view] of document.bufferViews.entries()) {
-      if (view.buffer !== 0 || !integer(view.byteOffset ?? 0) || !integer(view.byteLength) || view.byteLength < 1) fail(label, `invalid bufferView ${index}`);
+      if (!integer(view.byteOffset ?? 0) || !integer(view.byteLength) || view.byteLength < 1) fail(label, `invalid bufferView ${index}`);
       const offset = view.byteOffset ?? 0;
-      if (offset + view.byteLength > document.buffers[0].byteLength || offset + view.byteLength > binBytes) fail(label, `bufferView ${index} exceeds its buffer`);
+      const compression = view.extensions?.EXT_meshopt_compression;
+      if (view.buffer === 0) {
+        if (offset + view.byteLength > document.buffers[0].byteLength || offset + view.byteLength > binBytes) fail(label, `bufferView ${index} exceeds its buffer`);
+      } else if (meshoptFallback && compression !== undefined
+        && document.buffers[view.buffer]?.extensions?.EXT_meshopt_compression?.fallback === true) {
+        // The bytes live in the compressed stream: bounds-check the stream range instead.
+        const streamOffset = compression.byteOffset ?? 0;
+        if (compression.buffer !== 0 || !integer(streamOffset) || !integer(compression.byteLength) || compression.byteLength < 1
+          || streamOffset + compression.byteLength > document.buffers[0].byteLength) {
+          fail(label, `bufferView ${index} has an out-of-bounds meshopt stream`);
+        }
+      } else {
+        fail(label, `bufferView ${index} exceeds its buffer`);
+      }
       if (view.byteStride !== undefined && (!integer(view.byteStride) || view.byteStride < 4 || view.byteStride > 256 || view.byteStride % 4 !== 0)) {
         fail(label, `invalid byteStride on bufferView ${index}`);
       }
