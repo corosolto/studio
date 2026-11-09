@@ -109,7 +109,23 @@
               "jump": { "$ref": "#/$defs/glbPath" },
               "idle1h": { "$ref": "#/$defs/glbPath" },
               "walk1h": { "$ref": "#/$defs/glbPath" },
-              "walkfire": { "$ref": "#/$defs/glbPath" }
+              "walkfire": { "$ref": "#/$defs/glbPath" },
+              "extra": {
+                "type": "object",
+                "propertyNames": { "pattern": "^[a-z][a-z0-9_]{1,40}$" },
+                "additionalProperties": {
+                  "type": "object",
+                  "required": ["file", "duration", "loop", "rootMotion", "source"],
+                  "properties": {
+                    "file": { "$ref": "#/$defs/glbPath" },
+                    "duration": { "type": "number", "exclusiveMinimum": 0 },
+                    "loop": { "type": "boolean" },
+                    "rootMotion": { "type": "boolean" },
+                    "source": { "type": "string", "minLength": 1 }
+                  },
+                  "additionalProperties": false
+                }
+              }
             },
             "additionalProperties": false
           },
