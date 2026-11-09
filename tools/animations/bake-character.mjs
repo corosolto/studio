@@ -22,15 +22,16 @@ import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { CLIP_FPS, FLOOR_CLAMP_REGIONS, clampToFloor, clipMetadata, closeLoop, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
+import { CLIP_FPS, FLOOR_CLAMP_REGIONS, clampToFloor, clipMetadata, closeLoop, holdTwoHandGrip, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS } from '../lib/animation-sources.mjs';
 import { loadRig } from '../lib/character-rig.mjs';
+import { TWO_HAND_HOLDS } from '../lib/clip-qa.mjs';
 
 const args = process.argv.slice(2);
 const flag = (name) => args.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const model = flag('model'), clipsDir = flag('clips'), outDir = flag('out');
 if (!model || !clipsDir || !outDir) {
-  console.error('usage: bake-character.mjs --model=<character.glb> --clips=<reference dir> --out=<dir> [--states=<a,b>] [--no-foot-contact] [--no-foot-ik] [--no-floor-clamp] [--no-limb-align]');
+  console.error('usage: bake-character.mjs --model=<character.glb> --clips=<reference dir> --out=<dir> [--states=<a,b>] [--no-foot-contact] [--no-foot-ik] [--no-floor-clamp] [--no-limb-align] [--no-grip] [--passive-knees]');
   process.exit(1);
 }
 mkdirSync(outDir, { recursive: true });
@@ -68,6 +69,8 @@ for (const state of states) {
   // bakedFor.passiveRegions so the QA gate reports them as the rig's instead of gating them.
   const regions = args.includes('--passive-knees') ? FLOOR_CLAMP_REGIONS.map((r) => (r.name === 'knee' ? { ...r, lift: false, passive: true } : r)) : FLOOR_CLAMP_REGIONS;
   const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale), regions });
+  // Two-handed holds: the support hand stays on the weapon (--no-grip switches it off).
+  const grip = TWO_HAND_HOLDS.includes(meta.hold) && !args.includes('--no-grip') ? holdTwoHandGrip(rig, result) : null;
   if (meta.loop) closeLoop(result);
   const rm = meta.rootMotion;
   const frames = result.times.length;
@@ -76,7 +79,7 @@ for (const state of states) {
     contactSlide: meta.contactSlide != null ? scale(meta.contactSlide) : undefined,
     footClearance: meta.footClearance ? meta.footClearance.map(scale) : undefined,
     rootMotion: rm ? { ...rm, displacement: rm.displacement.map(scale), velocity: rm.velocity.map(scale), speed: scale(rm.speed) } : undefined,
-    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, unanimated: unanimated(result), footContact: result.contactCorrection, footIk: result.ik, floorClamp, passiveRegions: args.includes('--passive-knees') ? ['knee'] : [], alignedLimbs: result.aligned },
+    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, unanimated: unanimated(result), footContact: result.contactCorrection, footIk: result.ik, floorClamp, grip, passiveRegions: args.includes('--passive-knees') ? ['knee'] : [], alignedLimbs: result.aligned },
   };
   await io.write(path.join(outDir, `${state}.glb`), writeClipDocument(target, result, state, extras));
   if (!reported) { console.log(`skin joints left at rest: ${unanimated(result).join(', ') || 'none'}`); reported = true; }

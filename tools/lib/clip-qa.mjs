@@ -15,7 +15,7 @@
 //   stretch      filled from tools/characters/rig-pose-test.mjs --clips (skin stretch), tagged
 //                [rig] when the worst vertex's weights are a defect (stretchCause), else [clip].
 import * as THREE from 'three';
-import { FLOOR_CLAMP_REGIONS, FOOT_CONTACT_JOINTS, footContacts, vertexRegions } from './animation-retarget.mjs';
+import { FLOOR_CLAMP_REGIONS, FOOT_CONTACT_JOINTS, MAX_ALIGN_KNEE_BEND, footContacts, vertexRegions } from './animation-retarget.mjs';
 import { meshy28Joints } from './character-pack.mjs';
 import { POSE_THRESHOLDS, clipOverrides, skinPositions, worldMatrices } from './character-rig.mjs';
 
@@ -62,6 +62,18 @@ function dominantBone(rig, at) {
  * Measure one clip (`sampler` from clipSampler) with metadata `meta` (extras.clip) on `rig`.
  * Returns the metric object; evaluateClip() applies the thresholds.
  */
+/** Largest bind knee bend (thigh to shin, degrees) of the rig's two legs. */
+export function bindKneeBend(rig) {
+  const world = worldMatrices(rig);
+  const at = (n) => (rig.byName.get(n)?.[0] == null ? null : new THREE.Vector3().setFromMatrixPosition(world(rig.byName.get(n)[0])));
+  let worst = 0;
+  for (const side of ['Left', 'Right']) {
+    const [h, k, a] = [`${side}UpLeg`, `${side}Leg`, `${side}Foot`].map(at);
+    if (h && k && a) worst = Math.max(worst, THREE.MathUtils.radToDeg(k.clone().sub(h).angleTo(a.clone().sub(k))));
+  }
+  return +worst.toFixed(1);
+}
+
 export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = {}) {
   const duration = sampler.duration;
   const frames = Math.max(2, Math.round(duration * fps) + 1);
@@ -166,7 +178,7 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
     hips: {
       restHeight: +restHeight.Hips.toFixed(4), min: +Math.min(...hipsY).toFixed(4), max: +Math.max(...hipsY).toFixed(4),
       minRatio: +(Math.min(...hipsY) / restHeight.Hips).toFixed(3), maxRatio: +(Math.max(...hipsY) / restHeight.Hips).toFixed(3),
-      sourceRatio: meta.sourceHipsRatio || null,
+      sourceRatio: meta.sourceHipsRatio || null, bindKneeBendDeg: bindKneeBend(rig),
     },
     loopSeam: seam,
     hands: median == null ? null : {
@@ -224,7 +236,10 @@ export function evaluateClip(metrics, meta = {}, thresholds = CLIP_QA_THRESHOLDS
   const float = metrics.lowestVertex.floatOverSourceCm ?? metrics.lowestVertex.maxCm;
   if (grounded && float > thresholds.floatCm) failures.push(`floats ${float} cm above the source's feet @${metrics.lowestVertex.floatAt ?? metrics.lowestVertex.maxAt}s > ${thresholds.floatCm}`);
   const hipsLimit = Math.max(thresholds.hipsMaxRatio, (metrics.hips.sourceRatio?.[1] ?? -Infinity) + thresholds.hipsOverSourceRatio);
-  if (grounded && metrics.hips.maxRatio > hipsLimit) failures.push(`hips rise to ${metrics.hips.maxRatio}× bind height > ${+hipsLimit.toFixed(3)}`);
+  // A rig bound with a knee bent past MAX_ALIGN_KNEE_BEND (knee joint off the leg line) keeps
+  // that bend, and the bind height is not its standing height: tagged [rig].
+  const bentBind = metrics.hips.bindKneeBendDeg > THREE.MathUtils.radToDeg(MAX_ALIGN_KNEE_BEND);
+  if (grounded && metrics.hips.maxRatio > hipsLimit) failures.push(`hips rise to ${metrics.hips.maxRatio}× bind height > ${+hipsLimit.toFixed(3)}${bentBind ? ` [rig: knee bound bent ${metrics.hips.bindKneeBendDeg}°]` : ''}`);
   if (meta.loop && metrics.loopSeam) {
     if (metrics.loopSeam.positionCm > thresholds.loopSeamCm) failures.push(`loop seam ${metrics.loopSeam.positionCm} cm (${metrics.loopSeam.positionJoint}) > ${thresholds.loopSeamCm}`);
     if (metrics.loopSeam.rotationDeg > thresholds.loopSeamDeg) failures.push(`loop seam ${metrics.loopSeam.rotationDeg}° (${metrics.loopSeam.rotationJoint}) > ${thresholds.loopSeamDeg}`);

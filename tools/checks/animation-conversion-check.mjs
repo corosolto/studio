@@ -20,13 +20,14 @@ import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import { clipSampler, deformJointNames, loadRig } from '../lib/character-rig.mjs';
 import {
-  FLOOR_CLAMP_REGIONS, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, facingYaw, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
+  FLOOR_CLAMP_REGIONS, MAX_ALIGN_KNEE_BEND, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, facingYaw, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
   objectPoseSource, referenceSkeletonDocument, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mjs';
 import { LIBRARY_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
 import { converterExtraClipNames, extraClipNames } from '../lib/character-pack.mjs';
 import { evaluateClip, measureClip, stretchCause } from '../lib/clip-qa.mjs';
+import { packClipNames, packClips, unpackClip } from '../lib/clip-pack.mjs';
 import { J, synthDocument } from './lib/synthetic-humanoid.mjs';
 
 let failures = 0;
@@ -416,6 +417,23 @@ await clause('A12 limbs follow the source rest directions where the rests differ
   return `knee ${knee.toFixed(3)}°, elbow ${elbow.toFixed(3)}° (unaligned knee ${rawKnee.toFixed(1)}°)`;
 });
 
+await clause('A13 legs bound with the knee bent past MAX_ALIGN_KNEE_BEND keep their bend', () => {
+  const straight = Object.fromEntries(Object.entries(MESHY28_REFERENCE_JOINTS).map(([n, p]) => [n, [...p]]));
+  for (const [a, mid, b] of [['LeftUpLeg', 'LeftLeg', 'LeftFoot'], ['RightUpLeg', 'RightLeg', 'RightFoot']]) {
+    straight[mid] = V(straight[a]).lerp(V(straight[b]), 0.5).toArray();
+  }
+  // A short mascot leg: knee pushed forward until thigh and shin meet at about 70°.
+  const deep = Object.fromEntries(Object.entries(J).map(([n, p]) => [n, [...p]]));
+  for (const side of ['Left', 'Right']) deep[`${side}Leg`] = V(deep[`${side}UpLeg`]).lerp(V(deep[`${side}Foot`]), 0.5).add(new THREE.Vector3(0, 0, 0.22)).toArray();
+  const target = skeletonGraph(synthDocument({ joints: deep }));
+  const bend = (m) => THREE.MathUtils.radToDeg(m.get('LeftLeg').clone().sub(m.get('LeftUpLeg')).angleTo(m.get('LeftFoot').clone().sub(m.get('LeftLeg'))));
+  const rest = bend(new Map([...target.byName].map(([n, e]) => [n, e.restWorldP])));
+  const kept = bend(fk(target, retargetClip(mixamoSource({ layout: straight, frames: still }), target, { footIk: false }), 0));
+  assert(rest > THREE.MathUtils.radToDeg(MAX_ALIGN_KNEE_BEND), `fixture knee ${rest}° is not past the limit`);
+  assert(Math.abs(kept - rest) < 0.5, `bent-bind knee went from ${rest.toFixed(1)}° to ${kept.toFixed(1)}° (expected kept)`);
+  return `bind knee ${rest.toFixed(1)}°, retargeted ${kept.toFixed(1)}°`;
+});
+
 // ----------------------------------------------------------------------------- B bake
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
 /* A character with longer legs and A-pose arms (40° down): absolute arms, delta legs. */
@@ -636,6 +654,31 @@ await clause('Q5 closeLoop makes the last frame the first frame again', () => {
   closeLoop(r);
   for (const arr of r.rotations.values()) for (let k = 0; k < 4; k += 1) assert(arr[k] === arr[last * 4 + k], 'rotation seam left open');
   for (let k = 0; k < 3; k += 1) assert(r.hips[k] === r.hips[last * 3 + k], 'hips seam left open');
+});
+
+await clause('P1 a pack merges clips by name, resamples, stores int16 rotations and reads back within 0.01°', async () => {
+  const clipA = bodyClip(goodClip(), { ...loopMeta }, { duration: 1 });
+  const clipB = bodyClip((t) => ({ deltas: { LeftArm: Q(Z, 60 * t), RightLeg: Q(X, 30 * t) }, hips: [0, -0.02 * t, 0] }), { loop: false }, { duration: 0.5 });
+  const pack = await io.readBinary(await io.writeBinary(await packClips([{ name: 'idle', doc: clipA }, { name: 'hit_front', doc: clipB }])));
+  assert(JSON.stringify(packClipNames(pack)) === '["idle","hit_front"]', `clips ${packClipNames(pack)}`);
+  const rotations = pack.getRoot().listAnimations().flatMap((a) => a.listChannels().filter((c) => c.getTargetPath() === 'rotation'));
+  assert(rotations.every((c) => c.getSampler().getOutput().getNormalized() && c.getSampler().getOutput().getArray() instanceof Int16Array), 'rotations not stored as normalized int16');
+  let worst = 0;
+  for (const [name, doc] of [['idle', clipA], ['hit_front', clipB]]) {
+    const a = clipSampler(doc), b = clipSampler(unpackClip(pack, name));
+    for (let t = 0; t <= a.duration; t += 1 / 30) {
+      const pa = a.pose(t), pb = new Map(b.pose(t).map((c) => [`${c.name}.${c.path}`, c.value]));
+      for (const c of pa) {
+        const v = pb.get(`${c.name}.${c.path}`);
+        if (c.path === 'rotation' && v) worst = Math.max(worst, THREE.MathUtils.radToDeg(new THREE.Quaternion(...c.value).normalize().angleTo(new THREE.Quaternion(...v).normalize())));
+      }
+    }
+  }
+  assert(worst < 0.01, `packed rotations drift ${worst}°`);
+  const raw = await io.writeBinary(await packClips([{ name: 'idle', doc: clipA }, { name: 'hit_front', doc: clipB }], { compress: false }));
+  const packed = await io.writeBinary(pack);
+  assert(packed.length < raw.length * 0.75, `pack ${packed.length} B is not much smaller than ${raw.length} B`);
+  return `worst ${worst.toFixed(4)}°, ${packed.length} B vs ${raw.length} B uncompressed`;
 });
 
 // ----------------------------------------------------------------------------- L library

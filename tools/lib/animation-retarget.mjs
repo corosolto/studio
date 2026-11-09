@@ -320,6 +320,9 @@ export const IK_BLEND_FRAMES = 4;
 /** Largest hips drop per frame that foot IK may ask for to reach a planted ankle (m). */
 export const MAX_REACH_DROP = 0.05;
 
+/** Rest knee bend (thigh to shin, radians) above which a leg is not aligned; see LIMB_ALIGNMENT. */
+export const MAX_ALIGN_KNEE_BEND = THREE.MathUtils.degToRad(45);
+
 /** Largest rest-direction correction per limb bone (radians); see LIMB_ALIGNMENT. */
 export const MAX_REST_ALIGN = THREE.MathUtils.degToRad(20);
 
@@ -430,9 +433,18 @@ export function retargetClip(source, target, {
   // points like the source's rest bone. World deltas then reproduce the source's limb
   // directions even where the two rest poses differ (a bent rest knee, arms swept back).
   const restAlign = new Map();
+  // A leg bound with the knee bent past MAX_ALIGN_KNEE_BEND is not a straight leg: its knee
+  // joint sits off the leg line (a robe, a short mascot leg). Straightening it would stand the
+  // rig up taller than its bind, so that leg keeps its rest.
+  const bentLeg = (side) => {
+    const [h, k, a] = [`${side}UpLeg`, `${side}Leg`, `${side}Foot`].map((n) => target.byName.get(n)?.restWorldP);
+    return Boolean(h && k && a) && k.clone().sub(h).angleTo(a.clone().sub(k)) > MAX_ALIGN_KNEE_BEND;
+  };
+  const skipLeg = { Left: bentLeg('Left'), Right: bentLeg('Right') };
   for (const [bone, child] of alignLimbs) {
     const e = target.byName.get(bone), c = target.byName.get(child);
     if (!e || !c || !mappedSet.has(e) || (absoluteArms && ABSOLUTE_ARM_JOINT.test(bone)) || !srcRest.has(bone) || !srcRest.has(child)) continue;
+    if (/^(Left|Right)(UpLeg|Leg)$/.test(bone) && skipLeg[bone.startsWith('Left') ? 'Left' : 'Right']) continue;
     const tgtDir = c.restWorldP.clone().sub(e.restWorldP);
     const srcDir = srcRest.get(child).p.clone().sub(srcRest.get(bone).p).applyQuaternion(yaw);
     if (tgtDir.lengthSq() < 1e-12 || srcDir.lengthSq() < 1e-12) continue;
@@ -853,6 +865,65 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
   }
   for (const v of Object.values(stats)) v.max = +v.max.toFixed(4);
   return { ...stats, unresolvedFrames: unresolved };
+}
+
+/** Two-hand grip: band (m) around the clip's median hand distance the support hand is kept in. */
+export const GRIP_TOLERANCE = 0.02;
+/** A clip whose hands drift further than this (m) moves them apart on purpose (a reload). */
+export const GRIP_MAX_DRIFT = 0.08;
+
+/**
+ * Bake-time two-hand grip (`rig`: loadRig of the character; for two-handed holds). A rifle
+ * clip baked on other shoulders and spine lengths lets the hands drift apart over a stride;
+ * where the LeftHand-RightHand distance leaves GRIP_TOLERANCE around its median, the left arm
+ * is solved (two-bone IK, the hand keeps its world rotation) to bring the support hand back
+ * along the same line. Clips drifting past GRIP_MAX_DRIFT are left alone. Rewrites
+ * `result.rotations` in place; returns { frames, maxCm, driftCm } (driftCm before).
+ */
+export function holdTwoHandGrip(rig, result, { tolerance = GRIP_TOLERANCE, maxDrift = GRIP_MAX_DRIFT } = {}) {
+  const node = (name) => rig.byName.get(name)?.[0];
+  const [arm, fore, hand, other] = ['LeftArm', 'LeftForeArm', 'LeftHand', 'RightHand'].map(node);
+  const stats = { frames: 0, maxCm: 0, driftCm: 0 };
+  if (![arm, fore, hand, other].every(Boolean) || ![arm, fore, hand].every((n) => result.rotations.has(n.getName()))) return stats;
+  const hipsNode = node('Hips');
+  const frames = result.times.length;
+  const pose = (i) => {
+    const overrides = new Map();
+    for (const [name, arr] of result.rotations) { const n = node(name); if (n) overrides.set(n, { ...rig.trs.get(n), r: Array.from(arr.slice(i * 4, i * 4 + 4)) }); }
+    overrides.set(hipsNode, { ...(overrides.get(hipsNode) || rig.trs.get(hipsNode)), t: Array.from(result.hips.slice(i * 3, i * 3 + 3)) });
+    return worldMatrices(rig, overrides);
+  };
+  const pos = (world, n) => new THREE.Vector3().setFromMatrixPosition(world(n));
+  const rot = (world, n) => { const q = new THREE.Quaternion(); world(n).decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; };
+  const dist = Array.from({ length: frames }, (_, i) => { const w = pose(i); return pos(w, hand).distanceTo(pos(w, other)); });
+  const sorted = [...dist].sort((a, b) => a - b);
+  const median = sorted[Math.floor(sorted.length / 2)];
+  const drift = Math.max(median - sorted[0], sorted[sorted.length - 1] - median);
+  stats.driftCm = +(drift * 100).toFixed(2);
+  if (drift <= tolerance || drift > maxDrift) return stats;
+  for (let i = 0; i < frames; i += 1) {
+    const want = THREE.MathUtils.clamp(dist[i], median - tolerance, median + tolerance);
+    if (Math.abs(want - dist[i]) < 1e-5) continue;
+    const world = pose(i);
+    const H = pos(world, arm), K = pos(world, fore), A = pos(world, hand), R = pos(world, other);
+    const goal = R.clone().add(A.clone().sub(R).setLength(want));
+    const solved = solveTwoBone(H, K, A, goal, rot(world, arm), rot(world, fore), new THREE.Vector3(0, 1, 0).applyQuaternion(rot(world, arm)));
+    const locals = [
+      [arm, rot(world, rig.parent.get(arm)).invert().multiply(solved.hip)],
+      [fore, solved.hip.clone().invert().multiply(solved.knee)],
+      [hand, solved.knee.clone().invert().multiply(rot(world, hand))],
+    ];
+    for (const [n, q] of locals) {
+      q.normalize();
+      const track = result.rotations.get(n.getName());
+      const prev = track.slice(i * 4, i * 4 + 4);
+      if (prev[0] * q.x + prev[1] * q.y + prev[2] * q.z + prev[3] * q.w < 0) q.set(-q.x, -q.y, -q.z, -q.w);
+      track.set(q.toArray(), i * 4);
+    }
+    stats.frames += 1;
+    stats.maxCm = Math.max(stats.maxCm, +(Math.abs(want - dist[i]) * 100).toFixed(2));
+  }
+  return stats;
 }
 
 /**
