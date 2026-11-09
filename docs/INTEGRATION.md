@@ -19,7 +19,7 @@ Local candidate packaging and validation are implemented for the Lajes vertical 
 - Every release records provenance and licensing.
 - Map packs declare geometry, textures, LODs, collision, navigation, spawns, regions and previews. Every payload path has exactly one role and exactly one `files` entry; undeclared or missing files are rejected.
 - All payload paths are canonical package-relative paths. Absolute paths, traversal segments, backslashes and executable JavaScript are rejected.
-- Character packs declare one rigged meshy-28 model, per-state animation clips, previews, rights and budgets, one pack per character (see [character-pack.md](character-pack.md)). Every payload path has exactly one role and exactly one `files` entry.
+- Character packs declare one rigged meshy-28 model, per-state animation clips, previews, rights and budgets, one pack per character (see [character-pack.md](character-pack.md)). Every payload path has exactly one role and exactly one `files` entry. Characters reach a pack through the standard pipeline only ([character-pipeline.md](character-pipeline.md)).
 - `low` is a required output profile for map packs.
 - The client may reject a Studio-valid release if it violates runtime contracts.
 
