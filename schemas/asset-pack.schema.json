@@ -121,7 +121,8 @@
                     "duration": { "type": "number", "exclusiveMinimum": 0 },
                     "loop": { "type": "boolean" },
                     "rootMotion": { "type": "boolean" },
-                    "source": { "type": "string", "minLength": 1 }
+                    "source": { "type": "string", "minLength": 1 },
+                    "family": { "enum": ["loco", "combat", "ceremony", "emote"] }
                   },
                   "additionalProperties": false
                 }
