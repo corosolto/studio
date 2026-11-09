@@ -135,7 +135,6 @@ def cloth_weights(points, kind, joints, bidx, crotch_z, H):
     W[below, bidx["RightUpLeg"]] = legs * (1 - left)
     W[below, bidx["Hips"]] = 1 - legs
     return W
-    return allowed, rigid
 
 
 def vertex_groups_matrix(obj, bones):

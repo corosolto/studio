@@ -75,7 +75,8 @@ for (const step of steps.slice(0, from)) {
     if (!existsSync(file) || sha(file) !== digest) throw new Error(`cannot resume at ${steps[from]}: ${name} changed or vanished since ${step} ran; run --from=${step}`);
   }
   for (const [role, file] of Object.entries(inputsOf(step))) {
-    if (role === 'source') continue; // clean's source is only read by clean
+    // A --source given on resume must be the one clean ran on; without --source it is not checked.
+    if (role === 'source' && !args.source) continue;
     const digest = existsSync(file) ? sha(file) : null;
     if (record.inputs[role]?.sha256 !== digest) throw new Error(`cannot resume at ${steps[from]}: ${role} ${file} changed since ${step} ran; run --from=${step}`);
   }
