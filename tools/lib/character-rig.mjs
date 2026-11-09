@@ -43,6 +43,9 @@ export const MESHY28_REST_WORLD = Object.freeze({
 });
 
 export const uniqueJointNames = [...new Set(meshy28Joints.map(([name]) => name))];
+/** Helper joints that never carry skin weight (Blender builds them with use_deform off). */
+export const NON_DEFORM_JOINTS = Object.freeze(['head_end', 'headfront', 'Curl_R', 'Curl_L']);
+export const deformJointNames = uniqueJointNames.filter((name) => !NON_DEFORM_JOINTS.includes(name));
 /** Clean space (Blender: +Z up, faces -Y, left +X) to glTF (+Y up, faces +Z, left +X). */
 export const cleanToGltf = ([x, y, z]) => [x, z, -y];
 
@@ -71,6 +74,16 @@ export function validateJoints(json) {
     const s = side === 'Left' ? 1 : -1;
     const chain = [`${side}Shoulder`, `${side}Arm`, `${side}ForeArm`, `${side}Hand`].map((n) => joints[n][0] * s);
     if (!chain.every((v, i) => i === 0 || v > chain[i - 1])) errors.push(`${side} arm chain must run outward from the spine`);
+    // The hand rest frame is aimed at this tip (restWorldRotation): it has to lie past the
+    // wrist along the forearm, or the aligned frame turns the hand back up the arm.
+    const tip = json.tips?.[`${side}Hand`];
+    if (!Array.isArray(tip) || tip.length !== 3 || !tip.every(Number.isFinite)) {
+      errors.push(`tips.${side}Hand: missing or not three finite numbers`);
+      continue;
+    }
+    const hand = joints[`${side}Hand`], fore = joints[`${side}ForeArm`];
+    const along = [0, 1, 2].reduce((sum, k) => sum + (tip[k] - hand[k]) * (hand[k] - fore[k]), 0);
+    if (!(along > 0) || !(tip[0] * s > hand[0] * s)) errors.push(`tips.${side}Hand must lie beyond ${side}Hand along the forearm`);
   }
   return errors;
 }
@@ -343,7 +356,7 @@ export function measurePose(rig, setup, posed, { worst = 10 } = {}) {
       const [a] = group;
       for (const b of group.slice(1)) seamGap = Math.max(seamGap, Math.hypot(s[a * 3] - s[b * 3], s[a * 3 + 1] - s[b * 3 + 1], s[a * 3 + 2] - s[b * 3 + 2]));
     }
-    vmax.forEach((ratio, v) => { if (ratio > 1.5) perVertex.push([ratio, pi, v]); });
+    vmax.forEach((ratio, v) => perVertex.push([ratio, pi, v]));
   });
   ratios.sort((a, b) => a - b);
   perVertex.sort((a, b) => b[0] - a[0]);
@@ -474,4 +487,97 @@ export function bakePosedDocument(rig, posed) {
   const scene = doc.getRoot().listScenes()[0] || doc.createScene('scene');
   if (!scene.listChildren().includes(skinnedNode)) scene.addChild(skinnedNode);
   return doc;
+}
+
+/**
+ * Turn Blender's skinned export (tools/blender/character_rig/rig_weights.py) into the meshy-28
+ * model in place: weights remapped by bone name (Blender's `.001` suffix is the second
+ * occurrence of a duplicated helper), the mesh node's transform baked into the vertices, the
+ * Blender skeleton replaced by buildMeshy28Skeleton() on `jointsJson` (clean-space metres, as
+ * written by rig_joints.py). Throws on an invalid joints.json, an unknown bone, a vertex
+ * without weight, or a bind pose that does not reproduce the mesh to 0.1 mm.
+ */
+export function assembleMeshy28Model(doc, jointsJson) {
+  const errors = validateJoints(jointsJson);
+  if (errors.length) throw new Error(`joints.json is invalid:\n${errors.join('\n')}`);
+  const root = doc.getRoot();
+  const parent = new Map();
+  for (const n of root.listNodes()) for (const c of n.listChildren()) parent.set(c, n);
+  const skinned = root.listNodes().filter((n) => n.getSkin() && n.getMesh());
+  if (skinned.length !== 1) throw new Error(`expected one skinned mesh, found ${skinned.length}`);
+  const meshNode = skinned[0];
+  const oldSkin = meshNode.getSkin();
+
+  const slots = new Map();
+  meshy28Joints.forEach(([name], i) => { const list = slots.get(name) || []; list.push(i); slots.set(name, list); });
+  const remap = oldSkin.listJoints().map((joint) => {
+    const match = /^(.*)\.(\d{3})$/.exec(joint.getName());
+    const index = slots.get(match ? match[1] : joint.getName())?.[match ? Number(match[2]) : 0];
+    if (index === undefined) throw new Error(`Blender joint ${joint.getName()} is not a meshy-28 bone`);
+    return index;
+  });
+
+  const world = (n) => {
+    const m = localMatrix({ t: n.getTranslation(), r: n.getRotation(), s: n.getScale() });
+    const p = parent.get(n);
+    return p ? world(p).multiply(m) : m;
+  };
+  const meshWorld = world(meshNode);
+  const baked = !meshWorld.equals(new THREE.Matrix4());
+  const normalMatrix = new THREE.Matrix3().getNormalMatrix(meshWorld);
+  let vertices = 0;
+  for (const prim of meshNode.getMesh().listPrimitives()) {
+    if (baked) {
+      const v = new THREE.Vector3();
+      const pos = prim.getAttribute('POSITION');
+      const arr = pos.getArray().slice();
+      for (let i = 0; i < pos.getCount(); i += 1) v.fromArray(arr, i * 3).applyMatrix4(meshWorld).toArray(arr, i * 3);
+      pos.setArray(arr);
+      const nrm = prim.getAttribute('NORMAL');
+      if (nrm) {
+        const narr = nrm.getArray().slice();
+        for (let i = 0; i < nrm.getCount(); i += 1) v.fromArray(narr, i * 3).applyMatrix3(normalMatrix).normalize().toArray(narr, i * 3);
+        nrm.setArray(narr);
+      }
+      prim.setAttribute('TANGENT', null);
+    }
+    const J = prim.getAttribute('JOINTS_0'), W = prim.getAttribute('WEIGHTS_0');
+    if (!J || !W) throw new Error('skinned primitive without JOINTS_0/WEIGHTS_0');
+    const joints = new Uint16Array(J.getCount() * 4), weights = new Float32Array(W.getCount() * 4);
+    const j = [], w = [];
+    for (let i = 0; i < J.getCount(); i += 1) {
+      J.getElement(i, j); W.getElement(i, w);
+      const sum = w.reduce((a, b) => a + b, 0);
+      if (!(sum > 0)) throw new Error(`vertex ${i} has no skin weight`);
+      for (let k = 0; k < 4; k += 1) {
+        weights[i * 4 + k] = w[k] / sum;
+        joints[i * 4 + k] = w[k] > 0 ? remap[j[k]] : 0;
+      }
+      vertices += 1;
+    }
+    prim.setAttribute('JOINTS_0', doc.createAccessor().setType('VEC4').setArray(joints).setBuffer(J.getBuffer()));
+    prim.setAttribute('WEIGHTS_0', doc.createAccessor().setType('VEC4').setArray(weights).setBuffer(W.getBuffer()));
+    J.dispose(); W.dispose();
+  }
+
+  const jointsGltf = Object.fromEntries(Object.entries(jointsJson.joints).map(([name, p]) => [name, cleanToGltf(p)]));
+  for (const side of ['Left', 'Right']) jointsGltf[`${side}HandTip`] = cleanToGltf(jointsJson.tips[`${side}Hand`]);
+  const skeleton = buildMeshy28Skeleton(doc, jointsGltf);
+  const skin = doc.createSkin('meshy-28').setSkeleton(skeleton.joints[0])
+    .setInverseBindMatrices(doc.createAccessor().setType('MAT4').setArray(skeleton.inverseBindMatrices).setBuffer(root.listBuffers()[0]));
+  for (const node of skeleton.joints) skin.addJoint(node);
+
+  const scene = root.listScenes()[0] || doc.createScene('scene');
+  const keep = new Set([meshNode, skeleton.armature, ...skeleton.joints]);
+  for (const n of root.listNodes()) if (!keep.has(n)) n.dispose();
+  oldSkin.getInverseBindMatrices()?.dispose();
+  oldSkin.dispose();
+  meshNode.setSkin(skin).setTranslation([0, 0, 0]).setRotation([0, 0, 0, 1]).setScale([1, 1, 1]);
+  for (const child of scene.listChildren()) scene.removeChild(child);
+  scene.addChild(meshNode).addChild(skeleton.armature);
+  for (const a of root.listAnimations()) a.dispose();
+
+  const { bindError } = measureSetup(loadRig(doc));
+  if (!(bindError <= 1e-4)) throw new Error(`bind pose does not reproduce the mesh: ${bindError} m`);
+  return { joints: skin.listJoints().length, vertices, bindError, baked };
 }

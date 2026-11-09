@@ -42,8 +42,10 @@ Blender -b --factory-startup --python tools/blender/character_rig/rig_<step>.py 
 **joints** estimates all 26 distinct meshy-28 joints on the body without extras (a backpack or an antenna must not pull the spine or the head), every joint on the centroid of its limb or torso cross-section: shoulder just inside the armpit on the line fitted through the outer arm sections, elbow at `elbowRatio` of shoulder→wrist, hip at the crotch row + `hipAboveCrotch`, ankle at the thinnest leg section near the floor, knee at the strongest side-profile bend (bent mascot legs) or at `kneeRatio`, toe on the ball of the foot, `Hips`/`Spine` on the torso centroid with `Spine02`/`Spine01` on the line between them, `Head` just above the narrowest neck row. Ratios under `joints` in the config override the defaults, which were measured on the donor mesh (see Calibration). `joints-review.png` shows the front and side orthographic views with the 5 cm grid (labels in metres) and every joint; a `joints.json` next to the config (or `jointsOverride`) moves any subset of joints and wins:
 
 ```json
-{ "joints": { "LeftArm": [0.17, 0.10, 1.36], "RightArm": [-0.17, 0.10, 1.36] } }
+{ "joints": { "LeftArm": [0.17, 0.10, 1.36], "RightArm": [-0.17, 0.10, 1.36] }, "tips": { "LeftHand": [0.73, 0.0, 1.33] } }
 ```
+
+`tips` moves the hand or toe tips the bones aim at. The `Curl` helpers always follow the hand joint, and the joints step stops when a hand tip is not past its hand joint along the forearm (the aligned hand frame would turn back up the arm); `validateJoints` repeats that check before the armature is built.
 
 Coordinates are clean-space metres: +Z up, the character faces −Y, its left is +X (front view: right of the image is +X; side view: right of the image is +Y, the back).
 
@@ -53,7 +55,7 @@ Coordinates are clean-space metres: +Z up, the character faces −Y, its left is
 
 1. Heat (automatic) weights on the cleaned mesh; a voxel remesh of the body (`voxelSize` × height) is heat-weighted too and transfers its weights to vertices heat left bare (loose islands such as eyes or pouches), or to every vertex when heat failed on a limb bone or left more than `heatFailShare` of the main shell bare.
 2. Part rules: torso, vest and backpack never carry arm bones; legs carry only their own chain plus `Hips`; arms their own chain plus `Spine` and the clavicle; hands are 100% on their `Hand`; the head is 100% on `Head` above `Head` + `headRigidAbove` × height; extras follow their `rigid`/`bones`.
-3. Continuity: a bone allowed on one side of a part boundary and forbidden on the other fades to zero towards the boundary over `rampLength` × height of surface distance, so the rules never leave a weight step.
+3. Continuity: a bone allowed on one side of a part boundary and forbidden on the other fades to zero towards the boundary over `rampLength` × height of surface distance. The fade scales existing weights, so where a vertex carries nothing on the bones allowed across the boundary, normalisation restores the old ratios and a step can remain; the pose test is the guard.
 4. Smoothing inside a part only, tapering to nothing at `smoothRadius` × height from `smoothJoints` (shoulders and knees), never on part-boundary or rigid vertices, never across parts. Elbows are not smoothed by default: on capitao-caveira it raised the worst walk stretch at the back of the elbow from 2.88× to 4.28×.
 5. Linear hinge blends (`linearBlends`, wrists by default): the ForeArm+Hand share is re-split by position along the forearm axis, smoothstep over ±halfWidth × height, because heat switches ForeArm→Hand within one edge ring.
 6. At most 4 influences per vertex, normalised. `weights.json` reports the method, bare vertices, the largest arm weight left on no-arm parts (must be 0), the minimum `Hand` weight on hand vertices (must be 1) and the influence histogram.
@@ -111,3 +113,5 @@ The plush mascot keeps human-like clip motion: idle, walk, run, crouch, crouchwa
 - Joint positions are a first estimate: always look at `joints-review.png` and `parts-review.png`.
 - Heat weighting can fail on non-manifold meshes; the voxel proxy covers it, but check `weights.json` (`method`, `heat.unweightedVertices`).
 - Hips translation and in-place motion come from `retarget-glb.mjs`; this pipeline does not author clips.
+- `Curl_L`/`Curl_R` carry no skin (hands are 100% `Hand`), as in the rigs from `rig-from-donor.mjs`: the client's grip curl rotates those bones but the fingers do not close around the weapon.
+- The pipeline run (`rig-character.mjs`) fails when the pose test fails (`--strict`); `--no-clips` limits it to the synthetic poses.

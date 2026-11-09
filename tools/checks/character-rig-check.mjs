@@ -14,8 +14,8 @@ import { Document } from '@gltf-transform/core';
 import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import {
-  ALIGNED_BONES, MESHY28_REST_WORLD, SYNTHETIC_POSES, buildMeshy28Skeleton, evaluatePoseReport, loadRig, measurePose, measureSetup,
-  skinPositions, summarize, syntheticOverrides, uniqueJointNames, validateJoints,
+  ALIGNED_BONES, MESHY28_REST_WORLD, SYNTHETIC_POSES, assembleMeshy28Model, buildMeshy28Skeleton, deformJointNames, evaluatePoseReport,
+  loadRig, measurePose, measureSetup, skinPositions, summarize, syntheticOverrides, uniqueJointNames, validateJoints,
 } from '../lib/character-rig.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -45,14 +45,25 @@ clause('R1 character rig configs are well formed', () => {
       assert(extra.name && !partNames.has(extra.name) && !names.has(extra.name), `${file}: extra names must be unique and not body parts (${extra.name})`);
       names.add(extra.name);
       assert(Boolean(extra.rigid) !== Boolean(extra.bones), `${file}: extra ${extra.name} needs exactly one of rigid or bones`);
-      for (const bone of extra.rigid ? [extra.rigid] : extra.bones) assert(uniqueJointNames.includes(bone), `${file}: ${extra.name} names unknown bone ${bone}`);
+      for (const bone of extra.rigid ? [extra.rigid] : extra.bones) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
       for (const from of extra.select?.from || []) assert(partNames.has(from) || names.has(from), `${file}: ${extra.name} selects from unknown part ${from}`);
     }
     for (const [parent, child] of cfg.weights?.linearBlends || []) {
-      assert(uniqueJointNames.includes(parent) && uniqueJointNames.includes(child), `${file}: linearBlends names unknown bones`);
+      assert(deformJointNames.includes(parent) && deformJointNames.includes(child), `${file}: linearBlends names a bone that does not deform`);
     }
+    for (const joint of cfg.weights?.smoothJoints || []) assert(uniqueJointNames.includes(joint), `${file}: smoothJoints names unknown joint ${joint}`);
   }
   return configs.map(([dir]) => dir).join(', ');
+});
+clause('R1 the Blender steps use the contract meshy-28 list', () => {
+  // tools/blender/character_rig/common.py cannot import the JavaScript contract; compare its
+  // MESHY28 tuple list with meshy28Joints so the two cannot drift apart.
+  const source = readFileSync(path.join(root, 'tools/blender/character_rig/common.py'), 'utf8');
+  const block = /MESHY28 = \[([\s\S]*?)\n\]/.exec(source)?.[1];
+  assert(block, 'MESHY28 list not found in common.py');
+  const pairs = [...block.matchAll(/\("([^"]+)", (None|"([^"]+)")\)/g)].map((m) => [m[1], m[3] ?? null]);
+  assert(JSON.stringify(pairs) === JSON.stringify(meshy28Joints), `common.py MESHY28 differs from meshy28Joints: ${JSON.stringify(pairs)}`);
+  return `${pairs.length} joints in skin order`;
 });
 
 // ------------------------------------------------------------------------------ synthetic body
@@ -133,6 +144,16 @@ function synthBody({ mutant = null } = {}) {
     weights.push(1, 0, 0, 0);
     indices.push(v, positions.length / 3 - 1, v + 1);
   }
+  if (mutant === 'hand-on-spine') {
+    // Every other ring of the left hand is skinned to Spine: lifting the arm tears the hand.
+    for (let i = 0; i < positions.length / 3; i += 1) {
+      const [x, y] = positions.slice(i * 3, i * 3 + 2);
+      if (x > 0.63 && Math.abs(y - 1.25) < 0.06 && Math.round((x - 0.62) / 0.02) % 2 === 1) {
+        joints.splice(i * 4, 4, slot.get('Spine'), 0, 0, 0);
+        weights.splice(i * 4, 4, 1, 0, 0, 0);
+      }
+    }
+  }
   return { positions, joints, weights, indices };
 }
 
@@ -164,7 +185,10 @@ function poseReport(doc) {
 }
 
 // ------------------------------------------------------------------------------ R2 joints.json
-const baseJoints = { units: 'm', skeleton: 'meshy-28', joints: cleanJoints };
+const baseJoints = {
+  units: 'm', skeleton: 'meshy-28', joints: cleanJoints,
+  tips: Object.fromEntries(Object.entries(TIPS).map(([n, [x, y, z]]) => [n.replace('Tip', ''), [x, -z, y]])),
+};
 clause('R2 joints.json validation accepts the synthetic skeleton', () => {
   const errors = validateJoints(baseJoints);
   assert(!errors.length, errors.join('; '));
@@ -177,6 +201,8 @@ const jointMutants = [
   ['arm chain folds back', (j) => { j.joints.LeftHand[0] = 0.3; }, /Left arm chain/],
   ['unknown joint', (j) => { j.joints.Tail = [0, 0, 0]; }, /Tail: not a meshy-28 joint/],
   ['wrong skeleton id', (j) => { j.skeleton = 'mixamo'; }, /skeleton must be/],
+  ['missing hand tip', (j) => { delete j.tips.RightHand; }, /tips\.RightHand: missing/],
+  ['hand tip behind the wrist', (j) => { j.tips.LeftHand[0] = 0.5; }, /tips\.LeftHand must lie beyond LeftHand/],
 ];
 for (const [name, mutate, expected] of jointMutants) {
   clause(`R2 joints.json mutant rejected: ${name}`, () => {
@@ -184,6 +210,67 @@ for (const [name, mutate, expected] of jointMutants) {
     mutate(copy);
     const errors = validateJoints(copy);
     assert(errors.some((e) => expected.test(e)), `expected ${expected}, got ${JSON.stringify(errors)}`);
+  });
+}
+
+// ------------------------------------------------------------------------------ R3 assembly
+/* A Blender-like export of the synthetic body: Blender bone names (unique, the second Curl
+   pair suffixed .001) in scrambled skin order, identity inverse binds, and the mesh under a
+   translated parent. assembleMeshy28Model must remap every weight by name, bake the parent
+   transform and land on exactly the deformation of the reference meshy-28 body. */
+function blenderLikeDocument({ mutant = null } = {}) {
+  const doc = new Document();
+  const buffer = doc.createBuffer();
+  const body = synthBody();
+  const names = meshy28Joints.map(([name], i) => (meshy28Joints.findIndex(([n]) => n === name) === i ? name : `${name}.001`));
+  const order = [...names.keys()].sort((a, b) => ((a * 7) % 28) - ((b * 7) % 28));
+  const blenderIndex = new Map(order.map((slotIndex, i) => [slotIndex, i]));
+  if (mutant === 'unknown-bone') names[order[0]] = 'Tail';
+  const joints = body.joints.map((slotIndex) => blenderIndex.get(slotIndex));
+  const weights = body.weights.slice();
+  if (mutant === 'weightless-vertex') weights.splice(0, 4, 0, 0, 0, 0);
+  const shift = [0.1, 0.02, -0.03];
+  const positions = body.positions.map((v, i) => v - shift[i % 3]);
+  const prim = doc.createPrimitive()
+    .setAttribute('POSITION', doc.createAccessor().setType('VEC3').setArray(new Float32Array(positions)).setBuffer(buffer))
+    .setAttribute('JOINTS_0', doc.createAccessor().setType('VEC4').setArray(new Uint16Array(joints)).setBuffer(buffer))
+    .setAttribute('WEIGHTS_0', doc.createAccessor().setType('VEC4').setArray(new Float32Array(weights)).setBuffer(buffer))
+    .setIndices(doc.createAccessor().setType('SCALAR').setArray(new Uint32Array(body.indices)).setBuffer(buffer));
+  const holder = doc.createNode('Armature').setTranslation(shift);
+  const meshNode = doc.createNode('Body').setMesh(doc.createMesh('Body').addPrimitive(prim));
+  holder.addChild(meshNode);
+  const ibm = new Float32Array(28 * 16);
+  const skin = doc.createSkin('blender').setInverseBindMatrices(doc.createAccessor().setType('MAT4').setArray(ibm).setBuffer(buffer));
+  order.forEach((slotIndex, i) => {
+    ibm.set(new THREE.Matrix4().elements, i * 16);
+    const node = doc.createNode(names[slotIndex]);
+    holder.addChild(node);
+    skin.addJoint(node);
+  });
+  meshNode.setSkin(skin);
+  doc.createScene('scene').addChild(holder);
+  return doc;
+}
+
+clause('R3 assembly remaps Blender weights by name and bakes the mesh transform', () => {
+  const doc = blenderLikeDocument();
+  const result = assembleMeshy28Model(doc, JSON.parse(JSON.stringify(baseJoints)));
+  assert(result.joints === 28 && result.baked, `expected 28 joints and a baked transform, got ${JSON.stringify(result)}`);
+  const rig = loadRig(doc);
+  rig.joints.forEach((node, i) => assert(node.getName() === meshy28Joints[i][0], `joint ${i} is ${node.getName()}`));
+  const reference = loadRig(synthDocument());
+  const pose = SYNTHETIC_POSES.find((p) => p.name === 'arms-up-90');
+  const a = skinPositions(rig, syntheticOverrides(rig, pose))[0], b = skinPositions(reference, syntheticOverrides(reference, pose))[0];
+  let worst = 0;
+  for (let k = 0; k < a.length; k += 1) worst = Math.max(worst, Math.abs(a[k] - b[k]));
+  assert(worst < 1e-4, `assembled body deforms differently from the reference (${worst} m)`);
+  return `arms-up deformation matches to ${worst.toExponential(1)} m, bind error ${result.bindError.toExponential(1)} m`;
+});
+for (const [mutant, expected] of [['unknown-bone', /Tail is not a meshy-28 bone/], ['weightless-vertex', /vertex 0 has no skin weight/]]) {
+  clause(`R3 assembly mutant rejected: ${mutant}`, () => {
+    let message = '';
+    try { assembleMeshy28Model(blenderLikeDocument({ mutant }), JSON.parse(JSON.stringify(baseJoints))); } catch (error) { message = error.message; }
+    assert(expected.test(message), `expected ${expected}, got ${message || 'success'}`);
   });
 }
 
@@ -232,10 +319,11 @@ clause('R4 synthetic humanoid passes the pose thresholds', () => {
   return `worst ${report.summary.synthetic.maxEdge.value}× (${report.summary.synthetic.maxEdge.pose})`;
 });
 const poseMutants = [
-  ['arm-weight-on-torso', /back stretch|max edge stretch/],
+  ['arm-weight-on-torso', /back stretch/],
   ['split-seam', /seam opens/],
   ['stale-ibm', /bind pose does not reproduce/],
   ['hard-step', /max edge stretch/],
+  ['hand-on-spine', /hand L stretch/],
 ];
 for (const [mutant, expected] of poseMutants) {
   clause(`R4 pose-test mutant rejected: ${mutant}`, () => {

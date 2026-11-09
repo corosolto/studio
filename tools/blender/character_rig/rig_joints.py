@@ -111,7 +111,7 @@ def main():
         wrist = abs(float(parts_report["wrists"][side]["x"]))
         override_wrist = cfg.get("parts", {}).get("wristX")
         if override_wrist is not None:
-            wrist = float(override_wrist)
+            wrist = abs(float(override_wrist))
         x_sh = arm["armpitX"] - J["shoulderInset"] * arm["armThickness"]
         x_el = x_sh + J["elbowRatio"] * (wrist - x_sh)
         # Fit the arm centre line on the outer 75% of shoulder->wrist: straps, vest edges
@@ -267,6 +267,8 @@ def main():
     estimate = {name: C.r(joints[name]) for name in C.UNIQUE_JOINTS}
     override_path = (args.config_path.parent / cfg.get("jointsOverride", "joints.json")).resolve()
     overridden = []
+    tips = {"LeftHand": Vector(notes["LeftHandTip"]), "RightHand": Vector(notes["RightHandTip"]),
+            "LeftToeBase": leg_tips["Left"], "RightToeBase": leg_tips["Right"]}
     if override_path.is_file():
         override = json.loads(override_path.read_text())
         for name, value in override.get("joints", {}).items():
@@ -274,6 +276,19 @@ def main():
                 raise RuntimeError(f"override names unknown joint {name}")
             joints[name] = Vector(value)
             overridden.append(name)
+        for name, value in override.get("tips", {}).items():
+            if name not in tips:
+                raise RuntimeError(f"override names unknown tip {name}")
+            tips[name] = Vector(value)
+            overridden.append(f"tips.{name}")
+    # The finger helpers sit on the hand joint whatever moved it.
+    joints["Curl_L"] = joints["LeftHand"].copy()
+    joints["Curl_R"] = joints["RightHand"].copy()
+    for side in ("Left", "Right"):
+        hand, fore, tip = joints[f"{side}Hand"], joints[f"{side}ForeArm"], tips[f"{side}Hand"]
+        if (tip - hand).dot(hand - fore) <= 0:
+            raise RuntimeError(f"{side}Hand tip {C.r(tip)} is not past the hand joint {C.r(hand)} along the forearm; "
+                               f"set tips.{side}Hand in {override_path.name} when moving the hand")
     final = {name: C.r(joints[name]) for name in C.UNIQUE_JOINTS}
     meta = {
         "units": "m", "space": "clean: +Z up, faces -Y, character left is +X",
@@ -283,8 +298,7 @@ def main():
                                                      "ratios": J, "landmarks": C.public_landmarks(lm)})
     C.write_json(args.work / "joints.json", {**meta, "joints": final, "override": str(override_path) if overridden else None,
                                             "overridden": overridden,
-                                            "tips": {"LeftHand": notes["LeftHandTip"], "RightHand": notes["RightHandTip"],
-                                                     "LeftToeBase": C.r(leg_tips["Left"]), "RightToeBase": C.r(leg_tips["Right"])}})
+                                            "tips": {name: C.r(p) for name, p in tips.items()}})
     C.ensure_sun()
     lo, hi = C.world_bounds(body)
     C.render_ortho_views(args.work / "joints", (lo, hi), views=("front", "side"), res_per_m=600)
