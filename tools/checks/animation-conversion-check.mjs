@@ -20,12 +20,12 @@ import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import { clipSampler, deformJointNames, loadRig } from '../lib/character-rig.mjs';
 import {
-  FLOOR_CLAMP_REGIONS, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, clipMetadata, gltfPoseSource, mixamoBaseName,
+  FLOOR_CLAMP_REGIONS, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
   objectPoseSource, referenceSkeletonDocument, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mjs';
 import { CONTRACT_EXTRA_NAMES, PROPOSED_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
-import { evaluateClip, measureClip } from '../lib/clip-qa.mjs';
+import { evaluateClip, measureClip, stretchCause } from '../lib/clip-qa.mjs';
 import { J, synthDocument } from './lib/synthetic-humanoid.mjs';
 
 let failures = 0;
@@ -587,6 +587,44 @@ await clause('Q4 a body hanging above the floor drops back where the source has 
   const planted = await low(run(new Array(7).fill(0))), flying = await low(run(new Array(7).fill(0.05)));
   assert(Math.abs(planted.maxCm) < 0.2 && flying.minCm > 4, `planted source -> lowest ${planted.maxCm} cm; airborne source -> ${flying.minCm} cm`);
   return `planted: ${planted.maxCm} cm, source in the air: kept at ${flying.minCm} cm`;
+});
+
+await clause('Q5 stretch cause: weight defects are the rig, neighbouring blends are the clip', () => {
+  const v = (...bones) => ({ bones });
+  const cases = [
+    [v(['LeftUpLeg', 0.66], ['RightUpLeg', 0.31]), 'rig'], // crotch skinned to both thighs
+    [v(['RightArm', 0.41], ['RightShoulder', 0.31], ['Spine02', 0.21]), 'rig'], // armpit on the lowest spine
+    [v(['LeftArm', 0.6], ['LeftShoulder', 0.4]), 'clip'],
+    [v(['LeftForeArm', 0.5], ['LeftHand', 0.5]), 'clip'],
+    [v(['Spine', 0.7], ['LeftArm', 0.3]), 'clip'], // two joints apart: a normal shoulder blend
+    [v(['LeftLeg', 1]), 'clip'],
+  ];
+  for (const [vertex, want] of cases) assert(stretchCause(vertex).cause === want, `${JSON.stringify(vertex.bones)} -> ${stretchCause(vertex).cause}, expected ${want}`);
+});
+
+await clause('Q5 shin-weighted vertices below the ankle are a passive shoe region', () => {
+  const rig = loadRig(synthDocument());
+  const regions = vertexRegions(rig);
+  const shoe = FLOOR_CLAMP_REGIONS.findIndex((r) => r.name === 'shoe');
+  // In the synthetic tube body the shin ring just above the ankle is LeftLeg-dominant and above
+  // the ankle: knee region. Move one vertex's weight to the shin while it sits under the ankle.
+  const p = rig.prims[0];
+  const ankleY = 0.1;
+  let probe = -1;
+  for (let i = 0; i < p.count; i += 1) if (p.pos[i * 3 + 1] < ankleY - 0.02 && p.pos[i * 3] > 0.05 && rig.names[p.J[i * 4]] === 'LeftFoot') { probe = i; break; }
+  assert(probe >= 0, 'no foot vertex under the ankle in the synthetic body');
+  p.J[probe * 4] = rig.names.indexOf('LeftLeg'); p.W[probe * 4] = 1; p.W[probe * 4 + 1] = 0;
+  const after = vertexRegions(rig);
+  assert(regions[0][probe] !== shoe && after[0][probe] === shoe && FLOOR_CLAMP_REGIONS[shoe].passive, `vertex ${probe}: ${regions[0][probe]} -> ${after[0][probe]}`);
+});
+
+await clause('Q5 closeLoop makes the last frame the first frame again', () => {
+  const r = retargetClip(mixamoSource({ frames: walking }), reference, { footIk: false });
+  const last = r.times.length - 1;
+  r.rotations.get('LeftUpLeg').set([0, 0, 0.1, 0.995], last * 4);
+  closeLoop(r);
+  for (const arr of r.rotations.values()) for (let k = 0; k < 4; k += 1) assert(arr[k] === arr[last * 4 + k], 'rotation seam left open');
+  for (let k = 0; k < 3; k += 1) assert(r.hips[k] === r.hips[last * 3 + k], 'hips seam left open');
 });
 
 // ----------------------------------------------------------------------------- L library

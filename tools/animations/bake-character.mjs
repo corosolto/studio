@@ -15,12 +15,14 @@
 // contact windows (extras.clip.contacts), and a mesh-aware floor clamp keeps heels, toes, hands
 // and knees above the floor (docs/animation-conversion.md). --no-foot-contact, --no-foot-ik,
 // --no-floor-clamp and --no-limb-align switch those off. Works on clips without metadata too
-// (the client's shared pack): contacts are then detected on the clip itself.
+// (the client's shared pack): contacts are then detected on the clip itself. Legacy client rigs
+// (24 to 28 joints, meshy-28 names, optional Curl_*, Curl_*_Tip and neutral_bone helpers) bake
+// as they are: joints match by name, helpers stay at rest and are listed in bakedFor.unanimated.
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { CLIP_FPS, clampToFloor, clipMetadata, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
+import { CLIP_FPS, clampToFloor, clipMetadata, closeLoop, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS } from '../lib/animation-sources.mjs';
 import { loadRig } from '../lib/character-rig.mjs';
 
@@ -39,6 +41,19 @@ const rig = loadRig(modelDoc);
 const states = flag('states')?.split(',').filter(Boolean)
   || readdirSync(clipsDir).filter((f) => f.endsWith('.glb')).map((f) => f.slice(0, -4)).sort();
 
+// Skin joints a clip never drives: the runtime-only Curl_* and any non-meshy-28 helper of a
+// legacy rig (Curl_*_Tip, neutral_bone); they stay at rest. Reported once per model.
+const skinJoints = [...new Set(rig.names)];
+const unanimated = (result) => skinJoints.filter((n) => !result.mapped.includes(n));
+let reported = false;
+/* The root velocity an in-place reference clip removed, at this character's scale (the IK keeps
+   world-fixed contacts in the clip's moving frame with it). */
+const inPlaceVelocity = (meta, tgt, src) => {
+  const rm = meta.rootMotion;
+  if (!rm?.extracted || rm.mode !== 'in-place') return [0, 0];
+  const scale = tgt.byName.get('Hips').restWorldP.y / src.rest().get('Hips').p.y;
+  return rm.velocity.map((v) => v * scale);
+};
 const baked = [];
 for (const state of states) {
   const doc = await io.read(path.join(clipsDir, `${state}.glb`));
@@ -46,9 +61,10 @@ for (const state of states) {
   if (!animation) throw new Error(`${state}: no animation`);
   const meta = clipMetadata(doc);
   const source = gltfPoseSource(doc, animation, RIG_MAPS['meshy-28']);
-  const result = retargetClip(source, target, { fps: meta.fps || CLIP_FPS, rootMotion: 'keep', absoluteArms: true, footContact: !args.includes('--no-foot-contact'), footIk: !args.includes('--no-foot-ik'), contacts: meta.contacts || null, loop: Boolean(meta.loop), alignLimbs: args.includes('--no-limb-align') ? [] : undefined });
+  const result = retargetClip(source, target, { fps: meta.fps || CLIP_FPS, rootMotion: 'keep', absoluteArms: true, footContact: !args.includes('--no-foot-contact'), footIk: !args.includes('--no-foot-ik'), contacts: meta.contacts || null, loop: Boolean(meta.loop), inPlaceVelocity: inPlaceVelocity(meta, target, source), alignLimbs: args.includes('--no-limb-align') ? [] : undefined });
   const scale = (v) => +(v * result.hipsScale).toFixed(4);
   const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale) });
+  if (meta.loop) closeLoop(result);
   const rm = meta.rootMotion;
   const frames = result.times.length;
   const extras = {
@@ -56,9 +72,10 @@ for (const state of states) {
     contactSlide: meta.contactSlide != null ? scale(meta.contactSlide) : undefined,
     footClearance: meta.footClearance ? meta.footClearance.map(scale) : undefined,
     rootMotion: rm ? { ...rm, displacement: rm.displacement.map(scale), velocity: rm.velocity.map(scale), speed: scale(rm.speed) } : undefined,
-    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, footContact: result.contactCorrection, footIk: result.ik, floorClamp, alignedLimbs: result.aligned },
+    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, unanimated: unanimated(result), footContact: result.contactCorrection, footIk: result.ik, floorClamp, alignedLimbs: result.aligned },
   };
   await io.write(path.join(outDir, `${state}.glb`), writeClipDocument(target, result, state, extras));
+  if (!reported) { console.log(`skin joints left at rest: ${unanimated(result).join(', ') || 'none'}`); reported = true; }
   baked.push({ name: state, frames, duration: extras.duration, joints: result.mapped.length, hipsScale: extras.bakedFor.hipsScale, rootSpeed: extras.rootMotion?.speed ?? null });
   console.log(`ok ${state}: ${frames} f, ${extras.duration}s, ${result.mapped.length} joints, hips scale ${extras.bakedFor.hipsScale}`);
 }

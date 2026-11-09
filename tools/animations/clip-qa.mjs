@@ -4,14 +4,16 @@
 // tools/characters/rig-pose-test.mjs --clips) for meshy-28 clips baked onto one character.
 //
 //   node tools/animations/clip-qa.mjs --model=<character.glb> --clips=<dir> [--states=<a,b>]
-//        [--out=<report.json>] [--label=<name>] [--samples=<n>] [--no-stretch] [--strict]
+//        [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]
 //
 // Clip metadata (extras.clip: loop, hold, airborne, rootMotion) selects the gates that apply.
+// --flags-from takes loop, hold and airborne from the same-named clip in another directory, for
+// clips without metadata (the client's shipped clips) measured against converted ones.
 // --strict exits 1 when any clip fails tools/lib/clip-qa.mjs#CLIP_QA_THRESHOLDS.
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,7 +25,7 @@ const args = process.argv.slice(2);
 const flag = (name) => args.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const model = flag('model'), clipsDir = flag('clips');
 if (!model || !clipsDir) {
-  console.error('usage: clip-qa.mjs --model=<character.glb> --clips=<dir> [--states=<a,b>] [--out=<report.json>] [--label=<name>] [--samples=<n>] [--no-stretch] [--strict]');
+  console.error('usage: clip-qa.mjs --model=<character.glb> --clips=<dir> [--states=<a,b>] [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]');
   process.exit(1);
 }
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
@@ -41,10 +43,18 @@ if (!args.includes('--no-stretch')) {
 }
 
 const rig = loadRig(await io.read(model));
+const flagsFrom = (state) => {
+  const file = flag('flags-from') && path.join(flag('flags-from'), `${state}.glb`);
+  if (!file || !existsSync(file)) return {};
+  const { loop, hold, airborne } = clipMetadata(flagsDocs.get(state));
+  return { loop, hold, airborne };
+};
+const flagsDocs = new Map();
+if (flag('flags-from')) for (const state of states) { const f = path.join(flag('flags-from'), `${state}.glb`); if (existsSync(f)) flagsDocs.set(state, await io.read(f)); }
 const clips = [];
 for (const state of states) {
   const doc = await io.read(path.join(clipsDir, `${state}.glb`));
-  const meta = clipMetadata(doc);
+  const meta = { ...clipMetadata(doc), ...flagsFrom(state) };
   const sampler = clipSampler(doc);
   if (!sampler) throw new Error(`${state}: no animation`);
   const metrics = measureClip(rig, sampler, meta);

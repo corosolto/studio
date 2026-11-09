@@ -6,14 +6,17 @@
 //                contact windows; the limit rises to the source's own slide + 1 cm;
 //   lowestVertex lowest skinned vertex per frame: the minimum (penetration when negative)
 //                and the maximum (the whole body floats) (cm), and the minimum per body
-//                region (heel, toe, hand, knee, body) with a stricter heel limit;
+//                region (heel, toe, hand, knee, body) with a stricter heel limit; `shoe`
+//                vertices (shin-weighted below the ankle: a rig defect) are reported only;
 //   hips         Hips height range against the bind pose;
 //   loopSeam     first versus last frame for loop clips: joint positions (cm) and local
 //                rotations (degrees);
 //   hands        LeftHand–RightHand distance; gated for two-handed weapon holds (rifle);
-//   stretch      filled from tools/characters/rig-pose-test.mjs --clips (skin stretch).
+//   stretch      filled from tools/characters/rig-pose-test.mjs --clips (skin stretch), tagged
+//                [rig] when the worst vertex's weights are a defect (stretchCause), else [clip].
 import * as THREE from 'three';
 import { FLOOR_CLAMP_REGIONS, FOOT_CONTACT_JOINTS, footContacts, vertexRegions } from './animation-retarget.mjs';
+import { meshy28Joints } from './character-pack.mjs';
 import { POSE_THRESHOLDS, clipOverrides, skinPositions, worldMatrices } from './character-rig.mjs';
 
 export const CLIP_QA_THRESHOLDS = Object.freeze({
@@ -75,22 +78,25 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
 
   const membership = vertexRegions(rig);
   const regionLow = {};
-  const lowest = [], lowestBone = [], hipsY = [], hands = [], feet = Object.fromEntries(FOOT_JOINTS.map((n) => [n, []]));
+  const lowest = [], lowestAll = [], lowestBone = [], hipsY = [], hands = [], feet = Object.fromEntries(FOOT_JOINTS.map((n) => [n, []]));
   const firstLast = [];
   for (let f = 0; f < frames; f += 1) {
     const t = f === frames - 1 ? duration : Math.min(duration, f / fps);
     const overrides = clipOverrides(rig, sampler, t);
     const world = worldMatrices(rig, overrides);
-    let low = Infinity, lowAt = null;
+    let low = Infinity, lowAt = null, lowAll = Infinity;
     skinPositions(rig, overrides).forEach((p, pi) => {
       for (let v = 1; v < p.length; v += 3) {
-        if (p[v] < low) { low = p[v]; lowAt = [pi, (v - 1) / 3]; }
         const r = membership[pi][(v - 1) / 3];
+        const passive = r != null && FLOOR_CLAMP_REGIONS[r].passive;
+        if (!passive && p[v] < low) { low = p[v]; lowAt = [pi, (v - 1) / 3]; }
+        if (p[v] < lowAll) lowAll = p[v];
         const name = r == null ? 'body' : FLOOR_CLAMP_REGIONS[r].name;
         if (!(regionLow[name] <= p[v] - floor)) regionLow[name] = p[v] - floor;
       }
     });
     lowest.push(low - floor);
+    lowestAll.push(lowAll - floor);
     lowestBone.push(lowAt);
     hipsY.push(pos(world, 'Hips').y);
     const l = pos(world, 'LeftHand'), r = pos(world, 'RightHand');
@@ -144,15 +150,15 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
 
   const sorted = [...hands].sort((x, y) => x - y);
   const median = sorted.length ? sorted[Math.floor(sorted.length / 2)] : null;
-  const minLowest = Math.min(...lowest), maxLowest = Math.max(...lowest);
+  const minLowest = Math.min(...lowest), maxLowest = Math.max(...lowestAll);
   return {
     frames, duration: +duration.toFixed(4), fps,
     footSlide: slide,
     lowestVertex: {
       minCm: cm(minLowest), minAt: +(lowest.indexOf(minLowest) / fps).toFixed(3), minBone: dominantBone(rig, lowestBone[lowest.indexOf(minLowest)]),
-      maxCm: cm(maxLowest), maxAt: +(lowest.indexOf(maxLowest) / fps).toFixed(3), floorY: +floor.toFixed(4),
+      maxCm: cm(maxLowest), maxAt: +(lowestAll.indexOf(maxLowest) / fps).toFixed(3), floorY: +floor.toFixed(4),
       byRegionCm: Object.fromEntries(Object.entries(regionLow).map(([k, v]) => [k, cm(v)])),
-      ...floatOverSource(lowest, meta.footClearance, fps),
+      ...floatOverSource(lowestAll, meta.footClearance, fps),
     },
     hips: {
       restHeight: +restHeight.Hips.toFixed(4), min: +Math.min(...hipsY).toFixed(4), max: +Math.max(...hipsY).toFixed(4),
@@ -167,13 +173,36 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
   };
 }
 
+const PARENT = new Map(meshy28Joints.map(([n, p]) => [n, p]));
+const chain = (name) => { const out = []; for (let n = PARENT.has(name) ? name : name.replace(/_Tip$/, ''); n; n = PARENT.get(n)) out.push(n); return out; };
+const treeDistance = (a, b) => { const ca = chain(a), cb = chain(b); const common = ca.find((n) => cb.includes(n)); return common ? ca.indexOf(common) + cb.indexOf(common) : Infinity; };
+
+/**
+ * Whether a stretched vertex is a weight defect (`rig`) or a pose the clip asks for (`clip`):
+ * a vertex sharing ≥ 15% weight between bones of opposite sides (a crotch skinned to both
+ * thighs) or between bones three or more joints apart (an armpit on Spine02) tears whatever
+ * the clip does, so it is the rig's.
+ */
+export function stretchCause(vertex) {
+  const bones = (vertex?.bones || []).filter(([, w]) => w >= 0.15).map(([n]) => n);
+  for (let i = 0; i < bones.length; i += 1) {
+    for (let j = i + 1; j < bones.length; j += 1) {
+      const [a, b] = [bones[i], bones[j]];
+      if ((/^Left|_L$/.test(a) && /^Right|_R$/.test(b)) || (/^Right|_R$/.test(a) && /^Left|_L$/.test(b))) return { cause: 'rig', bones: [a, b] };
+      if (treeDistance(a, b) >= 3) return { cause: 'rig', bones: [a, b] };
+    }
+  }
+  return { cause: 'clip', bones };
+}
+
 /** Per-clip stretch summary from a rig-pose-test report (clip poses of that name). */
 export function stretchFromPoseReport(report, name) {
   const poses = (report?.poses || []).filter((p) => p.kind === 'clip' && p.name === name);
   if (!poses.length) return null;
   const max = (get) => poses.reduce((best, p) => { const v = get(p); return v != null && (!best || v > best.value) ? { value: v, time: p.time } : best; }, null);
+  const worstPose = poses.reduce((a, b) => (b.maxEdge > a.maxEdge ? b : a));
   return {
-    samples: poses.length,
+    samples: poses.length, ...stretchCause(worstPose.worstVertices?.[0]),
     maxEdge: max((p) => p.maxEdge), backMaxEdge: max((p) => p.backMaxEdge),
     handMaxEdgeL: max((p) => p.handMaxEdge?.L), handMaxEdgeR: max((p) => p.handMaxEdge?.R),
     seamGapMax: max((p) => p.seamGapMax),
@@ -202,13 +231,14 @@ export function evaluateClip(metrics, meta = {}, thresholds = CLIP_QA_THRESHOLDS
   }
   const s = metrics.stretch, lim = thresholds.stretch;
   if (s) {
-    if (s.maxEdge?.value > lim.maxEdge) failures.push(`skin stretch ${s.maxEdge.value}× @${s.maxEdge.time}s > ${lim.maxEdge}`);
-    if (s.backMaxEdge?.value > lim.backMaxEdge) failures.push(`back stretch ${s.backMaxEdge.value}× @${s.backMaxEdge.time}s > ${lim.backMaxEdge}`);
+    const tag = s.cause ? ` [${s.cause}${s.bones?.length ? `: ${s.bones.join('+')}` : ''}]` : '';
+    if (s.maxEdge?.value > lim.maxEdge) failures.push(`skin stretch ${s.maxEdge.value}× @${s.maxEdge.time}s > ${lim.maxEdge}${tag}`);
+    if (s.backMaxEdge?.value > lim.backMaxEdge) failures.push(`back stretch ${s.backMaxEdge.value}× @${s.backMaxEdge.time}s > ${lim.backMaxEdge}${tag}`);
     for (const side of ['L', 'R']) {
       const v = s[`handMaxEdge${side}`];
-      if (v?.value > lim.handMaxEdge) failures.push(`hand ${side} stretch ${v.value}× @${v.time}s > ${lim.handMaxEdge}`);
+      if (v?.value > lim.handMaxEdge) failures.push(`hand ${side} stretch ${v.value}× @${v.time}s > ${lim.handMaxEdge}${tag}`);
     }
-    if (s.seamGapMax?.value > lim.seamGapMax) failures.push(`seam opens ${s.seamGapMax.value} m > ${lim.seamGapMax}`);
+    if (s.seamGapMax?.value > lim.seamGapMax) failures.push(`seam opens ${s.seamGapMax.value} m > ${lim.seamGapMax} [rig: welded vertices weighted apart]`);
   }
   return failures;
 }

@@ -309,8 +309,8 @@ export function footContacts(tracks, times) {
 
 /** Leg chains for foot IK: hip joint, knee joint, ankle joint, the ankle's contact joints. */
 export const LEG_CHAINS = Object.freeze([
-  { side: 'Left', hip: 'LeftUpLeg', knee: 'LeftLeg', ankle: 'LeftFoot', contacts: ['LeftFoot', 'LeftToeBase'] },
-  { side: 'Right', hip: 'RightUpLeg', knee: 'RightLeg', ankle: 'RightFoot', contacts: ['RightFoot', 'RightToeBase'] },
+  { side: 'Left', hip: 'LeftUpLeg', knee: 'LeftLeg', ankle: 'LeftFoot', toe: 'LeftToeBase', contacts: ['LeftFoot', 'LeftToeBase'] },
+  { side: 'Right', hip: 'RightUpLeg', knee: 'RightLeg', ankle: 'RightFoot', toe: 'RightToeBase', contacts: ['RightFoot', 'RightToeBase'] },
 ]);
 /** Frames over which foot IK blends in before and out after a contact window. */
 export const IK_BLEND_FRAMES = 4;
@@ -367,7 +367,8 @@ export function solveTwoBone(H, K, A, goal, hipQ, kneeQ, fallbackAxis) {
  * options: fps, start, end (source seconds), rootMotion ('in-place' | 'keep' | 'strip'),
  * absoluteArms (bake rule), footContact, footIk, contacts (windows to use instead of the
  * detected ones, e.g. a reference clip's extras.clip.contacts), loop (IK ramps wrap the seam),
- * minJoints.
+ * inPlaceVelocity ([x, z] m/s: the root velocity already removed from an in-place source, so
+ * world-fixed points such as a planted ball move back at it in the clip's frame), minJoints.
  * footContact (default on): the Hips height is corrected per frame so the target's lowest
  * foot joint (relative to its rest height) is as far above its rest height as the source's,
  * scaled. Without it, a target whose legs are proportioned differently from the source floats
@@ -375,16 +376,19 @@ export function solveTwoBone(H, K, A, goal, hipQ, kneeQ, fallbackAxis) {
  * footIk (default on): inside the source's foot contact windows (ramped over IK_BLEND_FRAMES)
  * the ankle is pinned by two-bone IK to the source ankle's displacement from its rest, scaled
  * and added to the target ankle's rest; this is where the root velocity (the same scaled
- * source drift) keeps it still. (Pinning the ball instead while the heel is up was measured
- * and rejected: a leg proportioned differently cannot reach it at push-off, so the ball drags;
- * walk-forward on mst went from 1-2 cm to 9.6 cm of slide.)
+ * source drift) keeps it still. footAim (default on): while the ball is planted, the foot
+ * turns about that pinned ankle so the ball stays where it landed (a foot of another length or
+ * rest pitch would otherwise sweep it). (Moving the ankle to the ball instead was measured and rejected: a leg proportioned
+ * differently cannot reach it at push-off, so the ball dragged; walk-forward on mst went from
+ * 1.6 to 9.6 cm of slide.)
  * Without it, different leg proportions make planted feet slide.
  * Returns { times, rotations: Map(name -> Float32Array xyzw), hips: Float32Array local xyz,
  *           rootMotion, hipsScale, mapped, contacts, contactCorrection: {min, max} (m), ik }.
  */
 export function retargetClip(source, target, {
   fps = CLIP_FPS, start = 0, end = source.duration, rootMotion = 'in-place', absoluteArms = false,
-  footContact = true, footIk = true, alignLimbs = LIMB_ALIGNMENT, contacts: givenContacts = null, loop = false, minJoints = 8,
+  footContact = true, footIk = true, footAim = true, alignLimbs = LIMB_ALIGNMENT, contacts: givenContacts = null, loop = false,
+  inPlaceVelocity = [0, 0], minJoints = 8,
 } = {}) {
   if (!ROOT_MOTION_MODES.includes(rootMotion)) throw new Error(`rootMotion must be one of ${ROOT_MOTION_MODES.join(', ')}`);
   const mapped = target.order.filter((e) => source.joints.has(e.name) && !RUNTIME_ONLY_JOINT.test(e.name) && target.byName.get(e.name) === e);
@@ -499,7 +503,7 @@ export function retargetClip(source, target, {
   const footClearance = Array.from({ length: frames }, (_, i) => (footNames.length ? +Math.min(...footNames.map((n) => footTracks[n][i].clear)).toFixed(3) : 0));
 
   // Pass 2: foot IK inside the contact windows.
-  const ik = { legs: 0, maxCorrection: 0 };
+  const ik = { legs: 0, maxCorrection: 0, footAims: 0 };
   if (footIk) {
     for (const leg of LEG_CHAINS) {
       const [hip, knee, ankle] = [leg.hip, leg.knee, leg.ankle].map((n) => target.byName.get(n));
@@ -512,8 +516,15 @@ export function retargetClip(source, target, {
       const restAxisLocal = hip.restWorldP.clone().sub(knee.restWorldP).cross(ankle.restWorldP.clone().sub(knee.restWorldP));
       if (restAxisLocal.lengthSq() < 1e-12) restAxisLocal.set(1, 0, 0); else restAxisLocal.normalize();
       restAxisLocal.applyQuaternion(hip.restWorldQ.clone().invert());
+      // Ball contact: the ball stays where it landed by turning the foot about the pinned ankle
+      // (no extra reach asked of the leg), through flat stance and heel-off alike.
+      const toe = target.byName.get(leg.toe);
+      const aimBall = footAim && toe && toe.parent === ankle && mappedSet.has(toe);
+      const on = (name) => { const a = new Uint8Array(frames); for (const [x, y] of contacts[name] || []) for (let k = x; k <= Math.min(y, frames - 1); k += 1) a[k] = 1; return a; };
+      const ballOn = on(leg.toe);
+      let ballLock = null;
       for (let i = 0; i < frames; i += 1) {
-        if (!(weights[i] > 0)) continue;
+        if (!(weights[i] > 0)) { ballLock = null; continue; }
         const { worldQ, localQ, goals } = states[i];
         const at = forward(localQ, hipsT.restWorldP.clone().add(displacement[i]), worldQ);
         const H = at(hip), K = at(knee), A = at(ankle);
@@ -526,6 +537,19 @@ export function retargetClip(source, target, {
         localQ.set(hip, worldQ.get(hip.parent).clone().invert().multiply(solved.hip).normalize());
         localQ.set(knee, solved.hip.clone().invert().multiply(solved.knee).normalize());
         localQ.set(ankle, solved.knee.clone().invert().multiply(ankleW).normalize());
+        if (!aimBall || !ballOn[i]) { ballLock = null; continue; }
+        const after = forward(localQ, hipsT.restWorldP.clone().add(displacement[i]), worldQ);
+        const ankleP = after(ankle), ballP = after(toe);
+        // The lock is a world point: in an in-place clip's frame it moves back at the root velocity.
+        if (!ballLock) { ballLock = { at: ballP, t: times[i] }; continue; }
+        const dt = times[i] - ballLock.t;
+        const lockNow = ballLock.at.clone().add(new THREE.Vector3(-inPlaceVelocity[0] * dt, 0, -inPlaceVelocity[1] * dt));
+        const current = ballP.clone().sub(ankleP), wanted = lockNow.sub(ankleP);
+        if (current.lengthSq() < 1e-10 || wanted.lengthSq() < 1e-10) continue;
+        const turned = new THREE.Quaternion().setFromUnitVectors(current.normalize(), wanted.normalize()).multiply(ankleW);
+        worldQ.set(ankle, turned);
+        localQ.set(ankle, solved.knee.clone().invert().multiply(turned).normalize());
+        ik.footAims += 1;
       }
     }
   }
@@ -553,12 +577,13 @@ export function retargetClip(source, target, {
     const local = hipsT.restWorldP.clone().add(d).applyMatrix4(parentWorldInv);
     hips.set([local.x, local.y, local.z], i * 3);
   });
+  if (loop) closeLoop({ rotations, hips, times }, { xz: rootMotion !== 'keep' || Math.hypot(hips[0] - hips[(frames - 1) * 3], hips[2] - hips[(frames - 1) * 3 + 2]) < 1e-3 });
   const round = (v) => +v.toFixed(4);
   return {
     times, rotations, hips, hipsScale, mapped: mapped.map((e) => e.name), contacts,
     contactCorrection: contact ? { min: round(correction.min), max: round(correction.max) } : null, sourceSlide: round(sourceSlide),
     sourceHipsRatio: [round(sourceHips.min), round(sourceHips.max)], aligned: [...restAlign.keys()].map((e) => e.name), airborneFrames, footClearance,
-    ik: footIk ? { legs: ik.legs, maxCorrection: round(ik.maxCorrection) } : null,
+    ik: footIk ? { legs: ik.legs, maxCorrection: round(ik.maxCorrection), footAims: ik.footAims } : null,
     rootMotion: {
       mode: rootMotion, extracted: rootMotion !== 'keep',
       displacement: [round(drift.x), round(drift.z)],
@@ -590,14 +615,25 @@ export const FLOOR_CLAMP_REGIONS = Object.freeze([
   { name: 'toe', bones: ['RightToeBase'], pivots: ['RightToeBase'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
   { name: 'hand', bones: ['LeftHand', 'Curl_L'], pivots: ['LeftForeArm', 'LeftArm'], limb: ['LeftArm', 'LeftForeArm', 'LeftHand'] },
   { name: 'hand', bones: ['RightHand', 'Curl_R'], pivots: ['RightForeArm', 'RightArm'], limb: ['RightArm', 'RightForeArm', 'RightHand'] },
-  { name: 'knee', bones: ['LeftLeg'], lift: true },
-  { name: 'knee', bones: ['RightLeg'], lift: true },
+  { name: 'knee', bones: ['LeftLeg'], lift: true, below: ['LeftFoot', 'shoe'] },
+  { name: 'knee', bones: ['RightLeg'], lift: true, below: ['RightFoot', 'shoe'] },
   { name: 'body', bones: null, lift: true },
+  // Passive: shin-weighted vertices below the ankle in the bind pose (a shoe skinned to the
+  // shin, a rig defect common in the legacy client rigs). They move with the shin, so no foot
+  // pivot can lift them, and lifting the body for them makes the character float; the clamp
+  // leaves them and the QA gate reports them as `shoe` (rig), not as floor penetration.
+  { name: 'shoe', bones: [], passive: true },
 ]);
 
-/** Region index of every vertex of `rig` (dominant joint; a `bones: null` region takes the rest). */
+/**
+ * Region index of every vertex of `rig` (dominant joint; a `bones: null` region takes the rest;
+ * `below: [joint, region]` sends vertices lower than that joint in the bind pose to `region`).
+ */
 export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
-  return rig.prims.map((p) => {
+  const world = worldMatrices(rig);
+  const height = (name) => { const n = rig.byName.get(name)?.[0]; return n ? new THREE.Vector3().setFromMatrixPosition(world(n)).y : -Infinity; };
+  const bind = skinPositions(rig);
+  return rig.prims.map((p, pi) => {
     const out = new Array(p.count).fill(null);
     for (let v = 0; v < p.count; v += 1) {
       let best = 0;
@@ -605,6 +641,11 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
       const name = rig.names[p.J[v * 4 + best]];
       let region = regions.findIndex((r) => r.bones?.includes(name));
       if (region < 0) region = regions.findIndex((r) => r.bones === null);
+      const below = regions[region]?.below;
+      if (below && bind[pi][v * 3 + 1] < height(below[0])) {
+        const other = regions.findIndex((r) => r.name === below[1]);
+        if (other >= 0) region = other;
+      }
       out[v] = region < 0 ? null : region;
     }
     return out;
@@ -630,7 +671,7 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
   for (const b of bind) for (let v = 1; v < b.length; v += 3) floor = Math.min(floor, b[v]);
   const node = (name) => rig.byName.get(name)?.[0];
   const membership = vertexRegions(rig, regions);
-  const active = regions.map((r, i) => membership.some((m) => m.includes(i)) && (r.lift || r.pivots.some((p) => node(p) && result.rotations.has(p))));
+  const active = regions.map((r, i) => !r.passive && membership.some((m) => m.includes(i)) && (r.lift || r.pivots.some((p) => node(p) && result.rotations.has(p))));
   const stats = {};
   for (const r of regions) stats[r.name] ||= { frames: 0, max: 0 };
   stats.limbLift = { frames: 0, max: 0 };
@@ -744,11 +785,16 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
     }
     // Whole body last: lift it out of the floor, or, where the source has a foot planted
     // (clearance ≤ 1 cm) and this character hangs more than FLOAT_DROP above the floor, drop it.
-    let lowest = Infinity;
-    skinPositions(rig, overrides).forEach((p, pi) => membership[pi].forEach((region, v) => { if (region != null && active[region]) lowest = Math.min(lowest, p[v * 3 + 1]); }));
-    lowest -= floor;
+    // Lift by the active regions; drop only as far as no vertex at all (passive shoes included) sinks.
+    let lowest = Infinity, lowestAll = Infinity;
+    skinPositions(rig, overrides).forEach((p, pi) => membership[pi].forEach((region, v) => {
+      const y = p[v * 3 + 1];
+      if (region != null && active[region]) lowest = Math.min(lowest, y);
+      if (region != null && (active[region] || regions[region].passive)) lowestAll = Math.min(lowestAll, y);
+    }));
+    lowest -= floor; lowestAll -= floor;
     const shift = lowest < -FLOOR_CLAMP_TOLERANCE ? -lowest
-      : clearance && clearance[i] != null && clearance[i] <= 0.01 && lowest > FLOAT_DROP ? -lowest : 0;
+      : clearance && clearance[i] != null && clearance[i] <= 0.01 && lowestAll > FLOAT_DROP ? -lowestAll : 0;
     if (shift) {
       const world = worldMatrices(rig, overrides);
       const parent = rig.parent.get(hipsNode);
@@ -765,6 +811,18 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
   }
   for (const v of Object.values(stats)) v.max = +v.max.toFixed(4);
   return { ...stats, unresolvedFrames: unresolved };
+}
+
+/**
+ * Make a loop's last frame its first frame again (rotations, hips height and, with `xz`, the
+ * hips' horizontal residual). Per-frame corrections (foot IK locks, floor clamp) can leave the
+ * two ends a few millimetres or degrees apart even when the source closes.
+ */
+export function closeLoop(result, { xz = true } = {}) {
+  const last = result.times.length - 1;
+  for (const arr of result.rotations.values()) arr.set(arr.slice(0, 4), last * 4);
+  result.hips[last * 3 + 1] = result.hips[1];
+  if (xz) { result.hips[last * 3] = result.hips[0]; result.hips[last * 3 + 2] = result.hips[2]; }
 }
 
 /** World joint positions (first node of each name) of `target` at frame i of a retarget result. */
