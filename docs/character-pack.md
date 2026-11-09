@@ -65,6 +65,8 @@ Photos of real people never enter either repository.
 
 `npm run check` builds a synthetic character pack (a programmatic 12-triangle skinned GLB and eleven one-channel clips, no real asset bytes), validates it, and requires each contract mutant to be rejected for its stated reason: missing states, unknown state, misnamed clip, clip driving no meshy-28 bone, clip channel without a path, clip without keyframes or with mismatched output, wrong skeleton id, renamed, reparented or missing bone, missing skin or weights, missing, mistyped or out-of-skin `JOINTS_0`, triangle strips, bad GLB magic or version, triangle and byte budgets (including the byte budget before hashing), bad rights, missing or invalid previews, undeclared files, and hash or size mutations.
 
+`npm run check` also runs `tools/checks/character-rig-check.mjs`, the deterministic half of the Blender rig pipeline that produces these models (configs, `joints.json` validation, meshy-28 assembly and the pose test on a synthetic humanoid); see [character-rig.md](character-rig.md).
+
 ## Concept generation
 
 `tools/gen-character-concept-openrouter.mjs --ficha <ficha.json> --reference <cast image> --out <png>` composes the concept prompt from a character sheet (`especie`/`proporcao`, ORIGINAL CHARACTER clause without references, `dominioPublico` clause) via `tools/lib/character-concept-prompt.mjs`. `openai/gpt-image-*` models use OpenRouter's Images API in this tool and in `tools/gen-image.mjs`. Both tools call paid APIs. Checks run the concept tool only with `--dry-run`, which exits before credentials are read, and never run `gen-image.mjs`.
