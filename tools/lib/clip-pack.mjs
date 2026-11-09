@@ -1,11 +1,37 @@
 // Per-character clip packs (docs/animation-conversion.md#packs): many meshy-28 clip GLBs baked on
 // one rig, merged into one GLB with one animation per clip, keyframes resampled and rotations
-// stored as normalized int16 quaternions. Both are core glTF 2.0 (animation sampler outputs for
-// rotation may be normalized SHORT), which three.js's GLTFLoader dequantizes itself: no decoder
-// or extension is needed in the client.
-import { Document } from '@gltf-transform/core';
+// stored as normalized int16 quaternions (core glTF 2.0: rotation sampler outputs may be
+// normalized SHORT; three.js's GLTFLoader dequantizes them), then buffer views encoded with
+// EXT_meshopt_compression in its lossless mode (no filters; the client's GLTFLoader has
+// MeshoptDecoder registered by default, Node reads it through the meshoptimizer package).
+import { Document, NodeIO } from '@gltf-transform/core';
+import { ALL_EXTENSIONS, EXTMeshoptCompression } from '@gltf-transform/extensions';
 import { dedup, resample } from '@gltf-transform/functions';
+import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer';
+import { optionalCharacterStates, requiredCharacterStates } from './character-pack.mjs';
 import { accessorFloats } from './character-rig.mjs';
+
+/** NodeIO that reads and writes meshopt-compressed packs (every pack reader must use it). */
+export async function packIO() {
+  await Promise.all([MeshoptDecoder.ready, MeshoptEncoder.ready]);
+  return new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'meshopt.decoder': MeshoptDecoder, 'meshopt.encoder': MeshoptEncoder });
+}
+
+/**
+ * Pack file a clip goes to, so a match loads only what it needs: `states` (the runtime states),
+ * `loco` (directional walk/run/sprint/crouch-walk, strafes, turns, jump phases, pistol
+ * locomotion, aim idles), `combat` (reload, draw/holster, hits, grenade, knife, shoot
+ * variants), `ceremony` (victory, defeat, deaths) and `emotes` (one file per emote, never in a
+ * family pack).
+ */
+export function packFamily(name) {
+  if (requiredCharacterStates.includes(name) || optionalCharacterStates.includes(name)) return 'states';
+  if (name.startsWith('emote_')) return 'emotes';
+  if (/^(victory|defeat|death_)/.test(name)) return 'ceremony';
+  if (/^(reload_|draw_|holster_|hit_|grenade_|knife_|shoot_)/.test(name)) return 'combat';
+  return 'loco';
+}
+export const PACK_FAMILIES = Object.freeze(['states', 'loco', 'combat', 'ceremony']);
 
 /** Keyframe removal tolerance of resample() (value units: quaternion components; cm for the hips under the 0.01 Armature). */
 export const PACK_RESAMPLE_TOLERANCE = 1e-4;
@@ -15,9 +41,11 @@ const INT16 = 32767;
  * Merge `clips` ([{ name, doc }], each a clip GLB document over the same skeleton) into one
  * document: the first clip's nodes, one animation per clip renamed to `name`, its extras kept.
  * With `compress`, redundant keys are dropped (resample, PACK_RESAMPLE_TOLERANCE), identical
- * accessors shared (dedup) and rotation outputs written as normalized int16.
+ * accessors shared (dedup) and rotation outputs written as normalized int16. With `meshopt`
+ * (needs packIO() to write), buffer views are meshopt-encoded without filters: decoding gives
+ * back the same bytes.
  */
-export async function packClips(clips, { compress = true, tolerance = PACK_RESAMPLE_TOLERANCE } = {}) {
+export async function packClips(clips, { compress = true, meshopt = compress, tolerance = PACK_RESAMPLE_TOLERANCE } = {}) {
   if (!clips.length) throw new Error('nothing to pack');
   const out = new Document();
   const buffer = out.createBuffer();
@@ -59,6 +87,7 @@ export async function packClips(clips, { compress = true, tolerance = PACK_RESAM
       }
     }
   }
+  if (meshopt) out.createExtension(EXTMeshoptCompression).setRequired(true).setEncoderOptions({ method: EXTMeshoptCompression.EncoderMethod.QUANTIZE });
   return out;
 }
 

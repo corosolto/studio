@@ -126,7 +126,7 @@ function channelValue(c, t) {
   if (i === last || c.step || t <= T[0]) return at(i);
   const f = Math.min(1, Math.max(0, (t - T[i]) / ((T[i + 1] - T[i]) || 1)));
   const a = at(i), b = at(i + 1);
-  if (c.n === 4) return new THREE.Quaternion().fromArray(a).slerp(new THREE.Quaternion().fromArray(b), f).toArray();
+  if (c.n === 4) { const out = [0, 0, 0, 0]; THREE.Quaternion.slerpFlat(out, 0, a, 0, b, 0, f); return out; } // as three.js interpolates
   return a.map((x, k) => x + (b[k] - x) * f);
 }
 

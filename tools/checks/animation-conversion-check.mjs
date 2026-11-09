@@ -27,7 +27,9 @@ import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mj
 import { LIBRARY_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
 import { converterExtraClipNames, extraClipNames } from '../lib/character-pack.mjs';
 import { evaluateClip, measureClip, stretchCause } from '../lib/clip-qa.mjs';
-import { packClipNames, packClips, unpackClip } from '../lib/clip-pack.mjs';
+import { packClipNames, packClips, packFamily, packIO, unpackClip } from '../lib/clip-pack.mjs';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { J, synthDocument } from './lib/synthetic-humanoid.mjs';
 
 let failures = 0;
@@ -675,10 +677,13 @@ await clause('Q5 closeLoop makes the last frame the first frame again', () => {
   for (let k = 0; k < 3; k += 1) assert(r.hips[k] === r.hips[last * 3 + k], 'hips seam left open');
 });
 
-await clause('P1 a pack merges clips by name, resamples, stores int16 rotations and reads back within 0.01°', async () => {
+await clause('P1 a pack merges clips by name, resamples, stores int16 rotations under lossless meshopt, reads back within 0.01° (three.js too)', async () => {
+  const pio = await packIO();
   const clipA = bodyClip(goodClip(), { ...loopMeta }, { duration: 1 });
   const clipB = bodyClip((t) => ({ deltas: { LeftArm: Q(Z, 60 * t), RightLeg: Q(X, 30 * t) }, hips: [0, -0.02 * t, 0] }), { loop: false }, { duration: 0.5 });
-  const pack = await io.readBinary(await io.writeBinary(await packClips([{ name: 'idle', doc: clipA }, { name: 'hit_front', doc: clipB }])));
+  const packed = await pio.writeBinary(await packClips([{ name: 'idle', doc: clipA }, { name: 'hit_front', doc: clipB }]));
+  const pack = await pio.readBinary(packed);
+  assert(pack.getRoot().listExtensionsUsed().some((e) => e.extensionName === 'EXT_meshopt_compression'), 'pack is not meshopt-encoded');
   assert(JSON.stringify(packClipNames(pack)) === '["idle","hit_front"]', `clips ${packClipNames(pack)}`);
   const rotations = pack.getRoot().listAnimations().flatMap((a) => a.listChannels().filter((c) => c.getTargetPath() === 'rotation'));
   assert(rotations.every((c) => c.getSampler().getOutput().getNormalized() && c.getSampler().getOutput().getArray() instanceof Int16Array), 'rotations not stored as normalized int16');
@@ -694,10 +699,25 @@ await clause('P1 a pack merges clips by name, resamples, stores int16 rotations 
     }
   }
   assert(worst < 0.01, `packed rotations drift ${worst}°`);
-  const raw = await io.writeBinary(await packClips([{ name: 'idle', doc: clipA }, { name: 'hit_front', doc: clipB }], { compress: false }));
-  const packed = await io.writeBinary(pack);
+  // The client's loader: three.js GLTFLoader with MeshoptDecoder, same values as the Studio reader.
+  const gltf = await new Promise((res, rej) => new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parse(packed.buffer.slice(packed.byteOffset, packed.byteOffset + packed.byteLength), '', res, rej));
+  let threeWorst = 0;
+  for (const clip of gltf.animations) {
+    const s = clipSampler(unpackClip(pack, clip.name));
+    for (const track of clip.tracks.filter((t) => t.name.endsWith('.quaternion'))) {
+      const interp = track.createInterpolant(), node = track.name.split('.')[0];
+      for (let t = 0; t <= clip.duration; t += 1 / 30) {
+        const ref = s.pose(t).find((c) => c.name === node && c.path === 'rotation');
+        threeWorst = Math.max(threeWorst, THREE.MathUtils.radToDeg(new THREE.Quaternion(...interp.evaluate(t)).normalize().angleTo(new THREE.Quaternion(...ref.value).normalize())));
+      }
+    }
+  }
+  assert(gltf.animations.length === 2 && threeWorst < 1e-3, `three.js reads the pack ${threeWorst}° away from the Studio reader`);
+  assert(packFamily('walk') === 'states' && packFamily('run_fwd_left') === 'loco' && packFamily('crouch_aim') === 'loco' && packFamily('shoot_pistol') === 'combat'
+    && packFamily('knife_idle') === 'combat' && packFamily('death_front') === 'ceremony' && packFamily('victory') === 'ceremony' && packFamily('emote_salute') === 'emotes', 'pack families');
+  const raw = await pio.writeBinary(await packClips([{ name: 'idle', doc: clipA }, { name: 'hit_front', doc: clipB }], { compress: false }));
   assert(packed.length < raw.length * 0.75, `pack ${packed.length} B is not much smaller than ${raw.length} B`);
-  return `worst ${worst.toFixed(4)}°, ${packed.length} B vs ${raw.length} B uncompressed`;
+  return `worst ${worst.toFixed(4)}°, three.js vs Studio ${threeWorst.toExponential(1)}°, ${packed.length} B vs ${raw.length} B uncompressed`;
 });
 
 // ----------------------------------------------------------------------------- L library

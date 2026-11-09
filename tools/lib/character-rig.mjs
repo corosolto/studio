@@ -268,7 +268,9 @@ export function clipSampler(doc, animation = null) {
     const f = T.length > 1 && !c.step ? Math.min(1, Math.max(0, (t - T[i]) / ((T[i + 1] - T[i]) || 1))) : 0;
     const at = (k) => { const base = c.cubic ? (k * 3 + 1) * c.n : k * c.n; return Array.from(c.values.slice(base, base + c.n)); };
     const a = at(i), b = at(Math.min(i + 1, T.length - 1));
-    if (c.n === 4) return new THREE.Quaternion().fromArray(a).slerp(new THREE.Quaternion().fromArray(b), f).toArray();
+    // slerpFlat, as three.js's QuaternionLinearInterpolant: Quaternion#slerp returns its own
+    // value when the dot product reaches 1, which dequantized (not quite unit) keys do.
+    if (c.n === 4) { const out = [0, 0, 0, 0]; THREE.Quaternion.slerpFlat(out, 0, a, 0, b, 0, f); return out; }
     return a.map((x, k) => x + (b[k] - x) * f);
   };
   return { duration, pose: (t) => channels.map((c) => ({ name: c.name, path: c.path, value: value(c, t) })) };

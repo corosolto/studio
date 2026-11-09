@@ -5,7 +5,7 @@
 //
 //   node tools/animations/clip-qa.mjs --model=<character.glb> --clips=<dir> [--states=<a,b>]
 //        [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]
-//   node tools/animations/clip-qa.mjs --model=<character.glb> --pack=<states.glb|extra.glb> [same options]
+//   node tools/animations/clip-qa.mjs --model=<character.glb> --pack=<a.glb,b.glb,...> [same options]
 //
 // --pack gates every clip of a per-character pack (tools/lib/clip-pack.mjs) as stored: resampled
 // keys and int16 rotations, read the way three.js reads them.
@@ -14,8 +14,6 @@
 // --flags-from takes loop, hold and airborne from the same-named clip in another directory, for
 // clips without metadata (the client's shipped clips) measured against converted ones.
 // --strict exits 1 when any clip fails tools/lib/clip-qa.mjs#CLIP_QA_THRESHOLDS.
-import { NodeIO } from '@gltf-transform/core';
-import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -23,7 +21,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { clipMetadata } from '../lib/animation-retarget.mjs';
 import { clipSampler, loadRig } from '../lib/character-rig.mjs';
-import { packClipNames, unpackClip } from '../lib/clip-pack.mjs';
+import { packClipNames, packIO, unpackClip } from '../lib/clip-pack.mjs';
 import { CLIP_QA_THRESHOLDS, evaluateClip, measureClip, stretchFromPoseReport } from '../lib/clip-qa.mjs';
 
 const args = process.argv.slice(2);
@@ -32,13 +30,19 @@ const model = flag('model');
 let clipsDir = flag('clips');
 const scratchPack = flag('pack') ? mkdtempSync(path.join(tmpdir(), 'clip-qa-pack-')) : null;
 if (!model || (!clipsDir && !scratchPack)) {
-  console.error('usage: clip-qa.mjs --model=<character.glb> --clips=<dir> | --pack=<pack.glb> [--states=<a,b>] [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]');
+  console.error('usage: clip-qa.mjs --model=<character.glb> --clips=<dir> | --pack=<a.glb,b.glb> [--states=<a,b>] [--out=<report.json>] [--label=<name>] [--samples=<n>] [--flags-from=<dir>] [--no-stretch] [--strict]');
   process.exit(1);
 }
-const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
+const io = await packIO();
 if (scratchPack) {
-  const pack = await io.read(flag('pack'));
-  for (const name of packClipNames(pack)) await io.write(path.join(scratchPack, `${name}.glb`), unpackClip(pack, name));
+  for (const file of flag('pack').split(',')) {
+    const pack = await io.read(file);
+    for (const name of packClipNames(pack)) {
+      const out = path.join(scratchPack, `${name}.glb`);
+      if (existsSync(out)) throw new Error(`${name} is in more than one pack`);
+      await io.write(out, unpackClip(pack, name));
+    }
+  }
   clipsDir = scratchPack;
 }
 const states = flag('states')?.split(',').filter(Boolean)
@@ -75,7 +79,7 @@ for (const state of states) {
   clips.push({ name: state, loop: Boolean(meta.loop), hold: meta.hold || 'none', airborne: Boolean(meta.airborne), rootMotion: meta.rootMotion || null, metrics, failures });
 }
 const report = {
-  model: path.resolve(model), label: flag('label') || path.basename(model, '.glb'), clips: flag('pack') ? path.resolve(flag('pack')) : path.resolve(clipsDir),
+  model: path.resolve(model), label: flag('label') || path.basename(model, '.glb'), clips: flag('pack') ? flag('pack').split(',').map((f) => path.resolve(f)) : path.resolve(clipsDir),
   thresholds: CLIP_QA_THRESHOLDS,
   synthetic: poseReport ? poseReport.summary.synthetic : null,
   clipCount: clips.length, failing: clips.filter((c) => c.failures.length).map((c) => c.name),
