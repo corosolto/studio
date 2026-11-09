@@ -18,11 +18,13 @@ import { POSE_THRESHOLDS, clipOverrides, skinPositions, worldMatrices } from './
 
 export const CLIP_QA_THRESHOLDS = Object.freeze({
   footSlideCm: 4, // planted-foot travel within one contact window
-  footSlideOverSourceCm: 1, // ...or at most this much above the source's own slide (extras.clip.contactSlide)
+  footSlideOverSourceCm: 1, // ...or the source's own slide (extras.clip.contactSlide) x footSlideSourceRatio + 1 cm
+  footSlideSourceRatio: 1.25, // a pivoting ball/heel travels with foot length, up to ~1.2x between characters
   penetrationCm: 2, // lowest vertex may sink at most this far below the floor
   heelPenetrationCm: 1, // heels (vertices of the Foot joints) sink at most this far
-  floatCm: 3, // the per-frame lowest vertex may rise at most this far (grounded clips)
-  hipsMaxRatio: 1.08, // hips above the bind height (grounded clips): legs over-extended
+  floatCm: 3, // the per-frame lowest vertex may rise at most this far above the source's own foot clearance
+  hipsMaxRatio: 1.08, // hips above the bind height (grounded clips): legs over-extended...
+  hipsOverSourceRatio: 0.08, // ...unless the source's own hips go that high (+ this margin, its reference offset)
   loopSeamCm: 1.5,
   loopSeamDeg: 5,
   twoHandDeviationCm: 3, // |hand distance − median| for two-handed holds
@@ -32,6 +34,18 @@ export const TWO_HAND_HOLDS = Object.freeze(['rifle']);
 const FOOT_JOINTS = FOOT_CONTACT_JOINTS;
 
 const cm = (m) => +(m * 100).toFixed(2);
+/**
+ * Floating measured against the source: per frame, the lowest vertex minus the source's own
+ * lowest-foot clearance (extras.clip.footClearance, scaled; a jump's flight or a handstand's
+ * raised feet are not the retarget's fault). Absent clearance: no entry (the raw max applies).
+ */
+function floatOverSource(lowest, clearance, fps) {
+  if (!Array.isArray(clearance) || clearance.length !== lowest.length) return {};
+  let worst = -Infinity, at = 0;
+  lowest.forEach((y, f) => { const excess = y - Math.max(0, clearance[f]); if (excess > worst) { worst = excess; at = f; } });
+  return { floatOverSourceCm: cm(worst), floatAt: +(at / fps).toFixed(3) };
+}
+
 /** Joint name carrying the largest skin weight of vertex [primitive, vertex]. */
 function dominantBone(rig, at) {
   if (!at) return null;
@@ -138,6 +152,7 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
       minCm: cm(minLowest), minAt: +(lowest.indexOf(minLowest) / fps).toFixed(3), minBone: dominantBone(rig, lowestBone[lowest.indexOf(minLowest)]),
       maxCm: cm(maxLowest), maxAt: +(lowest.indexOf(maxLowest) / fps).toFixed(3), floorY: +floor.toFixed(4),
       byRegionCm: Object.fromEntries(Object.entries(regionLow).map(([k, v]) => [k, cm(v)])),
+      ...floatOverSource(lowest, meta.footClearance, fps),
     },
     hips: {
       restHeight: +restHeight.Hips.toFixed(4), min: +Math.min(...hipsY).toFixed(4), max: +Math.max(...hipsY).toFixed(4),
@@ -169,13 +184,15 @@ export function stretchFromPoseReport(report, name) {
 export function evaluateClip(metrics, meta = {}, thresholds = CLIP_QA_THRESHOLDS) {
   const failures = [];
   const grounded = !meta.airborne;
-  const slideLimit = Math.max(thresholds.footSlideCm, (metrics.footSlide.sourceCm ?? -Infinity) + thresholds.footSlideOverSourceCm);
+  const slideLimit = Math.max(thresholds.footSlideCm, (metrics.footSlide.sourceCm ?? -Infinity) * thresholds.footSlideSourceRatio + thresholds.footSlideOverSourceCm);
   if (metrics.footSlide.maxCm > slideLimit) failures.push(`foot slide ${metrics.footSlide.maxCm} cm (${metrics.footSlide.joint} ${metrics.footSlide.window?.join('–')}s) > ${+slideLimit.toFixed(2)}`);
   if (metrics.lowestVertex.minCm < -thresholds.penetrationCm) failures.push(`floor penetration ${metrics.lowestVertex.minCm} cm @${metrics.lowestVertex.minAt}s < -${thresholds.penetrationCm}`);
   const heel = metrics.lowestVertex.byRegionCm?.heel;
   if (heel != null && heel < -thresholds.heelPenetrationCm) failures.push(`heel sinks ${heel} cm < -${thresholds.heelPenetrationCm}`);
-  if (grounded && metrics.lowestVertex.maxCm > thresholds.floatCm) failures.push(`floats ${metrics.lowestVertex.maxCm} cm @${metrics.lowestVertex.maxAt}s > ${thresholds.floatCm}`);
-  if (grounded && metrics.hips.maxRatio > thresholds.hipsMaxRatio) failures.push(`hips rise to ${metrics.hips.maxRatio}× bind height > ${thresholds.hipsMaxRatio}`);
+  const float = metrics.lowestVertex.floatOverSourceCm ?? metrics.lowestVertex.maxCm;
+  if (grounded && float > thresholds.floatCm) failures.push(`floats ${float} cm above the source's feet @${metrics.lowestVertex.floatAt ?? metrics.lowestVertex.maxAt}s > ${thresholds.floatCm}`);
+  const hipsLimit = Math.max(thresholds.hipsMaxRatio, (metrics.hips.sourceRatio?.[1] ?? -Infinity) + thresholds.hipsOverSourceRatio);
+  if (grounded && metrics.hips.maxRatio > hipsLimit) failures.push(`hips rise to ${metrics.hips.maxRatio}× bind height > ${+hipsLimit.toFixed(3)}`);
   if (meta.loop && metrics.loopSeam) {
     if (metrics.loopSeam.positionCm > thresholds.loopSeamCm) failures.push(`loop seam ${metrics.loopSeam.positionCm} cm (${metrics.loopSeam.positionJoint}) > ${thresholds.loopSeamCm}`);
     if (metrics.loopSeam.rotationDeg > thresholds.loopSeamDeg) failures.push(`loop seam ${metrics.loopSeam.rotationDeg}° (${metrics.loopSeam.rotationJoint}) > ${thresholds.loopSeamDeg}`);

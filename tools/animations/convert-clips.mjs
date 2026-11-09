@@ -87,7 +87,7 @@ for (const entry of entries) {
   const frames = result.times.length;
   const meta = {
     fps: CLIP_FPS, frames, duration: +result.times[frames - 1].toFixed(4), loop, hold: entry.hold || 'none', airborne: Boolean(entry.airborne),
-    rootMotion: result.rootMotion, hipsScale: +result.hipsScale.toFixed(6), footContact: result.contactCorrection, footIk: result.ik, contacts: result.contacts, contactSlide: result.sourceSlide, sourceHipsRatio: result.sourceHipsRatio, alignedLimbs: result.aligned,
+    rootMotion: result.rootMotion, hipsScale: +result.hipsScale.toFixed(6), footContact: result.contactCorrection, footIk: result.ik, contacts: result.contacts, contactSlide: result.sourceSlide, footClearance: result.footClearance, sourceHipsRatio: result.sourceHipsRatio, alignedLimbs: result.aligned,
     source: {
       id: entry.id || null, rig: opened.rig, file: path.basename(file), take: opened.take, nativeFps: opened.source.nativeFps,
       duration: +opened.source.duration.toFixed(4), start: +start.toFixed(4), end: +end.toFixed(4),

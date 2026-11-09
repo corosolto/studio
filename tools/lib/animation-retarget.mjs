@@ -244,7 +244,12 @@ export function objectPoseSource(group, clip, map, { baseName = mixamoBaseName }
     kind: 'object', duration: clip.duration, nativeFps: keyRate(clip.tracks.map((t) => t.times)),
     joints: new Set(joints.keys()),
     rest: () => restPose,
-    sample(t) { mixer.setTime(Math.min(clip.duration, Math.max(0, t))); return read(); },
+    sample(t) {
+      // A LoopOnce action that reached its end stays paused; reset so any time can be sampled again.
+      action.reset();
+      mixer.setTime(Math.min(clip.duration, Math.max(0, t)));
+      return read();
+    },
   };
 }
 
@@ -274,6 +279,8 @@ export const FOOT_CONTACT_JOINTS = Object.freeze(['LeftFoot', 'LeftToeBase', 'Ri
 export const CONTACT_HEIGHT = 0.03;
 export const CONTACT_SPEED = 0.25;
 export const CONTACT_MIN_FRAMES = 3;
+/** Both feet this far above their rest heights (scaled source) count as an airborne frame. */
+export const AIRBORNE_CLEARANCE = 0.08;
 
 /** Planted frame windows per foot joint: { LeftFoot: [[first, last], ...], ... } (frame indices). */
 export function footContacts(tracks, times) {
@@ -368,7 +375,10 @@ export function solveTwoBone(H, K, A, goal, hipQ, kneeQ, fallbackAxis) {
  * footIk (default on): inside the source's foot contact windows (ramped over IK_BLEND_FRAMES)
  * the ankle is pinned by two-bone IK to the source ankle's displacement from its rest, scaled
  * and added to the target ankle's rest; this is where the root velocity (the same scaled
- * source drift) keeps it still. Without it, different leg proportions make planted feet slide.
+ * source drift) keeps it still. (Pinning the ball instead while the heel is up was measured
+ * and rejected: a leg proportioned differently cannot reach it at push-off, so the ball drags;
+ * walk-forward on mst went from 1-2 cm to 9.6 cm of slide.)
+ * Without it, different leg proportions make planted feet slide.
  * Returns { times, rotations: Map(name -> Float32Array xyzw), hips: Float32Array local xyz,
  *           rootMotion, hipsScale, mapped, contacts, contactCorrection: {min, max} (m), ik }.
  */
@@ -481,6 +491,12 @@ export function retargetClip(source, target, {
       for (let k = a; k <= Math.min(b, track.length - 1); k += 1) sourceSlide = Math.max(sourceSlide, Math.hypot(track[k].x - track[a].x, track[k].z - track[a].z));
     }
   }
+  // Frames with every foot joint more than AIRBORNE_CLEARANCE above its rest height (jumps).
+  const footNames = Object.keys(footTracks);
+  let airborneFrames = 0;
+  for (let i = 0; i < frames; i += 1) if (footNames.length && footNames.every((n) => footTracks[n][i].clear > AIRBORNE_CLEARANCE)) airborneFrames += 1;
+  // Per frame, how far the source's lowest foot joint is above its rest height (scaled, m).
+  const footClearance = Array.from({ length: frames }, (_, i) => (footNames.length ? +Math.min(...footNames.map((n) => footTracks[n][i].clear)).toFixed(3) : 0));
 
   // Pass 2: foot IK inside the contact windows.
   const ik = { legs: 0, maxCorrection: 0 };
@@ -541,7 +557,7 @@ export function retargetClip(source, target, {
   return {
     times, rotations, hips, hipsScale, mapped: mapped.map((e) => e.name), contacts,
     contactCorrection: contact ? { min: round(correction.min), max: round(correction.max) } : null, sourceSlide: round(sourceSlide),
-    sourceHipsRatio: [round(sourceHips.min), round(sourceHips.max)], aligned: [...restAlign.keys()].map((e) => e.name),
+    sourceHipsRatio: [round(sourceHips.min), round(sourceHips.max)], aligned: [...restAlign.keys()].map((e) => e.name), airborneFrames, footClearance,
     ik: footIk ? { legs: ik.legs, maxCorrection: round(ik.maxCorrection) } : null,
     rootMotion: {
       mode: rootMotion, extracted: rootMotion !== 'keep',
@@ -554,27 +570,32 @@ export function retargetClip(source, target, {
 
 /** Penetration below the bind floor tolerated before the floor clamp acts (m). */
 export const FLOOR_CLAMP_TOLERANCE = 0.005;
+/** Height above the floor at which a body whose source has a foot planted is dropped back (m). */
+export const FLOAT_DROP = 0.02;
 
 /* Body regions the bake-time floor clamp keeps above the floor, in the order it treats them.
    A vertex belongs to the region of its dominant joint. `pivots` are tried in order: the
    first whose lever to the sinking vertex is not vertical turns about the horizontal axis
    across that lever (heel: the ankle pitches the foot; toes: the ball; hands: the elbow, then
    the shoulder). When the heel and the toes of one foot both sink, no pitch can help (the
-   ankle itself is too low for this foot's shape): two-bone IK on `leg` raises that ankle by
-   the shallower depth first. `lift` regions (knees) raise the hips instead: a kneeling thigh
-   is vertical, so no rotation lifts the knee. */
+   ankle itself is too low for this foot's shape): two-bone IK on `limb` raises that ankle by
+   the shallower depth first; the same IK raises a wrist or an ankle whose levers are all
+   vertical (a hand planted under a straight arm). `lift` regions raise the hips instead:
+   knees (a kneeling thigh is vertical, so no rotation lifts the knee) and the rest of the
+   body (`bones: null`: torso, head, upper limbs lying on the floor). */
 export const FLOOR_CLAMP_REGIONS = Object.freeze([
-  { name: 'heel', bones: ['LeftFoot'], pivots: ['LeftFoot'], leg: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
-  { name: 'heel', bones: ['RightFoot'], pivots: ['RightFoot'], leg: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
-  { name: 'toe', bones: ['LeftToeBase'], pivots: ['LeftToeBase'], leg: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
-  { name: 'toe', bones: ['RightToeBase'], pivots: ['RightToeBase'], leg: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
-  { name: 'hand', bones: ['LeftHand', 'Curl_L'], pivots: ['LeftForeArm', 'LeftArm'] },
-  { name: 'hand', bones: ['RightHand', 'Curl_R'], pivots: ['RightForeArm', 'RightArm'] },
+  { name: 'heel', bones: ['LeftFoot'], pivots: ['LeftFoot'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
+  { name: 'heel', bones: ['RightFoot'], pivots: ['RightFoot'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
+  { name: 'toe', bones: ['LeftToeBase'], pivots: ['LeftToeBase'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
+  { name: 'toe', bones: ['RightToeBase'], pivots: ['RightToeBase'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
+  { name: 'hand', bones: ['LeftHand', 'Curl_L'], pivots: ['LeftForeArm', 'LeftArm'], limb: ['LeftArm', 'LeftForeArm', 'LeftHand'] },
+  { name: 'hand', bones: ['RightHand', 'Curl_R'], pivots: ['RightForeArm', 'RightArm'], limb: ['RightArm', 'RightForeArm', 'RightHand'] },
   { name: 'knee', bones: ['LeftLeg'], lift: true },
   { name: 'knee', bones: ['RightLeg'], lift: true },
+  { name: 'body', bones: null, lift: true },
 ]);
 
-/** Region name of every vertex of `rig` (dominant joint), or null outside FLOOR_CLAMP_REGIONS. */
+/** Region index of every vertex of `rig` (dominant joint; a `bones: null` region takes the rest). */
 export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
   return rig.prims.map((p) => {
     const out = new Array(p.count).fill(null);
@@ -582,7 +603,8 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
       let best = 0;
       for (let k = 1; k < 4; k += 1) if (p.W[v * 4 + k] > p.W[v * 4 + best]) best = k;
       const name = rig.names[p.J[v * 4 + best]];
-      const region = regions.findIndex((r) => r.bones.includes(name));
+      let region = regions.findIndex((r) => r.bones?.includes(name));
+      if (region < 0) region = regions.findIndex((r) => r.bones === null);
       out[v] = region < 0 ? null : region;
     }
     return out;
@@ -593,13 +615,16 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
  * Bake-time, mesh-aware floor clamp (`rig`: loadRig of the character). Per frame the mesh is
  * skinned; when a region's lowest vertex sinks more than FLOOR_CLAMP_TOLERANCE below the bind
  * floor, the region's pivot turns it up about the horizontal axis across the lever (at most 45°
- * per step), a foot whose heel and toes both sink is raised by leg IK, and `lift` regions
- * raise the hips by the depth. Up to 6 passes per frame.
+ * per step), a foot whose heel and toes both sink (or a limb no pivot can lift) is raised by
+ * two-bone IK, and `lift` regions raise the hips by the depth. Up to 8 passes per frame; then
+ * the whole body is lifted out of any remaining penetration, or dropped back to the floor when
+ * the source has a foot planted (`clearance`: extras.clip.footClearance, scaled) and this
+ * character hangs more than FLOAT_DROP above it.
  * Rewrites `result.rotations` and `result.hips` in place. Returns per-region { frames, max }
- * (degrees for pivots, metres for lifts; `ankleLift` for the leg IK) and the frames still
+ * (degrees for pivots, metres for lifts; `limbLift` for the IK) and the frames still
  * below the tolerance.
  */
-export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passes = 6 } = {}) {
+export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passes = 8, clearance = null } = {}) {
   const bind = skinPositions(rig);
   let floor = Infinity;
   for (const b of bind) for (let v = 1; v < b.length; v += 3) floor = Math.min(floor, b[v]);
@@ -608,7 +633,8 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
   const active = regions.map((r, i) => membership.some((m) => m.includes(i)) && (r.lift || r.pivots.some((p) => node(p) && result.rotations.has(p))));
   const stats = {};
   for (const r of regions) stats[r.name] ||= { frames: 0, max: 0 };
-  stats.ankleLift = { frames: 0, max: 0 };
+  stats.limbLift = { frames: 0, max: 0 };
+  stats.bodyShift = { frames: 0, max: 0 };
   let unresolved = 0;
   const hipsNode = node('Hips');
   const parentWorldInv = rig.parent.get(hipsNode) ? null : new THREE.Matrix4();
@@ -633,18 +659,18 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
       }));
       let moved = false;
       sinking = false;
-      // Whole foot below the floor: raise that ankle by leg IK (same leg chain on heel and toe).
+      // Whole foot below the floor: raise that ankle by leg IK (same limb chain on heel and toe).
       const legs = new Map();
       regions.forEach((region, ri) => {
         const depth = floor - low[ri].y;
-        if (!region.leg || !active[ri] || depth <= FLOOR_CLAMP_TOLERANCE) return;
-        const key = region.leg.join();
-        const entry = legs.get(key) || { leg: region.leg, depths: [] };
+        if (!region.limb || !active[ri] || depth <= FLOOR_CLAMP_TOLERANCE) return;
+        const key = region.limb.join();
+        const entry = legs.get(key) || { limb: region.limb, depths: [] };
         entry.depths.push(depth);
         legs.set(key, entry);
       });
-      const liftAnkle = (leg, lift) => {
-        const [hip, knee, ankle] = leg.map(node);
+      const liftLimb = (limb, lift) => {
+        const [hip, knee, ankle] = limb.map(node);
         if (![hip, knee, ankle].every((n) => n && result.rotations.has(n.getName()))) return false;
         const pos = (n) => new THREE.Vector3().setFromMatrixPosition(world(n));
         const rot = (n) => { const q = new THREE.Quaternion(); world(n).decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; };
@@ -664,11 +690,11 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
           track.set(q.toArray(), i * 4);
           overrides.set(n, { ...overrides.get(n), r: q.toArray() });
         }
-        stats.ankleLift.max = Math.max(stats.ankleLift.max, lift);
-        touched.add('ankleLift');
+        stats.limbLift.max = Math.max(stats.limbLift.max, lift);
+        touched.add('limbLift');
         return true;
       };
-      for (const { leg, depths } of legs.values()) if (depths.length > 1 && liftAnkle(leg, Math.min(...depths))) moved = true;
+      for (const { limb, depths } of legs.values()) if (depths.length > 1 && liftLimb(limb, Math.min(...depths))) moved = true;
       if (moved) continue; // re-skin before pitching
       regions.forEach((region, ri) => {
         const depth = floor - low[ri].y;
@@ -710,16 +736,66 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
           moved = true;
           return;
         }
-        // No pivot can lift it (lever vertical: the heel right under the ankle): raise the ankle.
-        if (region.leg && liftAnkle(region.leg, depth)) moved = true;
+        // No pivot can lift it (levers vertical: a heel under the ankle, a hand under a straight
+        // arm): raise the ankle or the wrist by IK.
+        if (region.limb && liftLimb(region.limb, depth)) moved = true;
       });
       if (!moved) break;
+    }
+    // Whole body last: lift it out of the floor, or, where the source has a foot planted
+    // (clearance ≤ 1 cm) and this character hangs more than FLOAT_DROP above the floor, drop it.
+    let lowest = Infinity;
+    skinPositions(rig, overrides).forEach((p, pi) => membership[pi].forEach((region, v) => { if (region != null && active[region]) lowest = Math.min(lowest, p[v * 3 + 1]); }));
+    lowest -= floor;
+    const shift = lowest < -FLOOR_CLAMP_TOLERANCE ? -lowest
+      : clearance && clearance[i] != null && clearance[i] <= 0.01 && lowest > FLOAT_DROP ? -lowest : 0;
+    if (shift) {
+      const world = worldMatrices(rig, overrides);
+      const parent = rig.parent.get(hipsNode);
+      const toLocal = parent ? world(parent).clone().invert() : parentWorldInv;
+      const local = new THREE.Vector3().setFromMatrixPosition(world(hipsNode)).add(new THREE.Vector3(0, shift, 0)).applyMatrix4(toLocal).toArray();
+      overrides.set(hipsNode, { ...overrides.get(hipsNode), t: local });
+      result.hips.set(local, i * 3);
+      stats.bodyShift.max = Math.max(stats.bodyShift.max, Math.abs(shift));
+      touched.add('bodyShift');
+      sinking = false;
     }
     for (const name of touched) stats[name].frames += 1;
     if (sinking) unresolved += 1;
   }
   for (const v of Object.values(stats)) v.max = +v.max.toFixed(4);
   return { ...stats, unresolvedFrames: unresolved };
+}
+
+/** World joint positions (first node of each name) of `target` at frame i of a retarget result. */
+export function resultJointPositions(target, result, i) {
+  const out = new Map(), world = new Map();
+  for (const e of target.order) {
+    const rot = result.rotations.get(e.name);
+    const r = rot && target.byName.get(e.name) === e ? Array.from(rot.slice(i * 4, i * 4 + 4)) : e.r;
+    const t = e === target.byName.get('Hips') ? Array.from(result.hips.slice(i * 3, i * 3 + 3)) : e.t;
+    const m = composeTrs(t, r, e.s);
+    const w = e.parent ? world.get(e.parent).clone().multiply(m) : m;
+    world.set(e, w);
+    if (!out.has(e.name)) out.set(e.name, new THREE.Vector3().setFromMatrixPosition(w));
+  }
+  return out;
+}
+
+/**
+ * First versus last frame of a retarget result: largest joint position difference (m) and
+ * largest local rotation difference (degrees) over the animated joints. Used to detect loops.
+ */
+export function resultSeam(target, result) {
+  const last = result.times.length - 1;
+  const a = resultJointPositions(target, result, 0), b = resultJointPositions(target, result, last);
+  let position = 0, rotation = 0;
+  for (const [name, arr] of result.rotations) {
+    position = Math.max(position, a.get(name).distanceTo(b.get(name)));
+    const qa = new THREE.Quaternion().fromArray(arr, 0), qb = new THREE.Quaternion().fromArray(arr, last * 4);
+    rotation = Math.max(rotation, THREE.MathUtils.radToDeg(qa.angleTo(qb)));
+  }
+  return { position, rotation };
 }
 
 /**

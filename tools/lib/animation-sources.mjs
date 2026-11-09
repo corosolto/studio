@@ -34,13 +34,40 @@ export function pickClip(animations, take) {
   return [...animations].filter((a) => a.tracks.length).sort((a, b) => b.duration * b.tracks.length - a.duration * a.tracks.length)[0] || null;
 }
 
-/** Parse an FBX file with three's FBXLoader (embedded textures are irrelevant and silenced). */
+/**
+ * Byte offset where the top-level node list of a binary FBX ends (before its null record), or
+ * null for ASCII files. Each node record: end offset, property count, property bytes (u32, or
+ * u64 from version 7500), a name length byte and the name; a zero end offset closes a list.
+ */
+export function fbxNodeListEnd(bytes) {
+  if (bytes.subarray(0, 18).toString('latin1') !== 'Kaydara FBX Binary') return null;
+  const big = bytes.readUInt32LE(23) >= 7500;
+  let pos = 27;
+  for (;;) {
+    const end = big ? Number(bytes.readBigUInt64LE(pos)) : bytes.readUInt32LE(pos);
+    if (end === 0 || end > bytes.length) return pos;
+    pos = end;
+  }
+}
+
+/**
+ * Parse an FBX file with three's FBXLoader (embedded textures are irrelevant and silenced).
+ * FBXLoader decides where the node list stops from the footer size (the last 160 + 16 bytes);
+ * some Mixamo exports carry a different footer and it then reads the footer as a node
+ * ("Unknown property type"). Those are re-parsed with the footer replaced by 176 zero bytes
+ * right after the last top-level node, which is what the loader's heuristic expects.
+ */
 export function parseFbx(file) {
   const bytes = readFileSync(file);
   const warn = console.warn;
   console.warn = () => {};
+  const parse = (b) => new FBXLoader().parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength), '');
   try {
-    return new FBXLoader().parse(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
+    return parse(bytes);
+  } catch (error) {
+    const end = /Unknown property type/.test(error.message) ? fbxNodeListEnd(bytes) : null;
+    if (end == null) throw error;
+    return parse(Buffer.concat([bytes.subarray(0, end), Buffer.alloc(176)]));
   } finally {
     console.warn = warn;
   }

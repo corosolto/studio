@@ -47,13 +47,14 @@ for (const state of states) {
   const meta = clipMetadata(doc);
   const source = gltfPoseSource(doc, animation, RIG_MAPS['meshy-28']);
   const result = retargetClip(source, target, { fps: meta.fps || CLIP_FPS, rootMotion: 'keep', absoluteArms: true, footContact: !args.includes('--no-foot-contact'), footIk: !args.includes('--no-foot-ik'), contacts: meta.contacts || null, loop: Boolean(meta.loop), alignLimbs: args.includes('--no-limb-align') ? [] : undefined });
-  const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result);
   const scale = (v) => +(v * result.hipsScale).toFixed(4);
+  const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale) });
   const rm = meta.rootMotion;
   const frames = result.times.length;
   const extras = {
     ...meta, fps: meta.fps || CLIP_FPS, frames, duration: +result.times[frames - 1].toFixed(4),
     contactSlide: meta.contactSlide != null ? scale(meta.contactSlide) : undefined,
+    footClearance: meta.footClearance ? meta.footClearance.map(scale) : undefined,
     rootMotion: rm ? { ...rm, displacement: rm.displacement.map(scale), velocity: rm.velocity.map(scale), speed: scale(rm.speed) } : undefined,
     bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, footContact: result.contactCorrection, footIk: result.ik, floorClamp, alignedLimbs: result.aligned },
   };
