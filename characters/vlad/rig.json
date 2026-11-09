@@ -1,0 +1,116 @@
+{
+  "id": "vlad",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.04
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ],
+    "thighCeiling": 1.0,
+    "waistBand": null,
+    "chainLocality": 0.02,
+    "gradientRamp": 0.05,
+    "groinBand": 0.08
+  },
+  "joints": {
+    "kneeBendMin": 1
+  },
+  "extras": [
+    {
+      "name": "coat-upper",
+      "select": {
+        "from": [
+          "torso"
+        ],
+        "box": {
+          "min": [
+            null,
+            null,
+            0.9
+          ],
+          "max": [
+            null,
+            null,
+            1.2
+          ]
+        },
+        "grow": {
+          "seeds": [
+            [
+              0,
+              0.13,
+              1.0
+            ]
+          ],
+          "crease": 40,
+          "thickness": 0.06
+        }
+      },
+      "kind": "cape",
+      "measure": true
+    },
+    {
+      "name": "coat-lower",
+      "select": {
+        "from": [
+          "torso",
+          "leg_L",
+          "leg_R"
+        ],
+        "box": {
+          "max": [
+            null,
+            null,
+            0.9
+          ]
+        },
+        "grow": {
+          "seeds": [
+            [
+              0,
+              0.216,
+              0.5
+            ]
+          ],
+          "crease": 40,
+          "thickness": 0.06
+        }
+      },
+      "kind": "cape",
+      "cut": [
+        "leg_L",
+        "leg_R"
+      ]
+    },
+    {
+      "name": "buckle",
+      "select": {
+        "box": {
+          "min": [
+            -0.09,
+            -0.24,
+            0.8
+          ],
+          "max": [
+            0.09,
+            -0.17,
+            1.03
+          ]
+        }
+      },
+      "rigid": "Hips"
+    }
+  ]
+}
