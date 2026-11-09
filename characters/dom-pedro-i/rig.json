@@ -1,0 +1,113 @@
+{
+  "id": "dom-pedro-i",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ],
+      [
+        "LeftShoulder",
+        "LeftArm",
+        0.08
+      ],
+      [
+        "Spine",
+        "LeftShoulder",
+        0.06
+      ],
+      [
+        "RightShoulder",
+        "RightArm",
+        0.08
+      ],
+      [
+        "Spine",
+        "RightShoulder",
+        0.06
+      ],
+      [
+        "Hips",
+        "Spine02",
+        0.1
+      ],
+      [
+        "Spine02",
+        "Spine01",
+        0.1
+      ],
+      [
+        "Spine01",
+        "Spine",
+        0.08
+      ]
+    ]
+  },
+  "extras": [
+    {
+      "name": "left-shoulder-transition",
+      "select": {
+        "from": [
+          "torso",
+          "arm_L"
+        ],
+        "box": {
+          "min": [
+            0.075,
+            null,
+            1.12
+          ],
+          "max": [
+            0.3,
+            null,
+            1.37
+          ]
+        }
+      },
+      "bones": [
+        "Spine",
+        "LeftShoulder",
+        "LeftArm",
+        "LeftForeArm"
+      ]
+    },
+    {
+      "name": "right-shoulder-transition",
+      "select": {
+        "from": [
+          "torso",
+          "arm_R"
+        ],
+        "box": {
+          "min": [
+            -0.3,
+            null,
+            1.12
+          ],
+          "max": [
+            -0.075,
+            null,
+            1.37
+          ]
+        }
+      },
+      "bones": [
+        "Spine",
+        "RightShoulder",
+        "RightArm",
+        "RightForeArm"
+      ]
+    }
+  ]
+}

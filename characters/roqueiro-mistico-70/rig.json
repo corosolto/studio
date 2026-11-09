@@ -1,0 +1,12 @@
+{
+  "id": "roqueiro-mistico-70",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": { "handPartOffset": 0.04 },
+  "weights": { "linearBlends": [["LeftForeArm", "LeftHand", 0.06], ["RightForeArm", "RightHand", 0.06]] },
+  "extras": [
+    { "name": "buckle", "select": { "box": { "min": [-0.07, -0.12, 0.92], "max": [0.07, -0.07, 0.99] } }, "rigid": "Hips" },
+    { "name": "fringe-L", "select": { "box": { "min": [0.20, null, 1.10], "max": [0.48, null, 1.25] } }, "bones": ["LeftArm", "LeftForeArm", "LeftHand"] },
+    { "name": "fringe-R", "select": { "box": { "min": [-0.48, null, 1.10], "max": [-0.20, null, 1.25] } }, "bones": ["RightArm", "RightForeArm", "RightHand"] }
+  ]
+}

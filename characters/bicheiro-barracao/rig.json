@@ -1,0 +1,28 @@
+{
+  "id": "bicheiro-barracao",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.04
+  },
+  "weights": {
+    "headRigidAbove": 0.06,
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ],
+      [
+        "neck",
+        "Head",
+        0.05
+      ]
+    ]
+  }
+}

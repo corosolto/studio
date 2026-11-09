@@ -1,0 +1,39 @@
+{
+  "id": "prata",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.035
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.035
+      ],
+      [
+        "Hips",
+        "LeftUpLeg",
+        0.15
+      ],
+      [
+        "Hips",
+        "RightUpLeg",
+        0.15
+      ],
+      [
+        "LeftShoulder",
+        "LeftArm",
+        0.08
+      ],
+      [
+        "RightShoulder",
+        "RightArm",
+        0.08
+      ]
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "pm-arrego",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03,
+    "armShoulderInset": 0.15
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ],
+    "headRigidAbove": 1.0
+  }
+}
