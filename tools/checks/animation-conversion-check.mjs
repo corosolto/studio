@@ -20,8 +20,8 @@ import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import { clipSampler, deformJointNames, loadRig } from '../lib/character-rig.mjs';
 import {
-  FLOOR_CLAMP_REGIONS, MAX_ALIGN_KNEE_BEND, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, facingYaw, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
-  objectPoseSource, referenceSkeletonDocument, retargetClip, skeletonGraph, writeClipDocument,
+  FLOOR_CLAMP_REGIONS, GRIP_MAX_DRIFT, GRIP_TOLERANCE, MAX_ALIGN_KNEE_BEND, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, facingYaw, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
+  holdTwoHandGrip, objectPoseSource, referenceSkeletonDocument, resultJointPositions, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mjs';
 import { LIBRARY_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
@@ -475,6 +475,25 @@ await clause('B2 clip metadata round-trips through the GLB and unmapped rigs are
   let message = '';
   try { retargetClip(gltfPoseSource(doc, doc.getRoot().listAnimations()[0], RIG_MAPS['meshy-28']), skeletonGraph(stranger)); } catch (error) { message = error.message; }
   assert(/only 1 target joints map/.test(message), `expected a refusal, got ${message || 'success'}`);
+});
+
+await clause('B3 two-hand grip: the support hand is held within GRIP_TOLERANCE of the median hand distance', async () => {
+  const swaying = (t) => ({ deltas: { LeftArm: Q(Y, -70 + 7 * Math.sin(2 * Math.PI * t)), RightArm: Q(Y, 70) } });
+  const clipDoc = await io.readBinary(await io.writeBinary(referenceClip(swaying)));
+  const doc = character();
+  const target = skeletonGraph(doc);
+  const r = retargetClip(gltfPoseSource(clipDoc, clipDoc.getRoot().listAnimations()[0], RIG_MAPS['meshy-28']), target, { rootMotion: 'keep', absoluteArms: true, footIk: false });
+  const drift = () => {
+    const d = r.times.map((_, i) => { const p = resultJointPositions(target, r, i); return p.get('LeftHand').distanceTo(p.get('RightHand')); });
+    const s = [...d].sort((a, b) => a - b), m = s[Math.floor(s.length / 2)];
+    return Math.max(m - s[0], s[s.length - 1] - m);
+  };
+  const before = drift();
+  const stats = holdTwoHandGrip(loadRig(doc), r);
+  const after = drift();
+  assert(before > GRIP_TOLERANCE + 0.01 && before < GRIP_MAX_DRIFT, `fixture drift ${before}`);
+  assert(after <= GRIP_TOLERANCE + 1e-3 && stats.frames > 0, `grip still drifts ${after} m (${JSON.stringify(stats)})`);
+  return `drift ${(before * 100).toFixed(2)} cm -> ${(after * 100).toFixed(2)} cm over ${stats.frames} frames`;
 });
 
 // ----------------------------------------------------------------------------- Q clip QA

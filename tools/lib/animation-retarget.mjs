@@ -895,34 +895,40 @@ export function holdTwoHandGrip(rig, result, { tolerance = GRIP_TOLERANCE, maxDr
   };
   const pos = (world, n) => new THREE.Vector3().setFromMatrixPosition(world(n));
   const rot = (world, n) => { const q = new THREE.Quaternion(); world(n).decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; };
-  const dist = Array.from({ length: frames }, (_, i) => { const w = pose(i); return pos(w, hand).distanceTo(pos(w, other)); });
-  const sorted = [...dist].sort((a, b) => a - b);
-  const median = sorted[Math.floor(sorted.length / 2)];
-  const drift = Math.max(median - sorted[0], sorted[sorted.length - 1] - median);
-  stats.driftCm = +(drift * 100).toFixed(2);
-  if (drift <= tolerance || drift > maxDrift) return stats;
-  for (let i = 0; i < frames; i += 1) {
-    const want = THREE.MathUtils.clamp(dist[i], median - tolerance, median + tolerance);
-    if (Math.abs(want - dist[i]) < 1e-5) continue;
-    const world = pose(i);
-    const H = pos(world, arm), K = pos(world, fore), A = pos(world, hand), R = pos(world, other);
-    const goal = R.clone().add(A.clone().sub(R).setLength(want));
-    const solved = solveTwoBone(H, K, A, goal, rot(world, arm), rot(world, fore), new THREE.Vector3(0, 1, 0).applyQuaternion(rot(world, arm)));
-    const locals = [
-      [arm, rot(world, rig.parent.get(arm)).invert().multiply(solved.hip)],
-      [fore, solved.hip.clone().invert().multiply(solved.knee)],
-      [hand, solved.knee.clone().invert().multiply(rot(world, hand))],
-    ];
-    for (const [n, q] of locals) {
-      q.normalize();
-      const track = result.rotations.get(n.getName());
-      const prev = track.slice(i * 4, i * 4 + 4);
-      if (prev[0] * q.x + prev[1] * q.y + prev[2] * q.z + prev[3] * q.w < 0) q.set(-q.x, -q.y, -q.z, -q.w);
-      track.set(q.toArray(), i * 4);
+  const touched = new Set();
+  // Up to three passes: the median moves a little once the outliers are pulled in.
+  for (let pass = 0; pass < 3; pass += 1) {
+    const dist = Array.from({ length: frames }, (_, i) => { const w = pose(i); return pos(w, hand).distanceTo(pos(w, other)); });
+    const sorted = [...dist].sort((a, b) => a - b);
+    const median = sorted[Math.floor(sorted.length / 2)];
+    const drift = Math.max(median - sorted[0], sorted[sorted.length - 1] - median);
+    if (pass === 0) stats.driftCm = +(drift * 100).toFixed(2);
+    if (drift <= tolerance || (pass === 0 && drift > maxDrift)) break;
+    const band = tolerance * 0.9;
+    for (let i = 0; i < frames; i += 1) {
+      const want = THREE.MathUtils.clamp(dist[i], median - band, median + band);
+      if (Math.abs(want - dist[i]) < 1e-5) continue;
+      const world = pose(i);
+      const H = pos(world, arm), K = pos(world, fore), A = pos(world, hand), R = pos(world, other);
+      const goal = R.clone().add(A.clone().sub(R).setLength(want));
+      const solved = solveTwoBone(H, K, A, goal, rot(world, arm), rot(world, fore), new THREE.Vector3(0, 1, 0).applyQuaternion(rot(world, arm)));
+      const locals = [
+        [arm, rot(world, rig.parent.get(arm)).invert().multiply(solved.hip)],
+        [fore, solved.hip.clone().invert().multiply(solved.knee)],
+        [hand, solved.knee.clone().invert().multiply(rot(world, hand))],
+      ];
+      for (const [n, q] of locals) {
+        q.normalize();
+        const track = result.rotations.get(n.getName());
+        const prev = track.slice(i * 4, i * 4 + 4);
+        if (prev[0] * q.x + prev[1] * q.y + prev[2] * q.z + prev[3] * q.w < 0) q.set(-q.x, -q.y, -q.z, -q.w);
+        track.set(q.toArray(), i * 4);
+      }
+      touched.add(i);
+      stats.maxCm = Math.max(stats.maxCm, +(Math.abs(want - dist[i]) * 100).toFixed(2));
     }
-    stats.frames += 1;
-    stats.maxCm = Math.max(stats.maxCm, +(Math.abs(want - dist[i]) * 100).toFixed(2));
   }
+  stats.frames = touched.size;
   return stats;
 }
 
