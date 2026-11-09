@@ -94,8 +94,9 @@ def main():
     labels, parts = C.read_face_parts(body, cfg)
     n_body = len(C.PART_NAMES)
     body_mask = parts < n_body
-    lm = C.landmarks(body, face_mask=body_mask)
     parts_report = json.loads((args.work / "parts.json").read_text())
+    # The crotch comes from the parts step (full, closed mesh); see common.landmarks.
+    lm = C.landmarks(body, face_mask=body_mask, crotch_z=float(parts_report["landmarks"]["crotchZ"]))
     bvh = lm["_bvh"]
     ymin, ymax = lm["_y"]
     H = lm["height"]
@@ -150,9 +151,19 @@ def main():
             return line[key]
 
         def leg_section(z):
-            _mean, xmin_, xmax_ = leg_row(z)
-            xs = np.arange(xmin_, xmax_ + 1e-9, 0.005)
-            return section_xy(bvh, xs, z, ymin, ymax)
+            """Leg centroid at z; a row the silhouette or the rays miss (an extra such as a
+            tail removed from the body, a gap in the mesh) falls back to the nearest row
+            within 3 cm that has a section."""
+            for dz in (0.0, -0.005, 0.005, -0.01, 0.01, -0.02, 0.02, -0.03, 0.03):
+                _mean, xmin_, xmax_ = leg_row(z + dz)
+                cen, area = section_xy(bvh, np.arange(xmin_, xmax_ + 1e-9, 0.005), z + dz, ymin, ymax)
+                if cen is not None:
+                    return cen, area
+            return None, 0.0
+
+        if not len(zs_line):
+            raise RuntimeError(f"{prefix} leg: no leg silhouette below the crotch (z {C.r(crotch, 3)}); "
+                               "check the leg parts in parts-review.png and the extras that select below the crotch")
 
         lo_w, hi_w = J["ankleWindow"]
         best = None
@@ -160,8 +171,14 @@ def main():
             cen, area = leg_section(z)
             if cen is not None and (best is None or area < best[2]):
                 best = (z, cen, area)
+        if best is None:
+            raise RuntimeError(f"{prefix}Foot: no leg section in the ankle window "
+                               f"{C.r(lo_w * H, 3)}..{C.r(hi_w * H, 3)} m; set joints.ankleWindow or override {prefix}Foot")
         ankle_z, ankle_c, _ = best
         thigh_c, _ = leg_section(crotch - 0.03)
+        if thigh_c is None:
+            raise RuntimeError(f"{prefix}UpLeg: no thigh section just below the crotch (z {C.r(crotch - 0.03, 3)} m); "
+                               f"an extra probably removed the thigh faces, or override {prefix}UpLeg")
         pelvis_y = None
         cen_p, _ = section_xy(bvh, np.arange(-lm["torsoHalfWidth"] * 0.6, lm["torsoHalfWidth"] * 0.6 + 1e-9, 0.005),
                               hip_z, ymin, ymax)
@@ -185,6 +202,12 @@ def main():
             knee_z = ankle_z + J["kneeRatio"] * (hip_z - ankle_z)
             notes[f"{prefix}Leg"] = "kneeRatio"
         knee_c, _ = leg_section(knee_z)
+        if knee_c is None:
+            # No section at the knee row (a skirt or tail extra took those faces): put the
+            # knee on the straight hip-ankle line.
+            t = (knee_z - ankle_z) / (hip_z - ankle_z)
+            knee_c = np.array([ankle.x + (hip.x - ankle.x) * t, ankle.y + (hip.y - ankle.y) * t])
+            notes[f"{prefix}Leg"] += "; no knee section, on the hip-ankle line"
         spans = C.section_y(bvh, float(knee_c[0]), float(knee_z), ymin, ymax)
         knee_y = knee_c[1]
         if spans:
@@ -305,4 +328,4 @@ def main():
     print("JOINTS " + " ".join(f"{k}={v}" for k, v in final.items()))
 
 
-main()
+C.run_main(main)

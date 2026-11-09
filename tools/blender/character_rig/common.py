@@ -311,7 +311,25 @@ def _runs(row: np.ndarray):
     return runs
 
 
-def landmarks(obj, face_mask=None, step=0.01):
+def run_main(main):
+    """Run a step's main() and exit non-zero on any exception.
+
+    Blender's ``--python`` swallows script exceptions and exits 0; the runner relies on the
+    exit code (and on fresh outputs) to never reuse a previous step's files.
+    """
+    import os
+    import traceback
+    try:
+        main()
+    except BaseException:  # noqa: BLE001 - every failure must reach the exit code
+        traceback.print_exc()
+        sys.stdout.flush()
+        sys.stderr.flush()
+        os._exit(1)
+    sys.stdout.flush()
+
+
+def landmarks(obj, face_mask=None, step=0.01, crotch_z=None):
     """Body landmarks measured from a 1 cm front silhouette and Y-ray cross-sections.
 
     Only faces in ``face_mask`` are measured (the joints step passes the body without
@@ -338,13 +356,16 @@ def landmarks(obj, face_mask=None, step=0.01):
 
     # Crotch: first height above 15% H where the midline (x = -1, 0, +1 cm) is at least
     # 2.5% H deep front to back.  A silhouette test alone fails when the thighs touch.
-    crotch_z = 0.47 * H
-    for iz in range(int(0.15 * H / step), int(0.8 * H / step)):
-        z = float(zs[iz])
-        depth = np.mean([sum(b - a for a, b in section_y(bvh, x, z, ymin, ymax)) for x in (-0.01, 0.0, 0.01)])
-        if depth >= 0.025 * H:
-            crotch_z = z
-            break
+    # ``crotch_z`` from the caller wins: removing extras (a cape over the back of the legs)
+    # opens the mesh, rays then never exit and the depth test below finds no crotch.
+    if crotch_z is None:
+        crotch_z = 0.47 * H
+        for iz in range(int(0.15 * H / step), int(0.8 * H / step)):
+            z = float(zs[iz])
+            depth = np.mean([sum(b - a for a, b in section_y(bvh, x, z, ymin, ymax)) for x in (-0.01, 0.0, 0.01)])
+            if depth >= 0.025 * H:
+                crotch_z = z
+                break
 
     def central_run(iz):
         for a, b in _runs(occ[iz]):
@@ -364,10 +385,16 @@ def landmarks(obj, face_mask=None, step=0.01):
     # well past the torso (T-pose arms).  Ears or a wide head above it are ignored.
     ext_l = np.array([xs[np.nonzero(occ[iz] & (xs > 0))[0]].max() if (occ[iz] & (xs > 0)).any() else 0.0 for iz in range(nz)])
     ext_r = np.array([-xs[np.nonzero(occ[iz] & (xs < 0))[0]].min() if (occ[iz] & (xs < 0)).any() else 0.0 for iz in range(nz)])
-    wide = (ext_l > 2.2 * w_ref) & (ext_r > 2.2 * w_ref) & (zs > crotch_z + 0.05 * H)
-    rows = np.nonzero(wide)[0]
+    # Arm band: the T-pose test (both sides reach 2.2x the torso half-width) first; A-pose
+    # arms hang closer to the body, so the factor relaxes down to 1.5x before giving up.
+    for factor in (2.2, 1.9, 1.7, 1.5):
+        wide = (ext_l > factor * w_ref) & (ext_r > factor * w_ref) & (zs > crotch_z + 0.05 * H)
+        rows = np.nonzero(wide)[0]
+        if len(rows):
+            break
     if not len(rows):
-        raise RuntimeError("no T-pose arm band found in the front silhouette")
+        raise RuntimeError("no arm band found in the front silhouette (arms closer than 1.5x the torso "
+                           "half-width); override the arm joints in joints.json")
     first = rows[0]
     last = first
     while last + 1 < nz and wide[last + 1]:
