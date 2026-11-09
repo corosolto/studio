@@ -54,11 +54,19 @@ clause('R1 character rig configs are well formed', () => {
       assert(extra.measure === undefined || typeof extra.measure === 'boolean', `${file}: extra ${extra.name} measure must be true or false`);
       for (const bone of extra.rigid ? [extra.rigid] : extra.bones || []) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
       for (const from of extra.select?.from || []) assert(partNames.has(from) || names.has(from), `${file}: ${extra.name} selects from unknown part ${from}`);
+      const grow = extra.select?.grow;
+      if (grow) {
+        assert(Array.isArray(grow.seeds) && grow.seeds.length && grow.seeds.every((p) => Array.isArray(p) && p.length === 3 && p.every(Number.isFinite)), `${file}: ${extra.name} grow.seeds must be [x, y, z] points`);
+        assert(grow.crease === undefined || (grow.crease > 0 && grow.crease <= 180), `${file}: ${extra.name} grow.crease must be in (0, 180] degrees`);
+        assert(grow.thickness === undefined || grow.thickness >= 0, `${file}: ${extra.name} grow.thickness must be >= 0`);
+      }
+      for (const part of extra.cut || []) assert(partNames.has(part), `${file}: ${extra.name} cuts from unknown body part ${part}`);
     }
     for (const [parent, child] of cfg.weights?.linearBlends || []) {
       assert(deformJointNames.includes(parent) && deformJointNames.includes(child), `${file}: linearBlends names a bone that does not deform`);
     }
     for (const joint of cfg.weights?.smoothJoints || []) assert(uniqueJointNames.includes(joint), `${file}: smoothJoints names unknown joint ${joint}`);
+    assert([undefined, 'armpit', 'junction'].includes(cfg.joints?.shoulderAt), `${file}: joints.shoulderAt must be "armpit" or "junction"`);
   }
   return configs.map(([dir]) => dir).join(', ');
 });

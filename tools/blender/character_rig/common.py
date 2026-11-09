@@ -405,11 +405,6 @@ def landmarks(obj, face_mask=None, step=0.01, crotch_z=None):
     for side, sign in (("L", 1.0), ("R", -1.0)):
         ext = ext_l if sign > 0 else ext_r
         tip = float(ext[first:last + 1].max())
-        # Armpit: half-width of the torso run just below the arm band.
-        below = int(max(first - 3, 0))
-        run = central_run(below) or (-w_ref, w_ref)
-        x_ap = float(run[1] if sign > 0 else -run[0])
-
         # Arm centre line and thickness per column, within a band around the arm rows.
         zlo = max(arm_lo - 0.08 * H, crotch_z)
         zhi = arm_hi + 0.04 * H
@@ -417,7 +412,7 @@ def landmarks(obj, face_mask=None, step=0.01, crotch_z=None):
         column = {}
         for ix in range(nx):
             x = float(xs[ix]) * sign
-            if x < x_ap * 0.6 or x > tip + 1e-6:
+            if x < 0.3 * w_ref or x > tip + 1e-6:
                 continue
             filled = np.nonzero(occ[izlo:izhi, ix])[0]
             if len(filled):
@@ -429,21 +424,38 @@ def landmarks(obj, face_mask=None, step=0.01, crotch_z=None):
         def col(x):
             key = min(column, key=lambda k: abs(k - x))
             return column[key]
-        # The torso row under the arm can be a narrow waist (hunched or skinny bodies), so
-        # the armpit is also found where the silhouette column becomes much taller than the
-        # arm itself, scanning inward from mid-arm.
+        # Armpit (the arm part boundary): half-width of the torso run just below the arm
+        # band.  The torso row under the arm can be a narrow waist (hunched or skinny
+        # bodies), so the armpit is also found where the silhouette column becomes much
+        # taller than the arm itself, scanning inward from mid-arm.
+        run = central_run(int(max(first - 3, 0))) or (-w_ref, w_ref)
+        x_ap = float(run[1] if sign > 0 else -run[0])
         keys = np.array(sorted(column))
         mid_arm = keys[(keys > x_ap + 0.3 * (tip - x_ap)) & (keys < x_ap + 0.7 * (tip - x_ap))]
         t_arm = float(np.median([column[k][1] for k in mid_arm])) if len(mid_arm) else 0.0
-        x_body = None
-        for k in keys[keys <= x_ap + 0.3 * (tip - x_ap)][::-1]:
+        for k in keys[(keys >= 0.6 * x_ap) & (keys <= x_ap + 0.3 * (tip - x_ap))][::-1]:
             if t_arm and column[k][1] > 2.0 * t_arm:
-                x_body = float(k) + step
+                x_ap = max(x_ap, float(k) + step)
                 break
-        if x_body is not None and x_body > x_ap:
-            x_ap = x_body
         thick = col(x_ap + 0.03)[1]
         armpit_z = col(x_ap + 0.02)[2]
+        # Arm-torso junction (where the shoulder joint goes): scanning out from the torso,
+        # a column whose run still reaches well below the arm band is the side of the body;
+        # the first column whose run ends above that has open space under it, the underarm
+        # gap.  A wide sleeve, an epaulette or a dropped T-shirt shoulder hangs below the bare
+        # arm but not down the side of the body, so the junction does not land on a sleeve
+        # end the way the torso-run armpit can.  A rounded ribcage opens that gap a little
+        # inside the junction, so it then moves out to the first column whose underside is
+        # within 2% H of the arm's own underside.
+        floor_z = max(arm_lo - 0.06 * H, zlo + step)
+        x_j = next((float(k) for k in keys if column[k][2] > floor_z + 1e-9), None)
+        if x_j is None:
+            x_j = x_ap
+        else:
+            ref = keys[(keys >= x_j + 0.025 * H) & (keys <= x_j + 0.06 * H)]
+            if len(ref):
+                underside = float(np.median([column[k][2] for k in ref]))
+                x_j = next((float(k) for k in keys if k >= x_j and column[k][2] >= underside - 0.02 * H), x_j)
 
         # Wrist: area profile of the distal half; the palm is the widest section of the
         # distal 35% and the wrist is the outermost section within 8% H inside the palm
@@ -467,7 +479,7 @@ def landmarks(obj, face_mask=None, step=0.01, crotch_z=None):
         else:
             x_wrist = tip - 0.11 * H
         sides[side] = {
-            "sign": sign, "tip": tip, "armpitX": x_ap, "armpitZ": armpit_z, "armThickness": thick,
+            "sign": sign, "tip": tip, "armpitX": x_ap, "armpitZ": armpit_z, "junctionX": x_j, "armThickness": thick,
             "wristX": x_wrist, "column": column,
         }
 

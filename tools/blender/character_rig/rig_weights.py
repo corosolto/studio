@@ -63,6 +63,9 @@ DEFAULTS = {
     # length / (gradientRamp x height); 0 disables.
     "gradientRamp": 0.025,
     "gradientIterations": 200,
+    # Torso height limits for the thighs and the clavicles (step 2); null leaves heat alone.
+    "thighCeiling": None,      # fraction of UpLeg -> Hips height, e.g. 1.0 = the Hips joint
+    "clavicleFloor": None,     # fraction of Spine02 -> Spine01 height, e.g. 0.0 = Spine02
 }
 
 ARM_BONES = {"LeftArm", "LeftForeArm", "LeftHand", "RightArm", "RightForeArm", "RightHand"}
@@ -282,6 +285,25 @@ def main():
             rigid[v] = rigid_bones.pop()
         elif vparts[v] == {"head"} and co[v, 2] > head_rigid_z:
             rigid[v] = "Head"
+    # Torso height limits (opt-in): heat lets a thigh reach up a belly or a coat front and a
+    # clavicle reach down a chest or a bib, where hip flexion or a shrug then drags skin far
+    # from the joint.  With thighCeiling, vertices on no leg part carry the thighs no higher
+    # than that fraction of UpLeg -> Hips; with clavicleFloor, vertices on no arm or hand
+    # part carry the clavicles no lower than that fraction of Spine02 -> Spine01.  The
+    # boundary fades of step 3 ramp them out.  Off by default: switched on for all 37
+    # characters of the 2026-11-09 set they fixed the chest of coelho-pascoa-shopping and
+    # corisco but made five passing rigs fail at the hips or shoulders.
+    if P["thighCeiling"] is not None:
+        up_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
+        above = co[:, 2] > up_z + P["thighCeiling"] * (joints["Hips"].z - up_z)
+        off_legs = np.array([not any(part.startswith("leg_") for part in vparts[v]) for v in range(n)])
+        for bone in ("LeftUpLeg", "RightUpLeg"):
+            allowed[off_legs & above, bidx[bone]] = False
+    if P["clavicleFloor"] is not None:
+        below = co[:, 2] < joints["Spine02"].z + P["clavicleFloor"] * (joints["Spine01"].z - joints["Spine02"].z)
+        off_arms = np.array([not any(part.startswith(("arm_", "hand_")) for part in vparts[v]) for v in range(n)])
+        for bone in ("LeftShoulder", "RightShoulder"):
+            allowed[off_arms & below, bidx[bone]] = False
     W = np.where(allowed, W, 0.0)
     nearest_fill = 0
     bone_heads = {name: joints[name.split(".")[0]] for name in deform}
