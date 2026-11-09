@@ -23,7 +23,8 @@ import {
   FLOOR_CLAMP_REGIONS, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, clipMetadata, gltfPoseSource, mixamoBaseName,
   objectPoseSource, referenceSkeletonDocument, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
-import { RIG_MAPS, detectRig } from '../lib/animation-sources.mjs';
+import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mjs';
+import { CONTRACT_EXTRA_NAMES, PROPOSED_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
 import { evaluateClip, measureClip } from '../lib/clip-qa.mjs';
 import { J, synthDocument } from './lib/synthetic-humanoid.mjs';
 
@@ -300,6 +301,12 @@ await clause('A7 resampling to 30 fps and trimming', () => {
   assert(at.get('LeftHand').clone().sub(at.get('LeftArm')).distanceTo(want) < 2e-3, 'trimmed frame 0 is not the source pose at 0.25 s');
 });
 
+await clause('A7 a three.js source can be sampled again after a full pass (LoopOnce clamp)', () => {
+  const src = mixamoSource({ frames: walking });
+  const a = retargetClip(src, reference, { footIk: false }), b = retargetClip(src, reference, { footIk: false });
+  assert(Math.abs(a.rootMotion.speed - b.rootMotion.speed) < 1e-9 && b.rootMotion.speed > 1, `second pass speed ${b.rootMotion.speed} vs ${a.rootMotion.speed}`);
+});
+
 await clause('A8 a source facing -Z converts like one facing +Z', () => {
   const a = retargetClip(mixamoSource({ frames: armUpKneeHead }), reference, { footIk: false });
   const b = retargetClip(mixamoSource({ frames: armUpKneeHead, yaw: Math.PI }), reference, { footIk: false });
@@ -545,7 +552,9 @@ await clause('Q3 clip-qa CLI gates skin stretch through rig-pose-test --clips (a
 const floorCases = [
   ['toes bent down', () => ({ deltas: { LeftToeBase: Q(X, 35), RightToeBase: Q(X, 35) } }), 'toe', 'toe'],
   ['heels sunk with the toes raised', () => ({ deltas: { LeftFoot: Q(X, -50), RightFoot: Q(X, -50) }, hips: [0, -0.09, 0] }), 'heel', 'heel'],
-  ['whole feet below the floor (ankle lift)', () => ({ deltas: {}, hips: [0, -0.04, 0] }), 'heel', 'ankleLift'],
+  ['whole feet below the floor (ankle lift)', () => ({ deltas: {}, hips: [0, -0.04, 0] }), 'heel', 'limbLift'],
+  // One `body` lift region holding every vertex: the hips rise out of the floor.
+  ['the whole body sunk into the floor', () => ({ deltas: {}, hips: [0, -0.2, 0] }), 'any', 'body', ['body']],
   // Bent over with the arms reaching forward-down; only the hand regions are clamped here.
   ['hands pushed into the ground', () => ({ deltas: { Spine02: Q(X, 90), LeftArm: Q(X, 45).multiply(Q(Z, -90)), RightArm: Q(X, 45).multiply(Q(Z, 90)) }, hips: [0, -0.62, 0] }), 'hand', 'hand', ['hand']],
 ];
@@ -558,12 +567,91 @@ for (const [label, frames, region, lever, only] of floorCases) {
     const before = await measure('a');
     const stats = clampToFloor(bodyRig, r, only ? { regions: FLOOR_CLAMP_REGIONS.filter((x) => only.includes(x.name)) } : {});
     const after = await measure('b');
-    assert(before.byRegionCm[region] < -1, `fixture does not sink the ${region} (${before.byRegionCm[region]} cm)`);
-    const low = only ? Math.min(...only.map((n) => after.byRegionCm[n])) : after.minCm;
-    assert(low >= -0.6 && stats[lever].frames > 0, `${region} ${before.byRegionCm[region]} -> ${low} cm (${JSON.stringify(stats)})`);
-    return `${region} ${before.byRegionCm[region]} -> ${only ? `${region} ${low}` : `lowest ${low}`} cm via ${lever} (max ${stats[lever].max})`;
+    const sunk = region === 'any' ? before.minCm : before.byRegionCm[region];
+    assert(sunk < -1, `fixture does not sink the ${region} (${sunk} cm)`);
+    const low = only && region !== 'any' ? Math.min(...only.map((n) => after.byRegionCm[n])) : after.minCm;
+    assert(low >= -0.6 && stats[lever].frames > 0, `${region} ${sunk} -> ${low} cm (${JSON.stringify(stats)})`);
+    return `${region} ${sunk} -> ${only && region !== 'any' ? `${region} ${low}` : `lowest ${low}`} cm via ${lever} (max ${stats[lever].max})`;
   });
 }
+
+await clause('Q4 a body hanging above the floor drops back where the source has a foot planted', async () => {
+  const doc = bodyClip(() => ({ deltas: {}, hips: [0, 0.05, 0] }), { loop: false }, { duration: 0.2 });
+  const graph = skeletonGraph(doc);
+  const run = (clearance) => {
+    const r = retargetClip(gltfPoseSource(doc, doc.getRoot().listAnimations()[0], RIG_MAPS['meshy-28']), bodyGraph, { rootMotion: 'keep', footIk: false, footContact: false, alignLimbs: [] });
+    clampToFloor(bodyRig, r, { clearance });
+    return r;
+  };
+  const low = async (r) => measureClip(bodyRig, clipSampler(await io.readBinary(await io.writeBinary(writeClipDocument(graph, r, 'd', {})))), {}).lowestVertex;
+  const planted = await low(run(new Array(7).fill(0))), flying = await low(run(new Array(7).fill(0.05)));
+  assert(Math.abs(planted.maxCm) < 0.2 && flying.minCm > 4, `planted source -> lowest ${planted.maxCm} cm; airborne source -> ${flying.minCm} cm`);
+  return `planted: ${planted.maxCm} cm, source in the air: kept at ${flying.minCm} cm`;
+});
+
+// ----------------------------------------------------------------------------- L library
+await clause('L1 binary FBX node-list end (FBXLoader footer fallback), 32- and 64-bit records', () => {
+  for (const version of [7400, 7700]) {
+    const big = version >= 7500, head = big ? 25 : 13;
+    const header = Buffer.concat([Buffer.from('Kaydara FBX Binary  \0', 'latin1'), Buffer.from([0x1a, 0x00]), Buffer.alloc(4)]);
+    header.writeUInt32LE(version, 23);
+    const record = (name, start) => {
+      const b = Buffer.alloc(head + name.length);
+      const end = start + b.length;
+      if (big) { b.writeBigUInt64LE(BigInt(end), 0); } else b.writeUInt32LE(end, 0);
+      b.writeUInt8(name.length, head - 1);
+      b.write(name, head, 'latin1');
+      return b;
+    };
+    const a = record('FBXHeaderExtension', 27), b = record('Objects', 27 + a.length);
+    const bytes = Buffer.concat([header, a, b, Buffer.alloc(head), Buffer.alloc(40, 7)]);
+    const end = fbxNodeListEnd(bytes);
+    assert(end === 27 + a.length + b.length, `version ${version}: node list ends at ${end}, expected ${27 + a.length + b.length}`);
+  }
+  assert(fbxNodeListEnd(Buffer.from('; FBX 7.4.0 project file')) === null, 'ASCII FBX must return null');
+});
+
+const miniCatalog = { clips: [
+  { id: 'mixamo/pro-rifle-pack/walk-left', category: 'locomotion-rifle-8way', source: 'mixamo', weapon: 'rifle', file: 'a.fbx' },
+  { id: 'mixamo/pro-rifle-pack/walk-forward-left', category: 'locomotion-rifle-8way', source: 'mixamo', weapon: 'rifle', file: 'b.fbx' },
+  { id: 'mixamo/pro-rifle-pack/run-forward', category: 'locomotion-rifle-8way', source: 'mixamo', weapon: 'rifle', file: 'c.fbx', same_take_as: [{ id: 'mixamo/loose/run-forward' }] },
+  { id: 'mixamo/loose/run-forward', category: 'locomotion-rifle', source: 'mixamo', weapon: 'rifle', file: 'd.fbx', same_take_as: [{ id: 'mixamo/pro-rifle-pack/run-forward' }] },
+  { id: 'mixamo/loose/standing-react-small-from-front', category: 'hit-reaction', source: 'mixamo', weapon: 'unknown', file: 'e.fbx' },
+  { id: 'mixamo/loose/standing-react-large-from-front', category: 'hit-reaction', source: 'mixamo', weapon: 'unknown', file: 'f.fbx' },
+  { id: 'mixamo/capoeira-pack/meia-lua-de-compasso-back', category: 'dance-capoeira', source: 'mixamo', weapon: 'none', file: 'g.fbx' },
+  { id: 'mixamo/soccer-game-pack/throw-in', category: 'soccer', source: 'mixamo', weapon: 'none', file: 'h.fbx' },
+  { id: 'ual/ual1/Walk_Loop', category: 'locomotion-unarmed', source: 'quaternius-ual', weapon: 'none', file: 'ual1/UAL1_Standard.glb', action: 'Walk_Loop', root_motion_variant: { file: 'ual1/UAL1_Standard_RM.glb' } },
+  { id: 'ual/ual1/Swim_Fwd_Loop', category: 'swim', source: 'quaternius-ual', weapon: 'none', file: 'ual1/UAL1_Standard.glb', action: 'Swim_Fwd_Loop' },
+  { id: 'ual/ual1/A_TPose', category: 'utility-pose', source: 'quaternius-ual', weapon: 'none', file: 'ual1/UAL1_Standard.glb', action: 'A_TPose' },
+  { id: 'mixamo/pro-rifle-pack/x-bot', category: 'rig', source: 'mixamo', weapon: 'none', file: 'x.fbx' },
+] };
+await clause('L2 library plan: skips, same-take preference, UAL root-motion file, loop and hold rules', () => {
+  const { clips, skipped } = planLibrary(miniCatalog);
+  const byId = Object.fromEntries(clips.map((c) => [c.id, c]));
+  assert(skipped.map((x) => x.id).sort().join() === ['mixamo/loose/run-forward', 'mixamo/pro-rifle-pack/x-bot', 'ual/ual1/A_TPose', 'ual/ual1/Swim_Fwd_Loop'].sort().join(), `skipped ${skipped.map((x) => x.id)}`);
+  assert(/same take as mixamo\/pro-rifle-pack\/run-forward/.test(skipped.find((x) => x.id === 'mixamo/loose/run-forward').reason), 'pack take must win over the loose download');
+  assert(byId['ual/ual1/Walk_Loop'].file.endsWith('_RM.glb') && byId['ual/ual1/Walk_Loop'].loop === true, 'UAL locomotion must come from the _RM file and loop');
+  assert(byId['mixamo/loose/standing-react-small-from-front'].loop === false && byId['mixamo/pro-rifle-pack/walk-left'].loop === 'auto', 'one-shot categories never loop; the rest are tested');
+  assert(byId['mixamo/pro-rifle-pack/walk-left'].hold === 'rifle', 'rifle locomotion keeps the two-hand grip gate');
+  assert(libraryName('mixamo/pro-rifle-pack/walk-left') === 'pro-rifle-pack--walk-left' && libraryName('ual/ual1/Walk_Loop') === 'ual1--walk-loop', 'library names');
+});
+await clause('L3 library keys: contract names, one primary per key, valid emote names, proposals outside the contract', () => {
+  const { clips } = planLibrary(miniCatalog);
+  const key = (id) => clips.find((c) => c.id === id);
+  assert(key('mixamo/pro-rifle-pack/walk-left').key === 'strafe_left' && key('mixamo/pro-rifle-pack/walk-left').primary, 'walk-left is the primary strafe_left');
+  assert(key('mixamo/pro-rifle-pack/walk-forward-left').key === 'walk_fwd_left' && key('mixamo/pro-rifle-pack/walk-forward-left').keyStatus === 'proposed', '8-way diagonal proposal');
+  assert(key('mixamo/pro-rifle-pack/run-forward').key === 'run' && key('mixamo/pro-rifle-pack/run-forward').keyStatus === 'state', 'run-forward is the run state candidate');
+  assert(key('mixamo/loose/standing-react-large-from-front').key === 'hit_front' && !key('mixamo/loose/standing-react-large-from-front').primary, 'large reaction is an alternate');
+  assert(key('mixamo/soccer-game-pack/throw-in').key === null, 'soccer has no pack key');
+  const emote = key('mixamo/capoeira-pack/meia-lua-de-compasso-back').key;
+  assert(/^emote_[a-z0-9_]+$/.test(emote) && /^[a-z][a-z0-9_]{1,40}$/.test(emote), `emote key ${emote} breaks the contract pattern`);
+  for (const c of clips.filter((x) => x.keyStatus === 'vocabulary')) assert(CONTRACT_EXTRA_NAMES.includes(c.key), `${c.key} is not a contract extra name`);
+  for (const c of clips.filter((x) => x.keyStatus === 'state')) assert(RUNTIME_STATES.includes(c.key), `${c.key} is not a runtime state`);
+  for (const name of PROPOSED_EXTRA_NAMES) {
+    assert(!CONTRACT_EXTRA_NAMES.includes(name) && !RUNTIME_STATES.includes(name) && /^[a-z][a-z0-9_]{1,40}$/.test(name), `proposal ${name} collides or breaks the pattern`);
+  }
+  return `${PROPOSED_EXTRA_NAMES.length} proposed names`;
+});
 
 if (failures) {
   console.error(`FAIL animation conversion: ${failures} clause(s)`);
