@@ -93,7 +93,12 @@ def main():
     body = C.body_object()
     labels, parts = C.read_face_parts(body, cfg)
     n_body = len(C.PART_NAMES)
-    body_mask = parts < n_body
+    # Joints are measured without accessories, but extras that are the body's own surface
+    # (a coat skirt over the legs, weight-only regions) stay: ``measure: true``, default for
+    # kind skirt.  Removing them would leave no thigh or torso to measure.
+    measured = [n_body + i for i, extra in enumerate(cfg.get("extras", []))
+                if extra.get("measure", extra.get("kind") == "skirt")]
+    body_mask = (parts < n_body) | np.isin(parts, measured)
     parts_report = json.loads((args.work / "parts.json").read_text())
     # The crotch comes from the parts step (full, closed mesh); see common.landmarks.
     lm = C.landmarks(body, face_mask=body_mask, crotch_z=float(parts_report["landmarks"]["crotchZ"]))
@@ -262,7 +267,11 @@ def main():
                     total += yb - ya
                     acc += np.array([x, 0.5 * (ya + yb)]) * (yb - ya)
         if total <= 0:
-            raise RuntimeError(f"no torso section at z={z:.3f}")
+            # Last resort: the mid-depth of the body vertices at this height.
+            near = co[np.abs(co[:, 2] - z) < 0.02]
+            if not len(near):
+                raise RuntimeError(f"no torso section or vertices at z={z:.3f}")
+            return np.array([0.0, 0.5 * (near[:, 1].min() + near[:, 1].max())])
         return acc / total
 
     up_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
