@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { meshy28Joints, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
+import { assertExtraClipVocabulary, converterExtraClipNames, coreExtraClipNames, extraClipNames, meshy28Joints, optionalCharacterStates, requiredCharacterStates } from '../lib/character-pack.mjs';
 import { validatePack } from '../lib/pack.mjs';
 
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
@@ -127,6 +127,9 @@ const allStates = [...requiredCharacterStates, ...optionalCharacterStates];
 function validFiles() {
   const files = { 'model/fixture-character.glb': modelGlb(), 'previews/portrait.png': png };
   for (const state of allStates) files[`animations/${state}.glb`] = clipGlb(state);
+  files['animations/extra/strafe-left.glb'] = clipGlb('strafe_left');
+  files['animations/extra/sprint-fwd-left.glb'] = clipGlb('sprint_fwd_left');
+  files['animations/extra/emote-danca.glb'] = clipGlb('emote_danca');
   return files;
 }
 
@@ -140,7 +143,14 @@ function manifestFor(files) {
     files: Object.entries(files).map(([file, bytes]) => ({ path: file, sha256: sha256(bytes), bytes: bytes.length })),
     model: 'model/fixture-character.glb',
     skeleton: 'meshy-28',
-    animations: Object.fromEntries(allStates.map(state => [state, `animations/${state}.glb`])),
+    animations: {
+      ...Object.fromEntries(allStates.map(state => [state, `animations/${state}.glb`])),
+      extra: {
+        strafe_left: { file: 'animations/extra/strafe-left.glb', duration: 0.8, loop: true, rootMotion: false, source: 'Synthetic strafe-left fixture clip' },
+        emote_danca: { file: 'animations/extra/emote-danca.glb', duration: 2.5, loop: false, rootMotion: false, source: 'Synthetic emote fixture clip' },
+        sprint_fwd_left: { file: 'animations/extra/sprint-fwd-left.glb', duration: 0.7, loop: true, rootMotion: false, source: 'Synthetic converter-vocabulary fixture clip' },
+      },
+    },
     previews: ['previews/portrait.png'],
     rights: { status: 'original', basis: 'Invented synthetic test character with no likeness or third-party design.' },
     budgets: { triangles: 100, bytes: 1048576 },
@@ -164,6 +174,18 @@ async function validateCase({ files = validFiles(), replace = {}, mutate = () =>
   return validatePack({ manifestPath, packageRoot });
 }
 
+// Synchronous form of expectRejection for the pure vocabulary invariant (no pack fixture).
+function expectVocabularyFailure(label, pattern, options) {
+  try {
+    assertExtraClipVocabulary(options);
+  } catch (caught) {
+    if (!pattern.test(caught.message)) throw new Error(`${label} was rejected for the wrong reason: ${caught.message}`);
+    console.log(`PASS ${label} rejected`);
+    return;
+  }
+  throw new Error(`${label} was not rejected`);
+}
+
 async function expectRejection(label, pattern, options) {
   let error;
   try { await validateCase(options); } catch (caught) { error = caught; }
@@ -177,13 +199,37 @@ const dropState = state => manifest => {
   manifest.files = manifest.files.filter(file => file.path !== `animations/${state}.glb`);
 };
 
+const dropExtras = manifest => {
+  for (const entry of Object.values(manifest.animations.extra || {})) {
+    manifest.files = manifest.files.filter(file => file.path !== entry.file);
+  }
+  delete manifest.animations.extra;
+};
+
 try {
   const valid = await validateCase();
-  console.log(`PASS Valid synthetic character pack (${valid.character.triangles} triangles, ${valid.character.joints} meshy-28 joints, ${valid.character.animations} state clips)`);
-  const requiredOnly = await validateCase({ mutate: manifest => optionalCharacterStates.forEach(state => dropState(state)(manifest)) });
-  console.log(`PASS Valid character pack with only the ${requiredOnly.character.animations} required states`);
+  console.log(`PASS Valid synthetic character pack (${valid.character.triangles} triangles, ${valid.character.joints} meshy-28 joints, ${valid.character.animations} state clips, ${valid.character.extraClips} extra clips)`);
+  const requiredOnly = await validateCase({ mutate: manifest => { optionalCharacterStates.forEach(state => dropState(state)(manifest)); dropExtras(manifest); } });
+  console.log(`PASS Valid character pack with only the ${requiredOnly.character.animations} required states and ${requiredOnly.character.extraClips} extra clips`);
   await validateCase({ replace: { 'animations/idle.glb': clipGlb('idle', { morph: 'valid' }) } });
   console.log('PASS Valid clip with a bone channel plus a morph-weights channel');
+
+  // Single-source vocabulary invariant: the contract vocabulary must equal the core names plus
+  // the animation conversion library's proposed names (snapshot in character-pack.mjs).
+  assertExtraClipVocabulary();
+  console.log(`PASS Extra clip vocabulary covers the conversion library (${extraClipNames.length} names = ${coreExtraClipNames.length} core + ${converterExtraClipNames.length} converter)`);
+  expectVocabularyFailure('Converter key missing from the vocabulary', /converter clip names missing from the vocabulary: vault_low/, {
+    converter: [...converterExtraClipNames, 'vault_low'],
+  });
+  expectVocabularyFailure('Vocabulary name outside the core and converter sets', /extra clip names outside the core and converter sets: moonwalk/, {
+    vocabulary: [...extraClipNames, 'moonwalk'],
+  });
+  expectVocabularyFailure('Core name dropped from the vocabulary', /core extra clip names missing from the vocabulary: victory/, {
+    vocabulary: extraClipNames.filter(name => name !== 'victory'),
+  });
+  expectVocabularyFailure('Duplicate vocabulary entry', /duplicate extra clip name in the vocabulary: sprint/, {
+    vocabulary: [...extraClipNames, 'sprint'],
+  });
 
   for (const state of requiredCharacterStates) {
     await expectRejection(`Missing required state ${state}`, new RegExp(`must have required property '${state}'`), { mutate: dropState(state) });
@@ -201,6 +247,48 @@ try {
   await expectRejection('Clip without keyframes', /animation "death" has no keyframes/, { replace: { 'animations/death.glb': clipGlb('death', { keyframes: 0 }) } });
   await expectRejection('Clip output count differs from keyframes', /output values that do not match its rotation keyframes/, { replace: { 'animations/crouch.glb': clipGlb('crouch', { keyframes: 2, outputValues: 1 }) } });
   await expectRejection('Same clip declared for two states', /Duplicate declared path/, { mutate: manifest => { manifest.animations.walk = manifest.animations.idle; } });
+  await expectRejection('Unknown extra clip name', /animations\.extra has an unknown clip name: moonwalk/, {
+    replace: { 'animations/extra/moonwalk.glb': clipGlb('moonwalk') },
+    mutate: manifest => { manifest.animations.extra.moonwalk = { file: 'animations/extra/moonwalk.glb', duration: 1, loop: false, rootMotion: false, source: 'Not in the vocabulary' }; },
+  });
+  await expectRejection('Extra clip name equal to a state', /unknown clip name: idle/, {
+    mutate: manifest => { manifest.animations.extra.idle = manifest.animations.extra.strafe_left; },
+  });
+  await expectRejection('Bare emote prefix as an extra clip name', /unknown clip name: emote_/, {
+    replace: { 'animations/extra/emote-puro.glb': clipGlb('emote_') },
+    mutate: manifest => { manifest.animations.extra.emote_ = { file: 'animations/extra/emote-puro.glb', duration: 1, loop: false, rootMotion: false, source: 'Bare prefix' }; },
+  });
+  await expectRejection('Extra clip name outside the key pattern', /\/animations\/extra must match pattern "\^\[a-z\]\[a-z0-9_\]\{1,40\}\$"/, {
+    replace: { 'animations/extra/Strafe-left.glb': clipGlb('strafe_left') },
+    mutate: manifest => { manifest.animations.extra.Strafe_left = { file: 'animations/extra/Strafe-left.glb', duration: 1, loop: true, rootMotion: false, source: 'Uppercase key' }; },
+  });
+  await expectRejection('Extra clip file missing from files', /Declared path is missing from files: animations\/extra\/strafe-left\.glb/, {
+    mutate: manifest => { manifest.files = manifest.files.filter(file => file.path !== 'animations/extra/strafe-left.glb'); },
+  });
+  await expectRejection('Extra clip file shared with a state', /Duplicate declared path: animations\/idle\.glb \(animations\.idle and animations\.extra\.strafe_left\)/, {
+    mutate: manifest => { manifest.animations.extra.strafe_left.file = manifest.animations.idle; },
+  });
+  await expectRejection('Extras counted in the byte budget', /over its \d+-byte budget/, {
+    mutate: manifest => {
+      const extraBytes = manifest.files.filter(file => file.path.startsWith('animations/extra/')).reduce((sum, file) => sum + file.bytes, 0);
+      manifest.budgets.bytes = manifest.files.reduce((sum, file) => sum + file.bytes, 0) - extraBytes;
+    },
+  });
+  await expectRejection('Extra clip misnamed inside its GLB', /animations\/extra\/strafe-left\.glb: no animation named "strafe_left"/, {
+    replace: { 'animations/extra/strafe-left.glb': clipGlb('Strafe') },
+  });
+  await expectRejection('Extra clip file is not a GLB', /animations\/extra\/strafe_left\/file must match pattern/, {
+    mutate: manifest => { manifest.animations.extra.strafe_left.file = 'animations/extra/strafe-left.gltf'; },
+  });
+  await expectRejection('Extra entry missing a required field', /animations\/extra\/strafe_left must have required property 'duration'/, {
+    mutate: manifest => { delete manifest.animations.extra.strafe_left.duration; },
+  });
+  await expectRejection('Extra entry with a mistyped loop', /animations\/extra\/strafe_left\/loop must be boolean/, {
+    mutate: manifest => { manifest.animations.extra.strafe_left.loop = 'yes'; },
+  });
+  await expectRejection('Extra entry with a non-numeric duration', /animations\/extra\/strafe_left\/duration must be number/, {
+    mutate: manifest => { manifest.animations.extra.strafe_left.duration = '0.8'; },
+  });
 
   await expectRejection('Wrong skeleton id', /\/skeleton must be equal to constant/, { mutate: manifest => { manifest.skeleton = 'mixamo-65'; } });
   const renamed = meshy28Joints.map(([name, parent]) => [name === 'LeftForeArm' ? 'LeftElbow' : name, parent === 'LeftForeArm' ? 'LeftElbow' : parent]);
