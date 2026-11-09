@@ -109,6 +109,7 @@ bytes — and fails closed. It refuses to build when:
 | `preview_signature` / `preview_missing` | previews absent or not a real PNG/JPEG/WebP |
 | `pack_version_exists` | that version was already published with different content — packs are immutable, bump the version |
 | `pack_validation_failed` | the freshly built pack failed the shared contract validator |
+| `omit_extra_state` / `omit_extra_invalid` / `omit_extra_absent` / `omit_reason_missing` | an `--omit-extra` names a state, a key outside the vocabulary or twice, a clip the converter never baked, or has neither a reason nor a QA failure to cite |
 
 The built pack ends in `<out>/character/<id>/<version>/` and is validated in place
 (`tools/validate-pack.mjs` runs inside the build; `npm run pack:validate` re-runs it
@@ -116,6 +117,15 @@ standalone). Families in the manifest come from the contract's own `clipFamily`,
 manifest can never disagree with the validator mirror. The 2026-11 pilot measured the full
 layout at 4.4–6.7 MB per pack (worst `bebe-reborn` 6671250 bytes = 80% of the 8 MiB
 declared budget; 30 packs, 155.5 MiB total, 85 clips each).
+
+An optional extra that fails clip QA on one character can leave that character's pack by
+owner decision instead of an allowance: `--omit-extra=<key>[:<reason>]` (repeatable). The
+builder rewrites the clip's family pack without it (same encoding; the other clips decode
+identically), drops it from `animations.extra`, stops gating on its QA results and adds one
+`source.provenance` line per omission with the reason and every QA failure of that clip, for
+example `omitted extra crouchwalk_back (dropped from animations/loco.glb; ...): clip QA: skin
+stretch 3.666× @0.6364s > 3.5 [clip: Hips+RightUpLeg]`. The runtime falls back when an
+optional extra is missing; states are its floor, so they can never be omitted.
 
 ## 7. Client verify + install
 
@@ -155,4 +165,5 @@ root and bumping a pin are owner decisions.
 pipeline output (skinned meshy-28 GLB, family packs, pose test, QA report, PROVENANCE,
 preview) is built, validated against the contract, rebuilt byte-identical, and every gate
 mutant above is rejected with its own error code — including the immutable-version rule
-and the QA allowlist. No real asset bytes are committed anywhere.
+and the QA allowlist. An omitted extra is proven gone from its rewritten family pack and
+recorded with its QA number. No real asset bytes are committed anywhere.
