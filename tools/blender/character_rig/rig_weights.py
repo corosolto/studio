@@ -106,7 +106,7 @@ def smoothstep(t):
     return t * t * (3 - 2 * t)
 
 
-def cloth_weights(points, kind, joints, bidx, crotch_z, H):
+def cloth_weights(points, kind, joints, bidx):
     """Procedural weights for hanging cloth (coat skirts, skirts, capes).
 
     Above the hips the cloth follows the spine chain by height (piecewise linear between
@@ -365,7 +365,7 @@ def main():
         if kind not in CLOTH_BONES:
             continue
         only = np.array([vparts[v] == {extra["name"]} for v in range(n)]) & ~rigid_mask
-        W[only] = cloth_weights(co[only], kind, joints, bidx, crotch_z, H)
+        W[only] = cloth_weights(co[only], kind, joints, bidx)
         cloth_vertices[extra["name"]] = int(only.sum())
 
     # ---------------------------------------------------------------- 4d. groin
@@ -398,8 +398,7 @@ def main():
             d = W[E[:, 0]] - W[E[:, 1]]
             mag = np.abs(d).max(axis=1)
             over = mag > g * 1.001
-            limit_left = int(over.sum())
-            if not limit_left:
+            if not over.any():
                 break
             a, b = E[over, 0], E[over, 1]
             fa, fb = free[a], free[b]
@@ -415,6 +414,8 @@ def main():
             W = np.where(allowed, np.clip(W + delta / np.maximum(count, 1)[:, None], 0, None), 0.0)
             sums = W.sum(axis=1, keepdims=True)
             W = np.divide(W, sums, out=np.zeros_like(W), where=sums > 1e-9)
+        # Counted on the final weights, after the last correction of the loop.
+        limit_left = int((np.abs(W[E[:, 0]] - W[E[:, 1]]).max(axis=1) > g * 1.001).sum())
 
     # ---------------------------------------------------------------- 5. rigid, limit, normalise
     for v in range(n):
