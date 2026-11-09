@@ -71,6 +71,10 @@ clause('R1 character rig configs are well formed', () => {
       assert(deformJointNames.includes(parent) && deformJointNames.includes(child), `${file}: linearBlends names a bone that does not deform`);
     }
     for (const joint of cfg.weights?.smoothJoints || []) assert(uniqueJointNames.includes(joint), `${file}: smoothJoints names unknown joint ${joint}`);
+    for (const key of ['waistBand', 'neckBand', 'flankBand']) {
+      const v = cfg.weights?.[key];
+      assert(v === undefined || v === null || (v > 0 && v <= 0.2), `${file}: weights.${key} must be null or in (0, 0.2] x height`);
+    }
     assert([undefined, 'armpit', 'junction'].includes(cfg.joints?.shoulderAt), `${file}: joints.shoulderAt must be "armpit" or "junction"`);
   }
   return configs.map(([dir]) => dir).join(', ');

@@ -25,8 +25,9 @@
    around the wrist.  Heat alone switches ForeArm->Hand within one edge ring; on
    capitao-caveira that ring stretched 1.64× in the client hand gate (rig-maos-check) versus
    1.32× with the blend and ``parts.handPartOffset`` 0.04.
-4c. Opt-in band models (``weights.waistBand``, ``weights.neckBand``): weights in a band
-   around the hips or the neck as a function of height and angle around the torso axis.
+4c. Opt-in band models (``weights.waistBand``, ``weights.neckBand``, ``weights.flankBand``):
+   weights in a band around the hips, the neck or the belly flanks as a function of height
+   and angle around the torso axis.
 5. At most 4 influences per vertex, normalised.
 
 Writes ``weights.blend``, ``weights.json`` and ``blender-rig.glb`` (Blender's own skin; run
@@ -69,9 +70,11 @@ DEFAULTS = {
     "thighCeiling": None,      # fraction of UpLeg -> Hips height, e.g. 1.0 = the Hips joint
     "clavicleFloor": None,     # fraction of Spine02 -> Spine01 height, e.g. 0.0 = Spine02
     # Band weight models (step 4c'), x height or null: the waist band reaches this far below
-    # the hip joints, the neck band this far above Head; each fades out over half of it.
+    # the hip joints, the neck band this far above Head; each fades out over half of it.  The
+    # flank band covers Hips -> Spine01 on the torso sides and fades out over half of it.
     "waistBand": None,
     "neckBand": None,
+    "flankBand": None,
     # Spine-chain locality (step 2), x height or null: margin beyond the parent and child joints.
     "chainLocality": None,
     # Side exclusivity (step 2), x height or null: no opposite-side bones past this margin.
@@ -166,7 +169,7 @@ def cloth_weights(points, kind, joints, bidx, front_panel=None):
 
 
 def band_model(co, joints, bidx, kind, margin):
-    """Weights of the waist or neck band model and their blend factor per vertex.
+    """Weights of the waist, neck or flank band model and their blend factor per vertex.
 
     waist: from ``margin`` below the hip joints up to Spine02.  The thighs take the sides
     (|sin| of the angle around the vertical axis through Hips, so a belly or a coat front
@@ -174,11 +177,25 @@ def band_model(co, joints, bidx, kind, margin):
     goes from Hips to Spine02 by height.
     neck: from Spine up to ``margin`` above Head.  The clavicles take the sides and fade out
     by the neck joint; the rest goes Spine -> neck -> Head by height.
+    flank: from Hips up to Spine01, on the sides of the torso only (|sin| of the angle
+    around the vertical through Hips from 0.5 to 0.9, so the belly front and the back keep
+    their weights): only the spine chain by height (Hips -> Spine02 -> Spine01), no
+    clavicle and no thigh, where heat put both on one flank of a big belly.
     The blend factor is 1 inside the band and smoothsteps to 0 over margin / 2 beyond it.
     """
     x, y, z = co[:, 0], co[:, 1], co[:, 2]
     W = np.zeros((len(co), len(bidx)))
-    if kind == "waist":
+    side_of = 1.0
+    if kind == "flank":
+        lo, mid, hi = joints["Hips"].z, joints["Spine02"].z, joints["Spine01"].z
+        side = np.abs(x) / np.maximum(np.hypot(x, y - joints["Hips"].y), 1e-6)
+        side_of = smoothstep((side - 0.5) / 0.4)
+        up = smoothstep((z - lo) / max(mid - lo, 1e-6))
+        top = smoothstep((z - mid) / max(hi - mid, 1e-6))
+        W[:, bidx["Hips"]] = 1 - up
+        W[:, bidx["Spine02"]] = up * (1 - top)
+        W[:, bidx["Spine01"]] = up * top
+    elif kind == "waist":
         axis_y = joints["Hips"].y
         up_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
         lo, hips_z, hi = up_z - margin, joints["Hips"].z, joints["Spine02"].z
@@ -203,7 +220,7 @@ def band_model(co, joints, bidx, kind, margin):
         W[:, bidx["neck"]] = (1 - limb) * lower * (1 - upper)
         W[:, bidx["Head"]] = (1 - limb) * lower * upper
     fade = 0.5 * margin
-    alpha = smoothstep((z - (lo - fade)) / fade) * smoothstep(((hi + fade) - z) / fade)
+    alpha = smoothstep((z - (lo - fade)) / fade) * smoothstep(((hi + fade) - z) / fade) * side_of
     return W, alpha
 
 
@@ -495,16 +512,16 @@ def main():
     # rule weights over half the margin beyond each end.
     band_vertices = {}
     eligible = ~rigid_mask & np.array([not any(p.startswith(("arm_", "hand_")) for p in vparts[v]) for v in range(n)])
-    for kind, margin in (("waist", P["waistBand"]), ("neck", P["neckBand"])):
+    for kind, margin in (("waist", P["waistBand"]), ("neck", P["neckBand"]), ("flank", P["flankBand"])):
         if not margin:
             continue
         Wm, alpha = band_model(co, joints, bidx, kind, margin * H)
         Wm = np.where(allowed, Wm, 0.0)
         sums = Wm.sum(axis=1)
         alpha = np.where(eligible & (sums > 1e-6), alpha, 0.0)
-        if kind == "waist":
+        if kind in ("waist", "flank"):
             alpha = np.where([("head" in vparts[v]) for v in range(n)], 0.0, alpha)
-        else:
+        if kind in ("neck", "flank"):
             alpha = np.where([any(p.startswith("leg_") for p in vparts[v]) for v in range(n)], 0.0, alpha)
         Wm = np.divide(Wm, sums[:, None], out=np.zeros_like(Wm), where=sums[:, None] > 1e-6)
         rows = W.sum(axis=1, keepdims=True)
