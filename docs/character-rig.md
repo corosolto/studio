@@ -17,7 +17,9 @@ node tools/characters/rig-character.mjs \
   --retarget=<client>/tools/retarget-glb.mjs
 ```
 
-`--from=<step>` resumes at `clean`, `parts`, `joints`, `armature`, `weights`, `assemble` or `pose` (for example after adding a `joints.json` override). `--blender=<path>` or `BLENDER` selects the binary (default `/Applications/Blender.app/Contents/MacOS/Blender`). Each Blender step can also run alone:
+`--from=<step>` resumes at `clean`, `parts`, `joints`, `armature`, `weights`, `assemble` or `pose` (for example after adding a `joints.json` override); `--to=<step>` stops early. `--blender=<path>` or `BLENDER` selects the binary (default `/Applications/Blender.app/Contents/MacOS/Blender`).
+
+Every Blender step exits 1 on any Python exception (`C.run_main`; plain `blender --python` exits 0). Before a step runs, the runner deletes its outputs and those of every later step; afterwards each output must exist and be newer than the step, whatever the exit code. `<work>/run-manifest.json` records per step the SHA-256 of its inputs (source, config, joints override) and outputs, and `--from` refuses to resume when a skipped step's outputs or inputs changed since it ran. Each Blender step can also run alone:
 
 ```bash
 Blender -b --factory-startup --python tools/blender/character_rig/rig_<step>.py -- --config characters/<id>/rig.json --work <dir> [--source <glb>]
@@ -58,7 +60,10 @@ Coordinates are clean-space metres: +Z up, the character faces −Y, its left is
 3. Continuity: a bone allowed on one side of a part boundary and forbidden on the other fades to zero towards the boundary over `rampLength` × height of surface distance. The fade scales existing weights, so where a vertex carries nothing on the bones allowed across the boundary, normalisation restores the old ratios and a step can remain; the pose test is the guard.
 4. Smoothing inside a part only, tapering to nothing at `smoothRadius` × height from `smoothJoints` (shoulders and knees), never on part-boundary or rigid vertices, never across parts. Elbows are not smoothed by default: on capitao-caveira it raised the worst walk stretch at the back of the elbow from 2.88× to 4.28×.
 5. Linear hinge blends (`linearBlends`, wrists by default): the ForeArm+Hand share is re-split by position along the forearm axis, smoothstep over ±halfWidth × height, because heat switches ForeArm→Hand within one edge ring.
-6. At most 4 influences per vertex, normalised. `weights.json` reports the method, bare vertices, the largest arm weight left on no-arm parts (must be 0), the minimum `Hand` weight on hand vertices (must be 1) and the influence histogram.
+6. Hanging cloth: extras with `kind: "skirt"` (coat skirts, skirts, cassocks) or `kind: "cape"` get procedural weights. Above the hips they follow the spine chain by height; below the hip joints they fade into the thighs down to the knees, split left/right by x, with 80% (skirt) or 45% (cape) of the weight on the legs at knee height and the rest on `Hips`.
+7. Groin: within `groinBand` × height (0.05) of the crotch and between the thigh joints, the thigh share moves to `Hips`, fully on the midline, so spreading the legs does not tear the crotch.
+8. Gradient limit: the ramps of step 3 only scale weights that already exist, so neighbouring vertices could still switch bones within millimetres (heat on layered cloth, proxy transfer across fused voxels, binary weights on small islands). Every edge whose weight change exceeds its length over `gradientRamp` × height (0.025) is relaxed towards its neighbour, rigid vertices held fixed, until no edge exceeds it (`gradientIterations`). This creates shared influence across part borders.
+9. At most 4 influences per vertex, normalised. `weights.json` reports the method, bare vertices, the largest arm weight left on no-arm parts (must be 0), the minimum `Hand` weight on hand vertices (must be 1), cloth and groin vertex counts, the gradient-limit iterations and the influence histogram.
 
 **assemble** drops Blender's skeleton and builds the meshy-28 skin in contract order (duplicate `Curl` pair included) under an `Armature` node scaled 0.01 (centimetre bones, metre mesh, like the donor), with fresh inverse bind matrices; it fails unless the bind pose reproduces the mesh to 0.1 mm. Rest frames: spine, legs, clavicles and head keep the donor's rest world rotations (`MESHY28_REST_WORLD` in `tools/lib/character-rig.mjs`; the client's `retarget-glb.mjs` applies world-rotation deltas there). `LeftArm`, `LeftForeArm`, `LeftHand` and their right counterparts are turned by the shortest arc that puts local +Y (the meshy-28 bone axis) on the measured bone, because `retarget-glb.mjs` copies the clip's **absolute** world rotations onto every Arm/Hand bone: only an aligned frame makes the character's arm segments point where the clip's arms point (Mint T-poses angle the arms forward, the donor's angle them ~20° back).
 
@@ -76,10 +81,10 @@ Thresholds (`POSE_THRESHOLDS`): body and upper back ≤ 3.5× (the donor reaches
 | `mergeDistance` | Seam merge distance in metres (default 0.0001). |
 | `parts.skinColors`, `parts.skinTolerance` | Hex colours of bare hands; the wrist moves to where they start. |
 | `parts.handPartOffset`, `parts.armShoulderInset`, `parts.wristX` | Rigid hand start past the wrist (× height); how far the arm part reaches inside the armpit; wrist override (absolute x). |
-| `extras[]` | `{ name, select: { from, box: {min, max}, colors, tolerance, islandMaxFaces }, rigid \| bones }`. |
+| `extras[]` | `{ name, select: { from, box: {min, max}, colors, tolerance, islandMaxFaces }, rigid \| bones \| kind }`; `kind` is `skirt` or `cape`. |
 | `joints.*` | Estimator ratios (`shoulderInset`, `shoulderRaise`, `clavicleRatio`, `elbowRatio`, `hipAboveCrotch`, `hipsAboveUpLeg`, `kneeRatio`, `kneeBendMin`, `kneeForward`, `ankleWindow`, `toeRatio`, `toeHeightRatio`, `spineBelowShoulder`, `neckRatio`, `headAboveNeck`, `headfrontForward`). |
 | `jointsOverride` | Override file relative to the config (default `joints.json`). |
-| `weights.*` | `heatFailShare`, `voxelSize`, `headRigidAbove`, `rampLength`, `smoothRadius`, `smoothIterations`, `smoothJoints`, `linearBlends`. |
+| `weights.*` | `heatFailShare`, `voxelSize`, `headRigidAbove`, `rampLength`, `smoothRadius`, `smoothIterations`, `smoothJoints`, `linearBlends`, `groinBand`, `gradientRamp`, `gradientIterations`. |
 
 ## Calibration
 
@@ -109,7 +114,7 @@ The plush mascot keeps human-like clip motion: idle, walk, run, crouch, crouchwa
 
 ## Limits
 
-- The estimator assumes a T-pose (arms clearly away from the body in the front view). A-pose meshes need a `joints.json` override.
+- The arm-band test accepts arms down to 1.5× the torso half-width away from the body (A-poses); closer arms need a `joints.json` override. The crotch is measured on the full mesh in the parts step, because removing extras can open the mesh.
 - Joint positions are a first estimate: always look at `joints-review.png` and `parts-review.png`.
 - Heat weighting can fail on non-manifold meshes; the voxel proxy covers it, but check `weights.json` (`method`, `heat.unweightedVertices`).
 - Hips translation and in-place motion come from `retarget-glb.mjs`; this pipeline does not author clips.

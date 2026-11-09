@@ -46,8 +46,10 @@ clause('R1 character rig configs are well formed', () => {
     for (const extra of cfg.extras || []) {
       assert(extra.name && !partNames.has(extra.name) && !names.has(extra.name), `${file}: extra names must be unique and not body parts (${extra.name})`);
       names.add(extra.name);
-      assert(Boolean(extra.rigid) !== Boolean(extra.bones), `${file}: extra ${extra.name} needs exactly one of rigid or bones`);
-      for (const bone of extra.rigid ? [extra.rigid] : extra.bones) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
+      const modes = [Boolean(extra.rigid), Boolean(extra.bones), Boolean(extra.kind)].filter(Boolean).length;
+      assert(modes === 1, `${file}: extra ${extra.name} needs exactly one of rigid, bones or kind`);
+      assert(!extra.kind || ['skirt', 'cape'].includes(extra.kind), `${file}: extra ${extra.name} has unknown kind ${extra.kind}`);
+      for (const bone of extra.rigid ? [extra.rigid] : extra.bones || []) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
       for (const from of extra.select?.from || []) assert(partNames.has(from) || names.has(from), `${file}: ${extra.name} selects from unknown part ${from}`);
     }
     for (const [parent, child] of cfg.weights?.linearBlends || []) {
