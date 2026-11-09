@@ -552,37 +552,66 @@ export function retargetClip(source, target, {
   };
 }
 
-/** Penetration below the bind floor tolerated before the toe clamp acts (m). */
-export const TOE_CLAMP_TOLERANCE = 0.005;
+/** Penetration below the bind floor tolerated before the floor clamp acts (m). */
+export const FLOOR_CLAMP_TOLERANCE = 0.005;
+
+/* Body regions the bake-time floor clamp keeps above the floor, in the order it treats them.
+   A vertex belongs to the region of its dominant joint. `pivots` are tried in order: the
+   first whose lever to the sinking vertex is not vertical turns about the horizontal axis
+   across that lever (heel: the ankle pitches the foot; toes: the ball; hands: the elbow, then
+   the shoulder). When the heel and the toes of one foot both sink, no pitch can help (the
+   ankle itself is too low for this foot's shape): two-bone IK on `leg` raises that ankle by
+   the shallower depth first. `lift` regions (knees) raise the hips instead: a kneeling thigh
+   is vertical, so no rotation lifts the knee. */
+export const FLOOR_CLAMP_REGIONS = Object.freeze([
+  { name: 'heel', bones: ['LeftFoot'], pivots: ['LeftFoot'], leg: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
+  { name: 'heel', bones: ['RightFoot'], pivots: ['RightFoot'], leg: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
+  { name: 'toe', bones: ['LeftToeBase'], pivots: ['LeftToeBase'], leg: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
+  { name: 'toe', bones: ['RightToeBase'], pivots: ['RightToeBase'], leg: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
+  { name: 'hand', bones: ['LeftHand', 'Curl_L'], pivots: ['LeftForeArm', 'LeftArm'] },
+  { name: 'hand', bones: ['RightHand', 'Curl_R'], pivots: ['RightForeArm', 'RightArm'] },
+  { name: 'knee', bones: ['LeftLeg'], lift: true },
+  { name: 'knee', bones: ['RightLeg'], lift: true },
+]);
+
+/** Region name of every vertex of `rig` (dominant joint), or null outside FLOOR_CLAMP_REGIONS. */
+export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
+  return rig.prims.map((p) => {
+    const out = new Array(p.count).fill(null);
+    for (let v = 0; v < p.count; v += 1) {
+      let best = 0;
+      for (let k = 1; k < 4; k += 1) if (p.W[v * 4 + k] > p.W[v * 4 + best]) best = k;
+      const name = rig.names[p.J[v * 4 + best]];
+      const region = regions.findIndex((r) => r.bones.includes(name));
+      out[v] = region < 0 ? null : region;
+    }
+    return out;
+  });
+}
 
 /**
- * Bake-time, mesh-aware floor clamp for the toes (`rig`: loadRig of the character). Per frame,
- * the vertices whose dominant joint is a ToeBase are skinned; when the lowest sinks below the
- * bind floor, that ToeBase is pitched up about the horizontal axis across the toe lever until
- * it clears (at most 3 iterations, 45° per step). Rewrites `result.rotations` in place.
- * The toes of a character with a longer or differently pitched foot than the source would
- * otherwise push through the floor at heel-off. Returns { frames, maxDeg }.
+ * Bake-time, mesh-aware floor clamp (`rig`: loadRig of the character). Per frame the mesh is
+ * skinned; when a region's lowest vertex sinks more than FLOOR_CLAMP_TOLERANCE below the bind
+ * floor, the region's pivot turns it up about the horizontal axis across the lever (at most 45°
+ * per step), a foot whose heel and toes both sink is raised by leg IK, and `lift` regions
+ * raise the hips by the depth. Up to 6 passes per frame.
+ * Rewrites `result.rotations` and `result.hips` in place. Returns per-region { frames, max }
+ * (degrees for pivots, metres for lifts; `ankleLift` for the leg IK) and the frames still
+ * below the tolerance.
  */
-export function clampToesToFloor(rig, result, { iterations = 3 } = {}) {
+export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passes = 6 } = {}) {
   const bind = skinPositions(rig);
   let floor = Infinity;
   for (const b of bind) for (let v = 1; v < b.length; v += 3) floor = Math.min(floor, b[v]);
   const node = (name) => rig.byName.get(name)?.[0];
-  const sides = ['LeftToeBase', 'RightToeBase'].filter((n) => node(n) && result.rotations.has(n)).map((name) => {
-    const slot = new Set(rig.names.map((n, i) => (n === name ? i : -1)).filter((i) => i >= 0));
-    const verts = [];
-    rig.prims.forEach((p, pi) => {
-      for (let v = 0; v < p.count; v += 1) {
-        let best = 0;
-        for (let k = 1; k < 4; k += 1) if (p.W[v * 4 + k] > p.W[v * 4 + best]) best = k;
-        if (slot.has(p.J[v * 4 + best])) verts.push([pi, v]);
-      }
-    });
-    return { name, node: node(name), verts };
-  }).filter((s) => s.verts.length);
-  const stats = { frames: 0, maxDeg: 0 };
-  if (!sides.length) return stats;
+  const membership = vertexRegions(rig, regions);
+  const active = regions.map((r, i) => membership.some((m) => m.includes(i)) && (r.lift || r.pivots.some((p) => node(p) && result.rotations.has(p))));
+  const stats = {};
+  for (const r of regions) stats[r.name] ||= { frames: 0, max: 0 };
+  stats.ankleLift = { frames: 0, max: 0 };
+  let unresolved = 0;
   const hipsNode = node('Hips');
+  const parentWorldInv = rig.parent.get(hipsNode) ? null : new THREE.Matrix4();
   const frames = result.times.length;
   for (let i = 0; i < frames; i += 1) {
     const overrides = new Map();
@@ -590,40 +619,107 @@ export function clampToesToFloor(rig, result, { iterations = 3 } = {}) {
       const n = node(name);
       if (n) overrides.set(n, { ...rig.trs.get(n), r: Array.from(arr.slice(i * 4, i * 4 + 4)) });
     }
-    overrides.set(hipsNode, { ...overrides.get(hipsNode), t: Array.from(result.hips.slice(i * 3, i * 3 + 3)) });
-    let touched = false;
-    for (let it = 0; it < iterations; it += 1) {
+    overrides.set(hipsNode, { ...(overrides.get(hipsNode) || rig.trs.get(hipsNode)), t: Array.from(result.hips.slice(i * 3, i * 3 + 3)) });
+    const touched = new Set();
+    let sinking = false;
+    for (let pass = 0; pass < passes; pass += 1) {
       const skinned = skinPositions(rig, overrides);
       const world = worldMatrices(rig, overrides);
+      const low = regions.map(() => ({ y: Infinity, at: null }));
+      membership.forEach((m, pi) => m.forEach((region, v) => {
+        if (region == null || !active[region]) return;
+        const y = skinned[pi][v * 3 + 1];
+        if (y < low[region].y) low[region] = { y, at: [pi, v] };
+      }));
       let moved = false;
-      for (const side of sides) {
-        let low = Infinity, at = null;
-        for (const [pi, v] of side.verts) if (skinned[pi][v * 3 + 1] < low) { low = skinned[pi][v * 3 + 1]; at = [pi, v]; }
-        if (low >= floor - TOE_CLAMP_TOLERANCE) continue;
-        const V = new THREE.Vector3().fromArray(skinned[at[0]], at[1] * 3);
-        const P = new THREE.Vector3().setFromMatrixPosition(world(side.node));
-        const lever = V.clone().sub(P);
-        const axis = lever.clone().cross(new THREE.Vector3(0, 1, 0));
-        if (axis.lengthSq() < 1e-10 || lever.length() < 1e-4) continue;
-        const angle = Math.min(Math.PI / 4, Math.asin(Math.min(1, (floor - low) / lever.length())) + 1e-3);
-        const toeQ = new THREE.Quaternion(), parentQ = new THREE.Quaternion();
-        world(side.node).decompose(new THREE.Vector3(), toeQ, new THREE.Vector3());
-        world(rig.parent.get(side.node)).decompose(new THREE.Vector3(), parentQ, new THREE.Vector3());
-        const turned = new THREE.Quaternion().setFromAxisAngle(axis.normalize(), angle).multiply(toeQ);
-        const local = parentQ.invert().multiply(turned).normalize();
-        const prev = result.rotations.get(side.name).slice(i * 4, i * 4 + 4);
-        if (prev[0] * local.x + prev[1] * local.y + prev[2] * local.z + prev[3] * local.w < 0) local.set(-local.x, -local.y, -local.z, -local.w);
-        result.rotations.get(side.name).set(local.toArray(), i * 4);
-        overrides.set(side.node, { ...overrides.get(side.node), r: local.toArray() });
-        stats.maxDeg = Math.max(stats.maxDeg, THREE.MathUtils.radToDeg(angle));
-        moved = touched = true;
-      }
+      sinking = false;
+      // Whole foot below the floor: raise that ankle by leg IK (same leg chain on heel and toe).
+      const legs = new Map();
+      regions.forEach((region, ri) => {
+        const depth = floor - low[ri].y;
+        if (!region.leg || !active[ri] || depth <= FLOOR_CLAMP_TOLERANCE) return;
+        const key = region.leg.join();
+        const entry = legs.get(key) || { leg: region.leg, depths: [] };
+        entry.depths.push(depth);
+        legs.set(key, entry);
+      });
+      const liftAnkle = (leg, lift) => {
+        const [hip, knee, ankle] = leg.map(node);
+        if (![hip, knee, ankle].every((n) => n && result.rotations.has(n.getName()))) return false;
+        const pos = (n) => new THREE.Vector3().setFromMatrixPosition(world(n));
+        const rot = (n) => { const q = new THREE.Quaternion(); world(n).decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; };
+        const H = pos(hip), K = pos(knee), A = pos(ankle);
+        const fallback = new THREE.Vector3(1, 0, 0).applyQuaternion(rot(hip));
+        const solved = solveTwoBone(H, K, A, A.clone().add(new THREE.Vector3(0, lift, 0)), rot(hip), rot(knee), fallback);
+        const locals = [
+          [hip, rot(rig.parent.get(hip)).invert().multiply(solved.hip)],
+          [knee, solved.hip.clone().invert().multiply(solved.knee)],
+          [ankle, solved.knee.clone().invert().multiply(rot(ankle))],
+        ];
+        for (const [n, q] of locals) {
+          q.normalize();
+          const track = result.rotations.get(n.getName());
+          const prev = track.slice(i * 4, i * 4 + 4);
+          if (prev[0] * q.x + prev[1] * q.y + prev[2] * q.z + prev[3] * q.w < 0) q.set(-q.x, -q.y, -q.z, -q.w);
+          track.set(q.toArray(), i * 4);
+          overrides.set(n, { ...overrides.get(n), r: q.toArray() });
+        }
+        stats.ankleLift.max = Math.max(stats.ankleLift.max, lift);
+        touched.add('ankleLift');
+        return true;
+      };
+      for (const { leg, depths } of legs.values()) if (depths.length > 1 && liftAnkle(leg, Math.min(...depths))) moved = true;
+      if (moved) continue; // re-skin before pitching
+      regions.forEach((region, ri) => {
+        const depth = floor - low[ri].y;
+        if (!active[ri] || depth <= FLOOR_CLAMP_TOLERANCE) return;
+        sinking = true;
+        if (moved && region.lift) return; // re-measure after rotations before lifting the body
+        if (region.lift) {
+          const parent = rig.parent.get(hipsNode);
+          const toLocal = parent ? world(parent).clone().invert() : parentWorldInv;
+          const hipsWorld = new THREE.Vector3().setFromMatrixPosition(world(hipsNode)).add(new THREE.Vector3(0, depth, 0));
+          const local = hipsWorld.applyMatrix4(toLocal).toArray();
+          overrides.set(hipsNode, { ...overrides.get(hipsNode), t: local });
+          result.hips.set(local, i * 3);
+          stats[region.name].max = Math.max(stats[region.name].max, depth);
+          touched.add(region.name);
+          moved = true;
+          return;
+        }
+        const V = new THREE.Vector3().fromArray(skinned[low[ri].at[0]], low[ri].at[1] * 3);
+        for (const pivotName of region.pivots) {
+          const pivot = node(pivotName);
+          if (!pivot || !result.rotations.has(pivotName)) continue;
+          const P = new THREE.Vector3().setFromMatrixPosition(world(pivot));
+          const lever = V.clone().sub(P);
+          const axis = lever.clone().cross(new THREE.Vector3(0, 1, 0));
+          if (lever.length() < 1e-4 || axis.length() < 0.2 * lever.length()) continue; // lever (near) vertical
+          const angle = Math.min(Math.PI / 4, Math.asin(Math.min(1, depth / lever.length())) + 1e-3);
+          const pivotQ = new THREE.Quaternion(), parentQ = new THREE.Quaternion();
+          world(pivot).decompose(new THREE.Vector3(), pivotQ, new THREE.Vector3());
+          world(rig.parent.get(pivot)).decompose(new THREE.Vector3(), parentQ, new THREE.Vector3());
+          const local = parentQ.invert().multiply(new THREE.Quaternion().setFromAxisAngle(axis.normalize(), angle).multiply(pivotQ)).normalize();
+          const track = result.rotations.get(pivotName);
+          const prev = track.slice(i * 4, i * 4 + 4);
+          if (prev[0] * local.x + prev[1] * local.y + prev[2] * local.z + prev[3] * local.w < 0) local.set(-local.x, -local.y, -local.z, -local.w);
+          track.set(local.toArray(), i * 4);
+          overrides.set(pivot, { ...overrides.get(pivot), r: local.toArray() });
+          stats[region.name].max = Math.max(stats[region.name].max, THREE.MathUtils.radToDeg(angle));
+          touched.add(region.name);
+          moved = true;
+          return;
+        }
+        // No pivot can lift it (lever vertical: the heel right under the ankle): raise the ankle.
+        if (region.leg && liftAnkle(region.leg, depth)) moved = true;
+      });
       if (!moved) break;
     }
-    if (touched) stats.frames += 1;
+    for (const name of touched) stats[name].frames += 1;
+    if (sinking) unresolved += 1;
   }
-  stats.maxDeg = +stats.maxDeg.toFixed(2);
-  return stats;
+  for (const v of Object.values(stats)) v.max = +v.max.toFixed(4);
+  return { ...stats, unresolvedFrames: unresolved };
 }
 
 /**

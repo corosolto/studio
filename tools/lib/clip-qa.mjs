@@ -5,20 +5,22 @@
 //                with the clip's extracted root motion added back (cm), inside the source's
 //                contact windows; the limit rises to the source's own slide + 1 cm;
 //   lowestVertex lowest skinned vertex per frame: the minimum (penetration when negative)
-//                and the maximum (the whole body floats) (cm);
+//                and the maximum (the whole body floats) (cm), and the minimum per body
+//                region (heel, toe, hand, knee, body) with a stricter heel limit;
 //   hips         Hips height range against the bind pose;
 //   loopSeam     first versus last frame for loop clips: joint positions (cm) and local
 //                rotations (degrees);
 //   hands        LeftHand–RightHand distance; gated for two-handed weapon holds (rifle);
 //   stretch      filled from tools/characters/rig-pose-test.mjs --clips (skin stretch).
 import * as THREE from 'three';
-import { FOOT_CONTACT_JOINTS, footContacts } from './animation-retarget.mjs';
+import { FLOOR_CLAMP_REGIONS, FOOT_CONTACT_JOINTS, footContacts, vertexRegions } from './animation-retarget.mjs';
 import { POSE_THRESHOLDS, clipOverrides, skinPositions, worldMatrices } from './character-rig.mjs';
 
 export const CLIP_QA_THRESHOLDS = Object.freeze({
   footSlideCm: 4, // planted-foot travel within one contact window
   footSlideOverSourceCm: 1, // ...or at most this much above the source's own slide (extras.clip.contactSlide)
   penetrationCm: 2, // lowest vertex may sink at most this far below the floor
+  heelPenetrationCm: 1, // heels (vertices of the Foot joints) sink at most this far
   floatCm: 3, // the per-frame lowest vertex may rise at most this far (grounded clips)
   hipsMaxRatio: 1.08, // hips above the bind height (grounded clips): legs over-extended
   loopSeamCm: 1.5,
@@ -57,6 +59,8 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
   const velocity = rm && rm.extracted && rm.mode === 'in-place' ? new THREE.Vector3(rm.velocity[0], 0, rm.velocity[1]) : new THREE.Vector3();
   const deform = rig.joints.filter((j, i) => rig.joints.findIndex((k) => k.getName() === j.getName()) === i && !/^Curl_|^head_end$|^headfront$/.test(j.getName()));
 
+  const membership = vertexRegions(rig);
+  const regionLow = {};
   const lowest = [], lowestBone = [], hipsY = [], hands = [], feet = Object.fromEntries(FOOT_JOINTS.map((n) => [n, []]));
   const firstLast = [];
   for (let f = 0; f < frames; f += 1) {
@@ -64,7 +68,14 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
     const overrides = clipOverrides(rig, sampler, t);
     const world = worldMatrices(rig, overrides);
     let low = Infinity, lowAt = null;
-    skinPositions(rig, overrides).forEach((p, pi) => { for (let v = 1; v < p.length; v += 3) if (p[v] < low) { low = p[v]; lowAt = [pi, (v - 1) / 3]; } });
+    skinPositions(rig, overrides).forEach((p, pi) => {
+      for (let v = 1; v < p.length; v += 3) {
+        if (p[v] < low) { low = p[v]; lowAt = [pi, (v - 1) / 3]; }
+        const r = membership[pi][(v - 1) / 3];
+        const name = r == null ? 'body' : FLOOR_CLAMP_REGIONS[r].name;
+        if (!(regionLow[name] <= p[v] - floor)) regionLow[name] = p[v] - floor;
+      }
+    });
     lowest.push(low - floor);
     lowestBone.push(lowAt);
     hipsY.push(pos(world, 'Hips').y);
@@ -126,6 +137,7 @@ export function measureClip(rig, sampler, meta = {}, { fps = meta.fps || 30 } = 
     lowestVertex: {
       minCm: cm(minLowest), minAt: +(lowest.indexOf(minLowest) / fps).toFixed(3), minBone: dominantBone(rig, lowestBone[lowest.indexOf(minLowest)]),
       maxCm: cm(maxLowest), maxAt: +(lowest.indexOf(maxLowest) / fps).toFixed(3), floorY: +floor.toFixed(4),
+      byRegionCm: Object.fromEntries(Object.entries(regionLow).map(([k, v]) => [k, cm(v)])),
     },
     hips: {
       restHeight: +restHeight.Hips.toFixed(4), min: +Math.min(...hipsY).toFixed(4), max: +Math.max(...hipsY).toFixed(4),
@@ -160,6 +172,8 @@ export function evaluateClip(metrics, meta = {}, thresholds = CLIP_QA_THRESHOLDS
   const slideLimit = Math.max(thresholds.footSlideCm, (metrics.footSlide.sourceCm ?? -Infinity) + thresholds.footSlideOverSourceCm);
   if (metrics.footSlide.maxCm > slideLimit) failures.push(`foot slide ${metrics.footSlide.maxCm} cm (${metrics.footSlide.joint} ${metrics.footSlide.window?.join('–')}s) > ${+slideLimit.toFixed(2)}`);
   if (metrics.lowestVertex.minCm < -thresholds.penetrationCm) failures.push(`floor penetration ${metrics.lowestVertex.minCm} cm @${metrics.lowestVertex.minAt}s < -${thresholds.penetrationCm}`);
+  const heel = metrics.lowestVertex.byRegionCm?.heel;
+  if (heel != null && heel < -thresholds.heelPenetrationCm) failures.push(`heel sinks ${heel} cm < -${thresholds.heelPenetrationCm}`);
   if (grounded && metrics.lowestVertex.maxCm > thresholds.floatCm) failures.push(`floats ${metrics.lowestVertex.maxCm} cm @${metrics.lowestVertex.maxAt}s > ${thresholds.floatCm}`);
   if (grounded && metrics.hips.maxRatio > thresholds.hipsMaxRatio) failures.push(`hips rise to ${metrics.hips.maxRatio}× bind height > ${thresholds.hipsMaxRatio}`);
   if (meta.loop && metrics.loopSeam) {

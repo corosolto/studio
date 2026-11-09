@@ -20,7 +20,7 @@ import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import { clipSampler, deformJointNames, loadRig } from '../lib/character-rig.mjs';
 import {
-  MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToesToFloor, clipMetadata, gltfPoseSource, mixamoBaseName,
+  FLOOR_CLAMP_REGIONS, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, clipMetadata, gltfPoseSource, mixamoBaseName,
   objectPoseSource, referenceSkeletonDocument, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS, detectRig } from '../lib/animation-sources.mjs';
@@ -504,6 +504,13 @@ for (const [label, frames, meta, expected] of mutants) {
     return f.find((x) => expected.test(x));
   });
 }
+await clause('Q2 clip QA mutant rejected: heel sinks past the stricter heel limit', async () => {
+  const { metrics } = await qa(bodyClip(goodClip(), loopMeta));
+  const sunk = { ...metrics, lowestVertex: { ...metrics.lowestVertex, byRegionCm: { ...metrics.lowestVertex.byRegionCm, heel: -1.5 } } };
+  const f = evaluateClip(sunk, loopMeta);
+  assert(f.some((x) => /heel sinks -1.5 cm/.test(x)) && !evaluateClip(metrics, loopMeta).length, f.join('; '));
+  return f.find((x) => /heel/.test(x));
+});
 await clause('Q2 airborne clips are exempt from the float and hips gates', async () => {
   const { failures: f } = await qa(bodyClip(goodClip(() => ({ hips: [0, 0.1, 0] })), { ...loopMeta, airborne: true }));
   assert(!f.some((x) => /floats|hips rise/.test(x)), f.join('; '));
@@ -533,17 +540,30 @@ await clause('Q3 clip-qa CLI gates skin stretch through rig-pose-test --clips (a
   }
 });
 
-await clause('Q4 the bake-time toe clamp lifts toes pushed through the floor', async () => {
-  const doc = bodyClip(() => ({ deltas: { LeftToeBase: Q(X, 35), RightToeBase: Q(X, 35) } }), { loop: false });
-  const graph = skeletonGraph(doc);
-  const anim = doc.getRoot().listAnimations()[0];
-  const r = retargetClip(gltfPoseSource(doc, anim, RIG_MAPS['meshy-28']), bodyGraph, { rootMotion: 'keep', footIk: false, footContact: false });
-  const before = measureClip(bodyRig, clipSampler(await io.readBinary(await io.writeBinary(writeClipDocument(graph, r, 'a', {})))), {});
-  const stats = clampToesToFloor(bodyRig, r);
-  const after = measureClip(bodyRig, clipSampler(await io.readBinary(await io.writeBinary(writeClipDocument(graph, r, 'b', {})))), {});
-  assert(before.lowestVertex.minCm < -1 && after.lowestVertex.minCm >= -0.6 && stats.frames > 0, `toes ${before.lowestVertex.minCm} -> ${after.lowestVertex.minCm} cm (${JSON.stringify(stats)})`);
-  return `lowest toe ${before.lowestVertex.minCm} -> ${after.lowestVertex.minCm} cm, ${stats.frames} frames, ≤${stats.maxDeg}°`;
-});
+/* Bake-time floor clamp: each case sinks one body region through the floor; the clamp must
+   bring every region back within 6 mm and report the lever it used. */
+const floorCases = [
+  ['toes bent down', () => ({ deltas: { LeftToeBase: Q(X, 35), RightToeBase: Q(X, 35) } }), 'toe', 'toe'],
+  ['heels sunk with the toes raised', () => ({ deltas: { LeftFoot: Q(X, -50), RightFoot: Q(X, -50) }, hips: [0, -0.09, 0] }), 'heel', 'heel'],
+  ['whole feet below the floor (ankle lift)', () => ({ deltas: {}, hips: [0, -0.04, 0] }), 'heel', 'ankleLift'],
+  // Bent over with the arms reaching forward-down; only the hand regions are clamped here.
+  ['hands pushed into the ground', () => ({ deltas: { Spine02: Q(X, 90), LeftArm: Q(X, 45).multiply(Q(Z, -90)), RightArm: Q(X, 45).multiply(Q(Z, 90)) }, hips: [0, -0.62, 0] }), 'hand', 'hand', ['hand']],
+];
+for (const [label, frames, region, lever, only] of floorCases) {
+  await clause(`Q4 the bake-time floor clamp lifts ${label}`, async () => {
+    const doc = bodyClip(frames, { loop: false }, { duration: 0.2 });
+    const graph = skeletonGraph(doc);
+    const r = retargetClip(gltfPoseSource(doc, doc.getRoot().listAnimations()[0], RIG_MAPS['meshy-28']), bodyGraph, { rootMotion: 'keep', footIk: false, footContact: false, alignLimbs: [] });
+    const measure = async (name) => measureClip(bodyRig, clipSampler(await io.readBinary(await io.writeBinary(writeClipDocument(graph, r, name, {})))), {}).lowestVertex;
+    const before = await measure('a');
+    const stats = clampToFloor(bodyRig, r, only ? { regions: FLOOR_CLAMP_REGIONS.filter((x) => only.includes(x.name)) } : {});
+    const after = await measure('b');
+    assert(before.byRegionCm[region] < -1, `fixture does not sink the ${region} (${before.byRegionCm[region]} cm)`);
+    const low = only ? Math.min(...only.map((n) => after.byRegionCm[n])) : after.minCm;
+    assert(low >= -0.6 && stats[lever].frames > 0, `${region} ${before.byRegionCm[region]} -> ${low} cm (${JSON.stringify(stats)})`);
+    return `${region} ${before.byRegionCm[region]} -> ${only ? `${region} ${low}` : `lowest ${low}`} cm via ${lever} (max ${stats[lever].max})`;
+  });
+}
 
 if (failures) {
   console.error(`FAIL animation conversion: ${failures} clause(s)`);
