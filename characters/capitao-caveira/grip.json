@@ -1,0 +1,11 @@
+{
+  "id": "capitao-caveira",
+  "sourceSha256": "cbdc5595ceb2b4650b3c05b71c3bb379d53d2f1318111ddf66c1701d26ccdcbe",
+  "donorSha256": "acecd2a763dc417f6b132a2d555bffd2c6a5e7cf3b1a83a50ee24d938fce4b0f",
+  "units": "hand-local-metres",
+  "reference": "meshy-28 mst: Hand local +X flexion, +Y distal; Curl inherits Hand rotation. Existing tools/finger-curl.mjs uses a longitudinal weight ramp. No donor geometry or nearest-neighbour weights are copied.",
+  "hands": [
+    { "hand": "LeftHand", "curl": "Curl_L", "knuckleY": 0.17, "fullY": 0.20, "palmY": 0.15, "thumbSign": -1, "thumbX": 0.075, "branchY": 0.185 },
+    { "hand": "RightHand", "curl": "Curl_R", "knuckleY": 0.18, "fullY": 0.21, "palmY": 0.16, "thumbSign": 1, "thumbX": 0.075, "branchY": 0.195 }
+  ]
+}

@@ -24,6 +24,7 @@ const requiredFiles = [
   'tools/checks/character-concept-prompt-check.mjs',
   'tools/lib/character-rig.mjs',
   'tools/checks/character-rig-check.mjs',
+  'tools/checks/character-grip-public-check.mjs',
   'docs/character-rig.md',
   'maps/lajes/gauntlet/fixtures/scene-report.valid.json',
 ];
@@ -46,6 +47,6 @@ const scripts = walk(path.join(root, 'tools')).filter(file => file.endsWith('.mj
 for (const script of scripts) execFileSync(process.execPath, ['--check', script], { stdio: 'pipe' });
 console.log(`PASS Studio structure, JSON, public asset boundary and ${scripts.length} Node tool syntax checks`);
 // Contract checks that use synthetic fixtures only; they never call paid generation APIs.
-for (const check of ['tools/checks/character-pack-check.mjs', 'tools/checks/character-concept-prompt-check.mjs', 'tools/checks/character-rig-check.mjs']) {
+for (const check of ['tools/checks/character-pack-check.mjs', 'tools/checks/character-concept-prompt-check.mjs', 'tools/checks/character-rig-check.mjs', 'tools/checks/character-grip-public-check.mjs']) {
   execFileSync(process.execPath, [path.join(root, check)], { stdio: 'inherit' });
 }
