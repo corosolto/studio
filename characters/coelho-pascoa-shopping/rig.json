@@ -30,5 +30,35 @@
     ],
     "thighCeiling": 1.0,
     "clavicleFloor": 0.0
-  }
+  },
+  "extras": [
+    {
+      "name": "rod",
+      "select": {
+        "box": {
+          "min": [
+            null,
+            0.2,
+            0.45
+          ],
+          "max": [
+            null,
+            null,
+            0.7
+          ]
+        },
+        "grow": {
+          "seeds": [
+            [
+              0.0,
+              0.3,
+              0.575
+            ]
+          ],
+          "crease": 180
+        }
+      },
+      "remove": true
+    }
+  ]
 }

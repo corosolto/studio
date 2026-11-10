@@ -1,0 +1,11 @@
+{
+  "units": "m",
+  "space": "clean: +Z up, faces -Y, character left is +X",
+  "joints": {
+    "Hips": [
+      0.0,
+      0.141,
+      0.572
+    ]
+  }
+}
