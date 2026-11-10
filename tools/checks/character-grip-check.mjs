@@ -143,26 +143,33 @@ export function assertGrip(before, after, config) {
   return result;
 }
 
+export function assertGripMutants(before, after, config) {
+  const reject = (name, doc, pattern) => {
+    assert.throws(() => assertGrip(before, doc, config), pattern, `mutant survived: ${name}`);
+    console.log(`KILLED ${name}`);
+  };
+  reject('original-zero-finger-influence', before, /zero\/insufficient finger influence/);
+  const geometry = cloneDocument(after); geometry.getRoot().listMeshes()[0].listPrimitives()[0].getAttribute('POSITION').getArray()[0] += 0.01;
+  reject('changed-base-silhouette', geometry, /base shape changed/);
+  const wholeHand = cloneDocument(after), rig = loadRig(wholeHand), h = config.hands[0], region = handRegion(loadRig(before), h);
+  const v = region.members.findIndex((m, i) => m && region.points[i].y < h.palmY);
+  assert(v >= 0, 'palm mutant did not find a protected vertex');
+  const j = rig.prims[0].J, w = rig.prims[0].W;
+  let changed = false;
+  for (let k = 0; k < 4; k++) if (j[v * 4 + k] === region.hi && w[v * 4 + k] > 0) {
+    j[v * 4 + k] = region.ci; changed = true;
+  }
+  assert(changed, 'palm mutant did not change an influence');
+  reject('whole-palm-as-fingers', wholeHand, /palm\/thumb acquired Curl influence/);
+  const wrongFrame = cloneDocument(after); wrongFrame.getRoot().listNodes().find(n => n.getName() === h.curl).setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI).toArray());
+  reject('reversed-flexion-frame', wrongFrame, /bind shape error|wrong flexion frame/);
+}
+
 if (process.argv[1]?.endsWith('/character-grip-check.mjs')) {
   const [source, repaired, annotation, flag] = process.argv.slice(2);
   assert(source && repaired && annotation, 'usage: character-grip-check.mjs <before.glb> <after.glb> <grip.json> [--mutants]');
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS), config = JSON.parse(readFileSync(annotation, 'utf8'));
   const before = await io.read(source), after = await io.read(repaired);
   console.log(JSON.stringify(assertGrip(before, after, config), null, 2));
-  if (flag === '--mutants') {
-    const reject = (name, doc, pattern) => {
-      assert.throws(() => assertGrip(before, doc, config), pattern, `mutant survived: ${name}`);
-      console.log(`KILLED ${name}`);
-    };
-    reject('original-zero-finger-influence', before, /zero\/insufficient finger influence/);
-    const geometry = cloneDocument(after); geometry.getRoot().listMeshes()[0].listPrimitives()[0].getAttribute('POSITION').getArray()[0] += 0.01;
-    reject('changed-base-silhouette', geometry, /base shape changed/);
-    const wholeHand = cloneDocument(after), rig = loadRig(wholeHand), h = config.hands[0], region = handRegion(loadRig(before), h);
-    const v = region.members.findIndex((m, i) => m && region.points[i].y < h.palmY);
-    const j = rig.prims[0].J, w = rig.prims[0].W;
-    for (let k = 0; k < 4; k++) if (j[v * 4 + k] === region.hi && w[v * 4 + k] > 0) j[v * 4 + k] = region.ci;
-    reject('whole-palm-as-fingers', wholeHand, /palm\/thumb acquired Curl influence/);
-    const wrongFrame = cloneDocument(after); wrongFrame.getRoot().listNodes().find(n => n.getName() === h.curl).setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI).toArray());
-    reject('reversed-flexion-frame', wrongFrame, /bind shape error|wrong flexion frame/);
-  }
+  if (flag === '--mutants') assertGripMutants(before, after, config);
 }

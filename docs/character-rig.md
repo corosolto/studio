@@ -143,8 +143,10 @@ remain in contract order, parented to Hand, with the unused copies unweighted.
 This is one bend per finger, matching the existing meshy-28 mechanism, not a new
 fully articulated finger rig.
 
-From this Studio worktree, with `BASE` pointing at the local character pack root
-and `DONOR` at the client's existing `public/models/characters/mst.glb`:
+Requires Node >=22.12 (the default system Node may be older; use `asdf exec node`
+where applicable). From this Studio worktree, with `BASE` pointing at the local
+character pack root and `DONOR` at the client's existing
+`public/models/characters/mst.glb`:
 
 ```sh
 node tools/characters/repair-grip-pack.mjs \
@@ -180,4 +182,19 @@ L/R=1.68x/1.30x on shared clips, measured by `tools/characters/rig-pose-test.mjs
 The grip production report records the additional synthetic Curl endpoints:
 left 1.484x and right 1.747x maximum at 0.95 rad. None of these numbers approves
 actual AK contact or replaces the parent browser/visual evaluation.
+
+### Public CI proof
+
+`npm run check:character-grip` generates a synthetic skinned hand pair in memory,
+with four distal branches, a separate shorter thumb and a protected palm. It runs
+the same nominal gate and four causal mutants as the private pilot: zero finger
+influence, changed rest shape, palm-as-finger and reversed frame. The fixture also
+constructs an actual Three.js `SkinnedMesh` and compares every vertex against the
+offline skinning at the two runtime endpoint curls using Euler XYZ addition.
+No GLB, texture, clip, private directory, paid service or browser is needed.
+
+`npm run check` runs this proof through `tools/studio-check.mjs`, so the existing
+Studio CI executes the nominal case and mutants, not merely a syntax check.
+Private-pack validation and the actual-client visual review remain separate
+required evidence; no synthetic result means that a hand visibly grips a weapon.
 

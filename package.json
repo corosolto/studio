@@ -9,6 +9,7 @@
     "check": "node tools/studio-check.mjs",
     "check:asset-gen": "node tools/checks/gen-asset-pbr-check.mjs",
     "check:pistol-source": "node tools/checks/pistol-hires-pilot-check.mjs",
+    "check:character-grip": "node tools/checks/character-grip-public-check.mjs",
     "smoke:pack": "node tools/smoke-pack.mjs",
     "pack:build-lajes": "node tools/build-lajes-pack.mjs",
     "pack:validate": "node tools/validate-pack.mjs",
