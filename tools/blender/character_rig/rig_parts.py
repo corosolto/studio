@@ -196,14 +196,24 @@ def main():
     # deleted, so a cape or coat hem fused to a boot or a trouser leg hangs free instead of
     # tearing between the cloth weights and the leg weights.  Geometry is only removed,
     # never moved or welded: the cut opens one face ring, it does not hide a seam.
+    # Removals (``remove: true``): every face of the extra is deleted and the opening it
+    # leaves in the rest of the mesh is capped, for geometry the concept does not have
+    # (coelho-pascoa-shopping: a rod with a ball fused to the tail, pointing straight back).
     drop = np.zeros(len(part), dtype=bool)
+    capped = set()
     for extra, entry in zip(cfg.get("extras", []), extras_report):
+        own = np.nonzero(part == index[extra["name"]])[0]
+        if extra.get("remove"):
+            drop[own] = True
+            entry["removedFaces"] = len(own)
+            capped.add(extra["name"])
+            continue
         if not extra.get("cut"):
             continue
         fused = np.zeros(len(me.vertices), dtype=bool)
         for i in np.nonzero(np.isin(part, [index[name] for name in extra["cut"]]))[0]:
             fused[list(me.polygons[i].vertices)] = True
-        hit = [i for i in np.nonzero(part == index[extra["name"]])[0] if fused[list(me.polygons[i].vertices)].any()]
+        hit = [i for i in own if fused[list(me.polygons[i].vertices)].any()]
         drop[hit] = True
         entry["cutFaces"] = len(hit)
 
@@ -211,13 +221,21 @@ def main():
     attr.data.foreach_set("value", part)
     me.update()
     if drop.any():
+        removed = np.isin(part, [index[name] for name in capped])
         bm = C.bm_from(body)
+        rim = {v for i in np.nonzero(removed)[0] for v in bm.faces[i].verts}
         bmesh.ops.delete(bm, geom=[bm.faces[i] for i in np.nonzero(drop)[0]], context="FACES")
+        if rim:
+            layer = bm.faces.layers.int.get("rig_part")
+            edges = [e for e in bm.edges if e.is_boundary and all(v in rim for v in e.verts)]
+            for face in bmesh.ops.holes_fill(bm, edges=edges, sides=0)["faces"]:
+                around = [g[layer] for e in face.edges for g in e.link_faces if g is not face]
+                face[layer] = max(set(around), key=around.count) if around else index["torso"]
         bm.to_mesh(me)
         bm.free()
-        part, centers = part[~drop], centers[~drop]
-        C.face_part_layer(me, create=True).data.foreach_set("value", part)
         me.update()
+        _, part = C.read_face_parts(body, cfg)
+        _, centers = C.mesh_arrays(body)
     C.save_blend(args.work / "parts.blend")
 
     centers_k, klabels = C.kmeans_palette(colors, k=int(pcfg.get("paletteSize", 8)))

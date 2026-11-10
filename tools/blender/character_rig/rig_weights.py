@@ -104,6 +104,8 @@ def part_rules(cfg):
             rigid[extra["name"]] = extra["rigid"]
         elif extra.get("kind") in CLOTH_BONES:
             allowed[extra["name"]] = set(CLOTH_BONES[extra["kind"]])
+        elif extra.get("remove"):
+            allowed[extra["name"]] = set()  # deleted in the parts step; no face is left
         else:
             allowed[extra["name"]] = set(extra["bones"])
     return allowed, rigid

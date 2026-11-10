@@ -48,8 +48,9 @@ clause('R1 character rig configs are well formed', () => {
     for (const extra of cfg.extras || []) {
       assert(extra.name && !partNames.has(extra.name) && !names.has(extra.name), `${file}: extra names must be unique and not body parts (${extra.name})`);
       names.add(extra.name);
-      const modes = [Boolean(extra.rigid), Boolean(extra.bones), Boolean(extra.kind)].filter(Boolean).length;
-      assert(modes === 1, `${file}: extra ${extra.name} needs exactly one of rigid, bones or kind`);
+      const modes = [Boolean(extra.rigid), Boolean(extra.bones), Boolean(extra.kind), extra.remove === true].filter(Boolean).length;
+      assert(modes === 1, `${file}: extra ${extra.name} needs exactly one of rigid, bones, kind or remove: true`);
+      assert(extra.remove === undefined || (extra.remove === true && !extra.cut && extra.measure === undefined), `${file}: extra ${extra.name} remove must be true, without cut or measure`);
       assert(!extra.kind || ['skirt', 'cape'].includes(extra.kind), `${file}: extra ${extra.name} has unknown kind ${extra.kind}`);
       assert(extra.measure === undefined || typeof extra.measure === 'boolean', `${file}: extra ${extra.name} measure must be true or false`);
       const fp = extra.frontPanel;
