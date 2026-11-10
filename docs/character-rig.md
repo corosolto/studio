@@ -122,5 +122,62 @@ The plush mascot keeps human-like clip motion: idle, walk, run, crouch, crouchwa
 - `shoulderAt: "junction"`, `spineDepth`, `thighCeiling`/`clavicleFloor` and a larger `gradientRamp` (0.04) are per-character levers, not defaults: on the 37-character set of 2026-11-09 each fixed some rigs and broke others when applied to all (junction shoulders: 7 passing rigs failed; `spineDepth` 0.4 worsened barbudo-creepy and bebezao-de-feira).
 - Heat weighting can fail on non-manifold meshes; the voxel proxy covers it, but check `weights.json` (`method`, `heat.unweightedVertices`).
 - Hips translation and in-place motion come from `retarget-glb.mjs`; this pipeline does not author clips.
-- `Curl_L`/`Curl_R` carry no skin (hands are 100% `Hand`), as in the rigs from `rig-from-donor.mjs`: the client's grip curl rotates those bones but the fingers do not close around the weapon.
+- The Blender weights still treat `Curl_L`/`Curl_R` as non-deforming. A body pose PASS is **not** a playable-hand approval. The explicit offline pilot repair below is required before evaluating capitao-caveira's grip; it is not enabled for the other characters.
 - The pipeline run (`rig-character.mjs`) fails when the pose test fails (`--strict`); `--no-clips` limits it to the synthetic poses.
+
+## Offline grip prerequisite — capitao-caveira only
+
+`characters/capitao-caveira/grip.json` pins the exact 0.2.0 mesh and donor hashes.
+The existing client's `tools/finger-curl.mjs` establishes the longitudinal weight
+ramp and positive local-X curl convention, but its world/local offset and IBM
+calculations must not be copied onto the centimetre skeleton. This repair computes
+the new inverse bind matrix from the complete actual joint hierarchy.
+
+Measured in Hand-local metres, the pilot's four non-thumb fingers separate into
+four welded-position components past Y=0.185 (left) / 0.195 (right). The annotation
+places their shared hinge at Y=0.17 / 0.18 and smoothly transfers only existing
+Hand weight to the first corresponding Curl. Palm Y<=0.15 / 0.16 and thumb-side
+X<=-0.075 / X>=0.075 remain untouched. No geometry, normals, UV, topology,
+material, image, rights or animation bytes are regenerated. Duplicate Curl joints
+remain in contract order, parented to Hand, with the unused copies unweighted.
+This is one bend per finger, matching the existing meshy-28 mechanism, not a new
+fully articulated finger rig.
+
+From this Studio worktree, with `BASE` pointing at the local character pack root
+and `DONOR` at the client's existing `public/models/characters/mst.glb`:
+
+```sh
+node tools/characters/repair-grip-pack.mjs \
+  "$BASE/capitao-caveira/0.2.0" "$BASE/capitao-caveira/0.2.1" \
+  characters/capitao-caveira/grip.json "$DONOR" \
+  "$BASE/capitao-caveira/grip-0.2.1.json"
+node tools/checks/character-grip-check.mjs \
+  "$BASE/capitao-caveira/0.2.0/model/capitao-caveira.glb" \
+  "$BASE/capitao-caveira/0.2.1/model/capitao-caveira.glb" \
+  characters/capitao-caveira/grip.json --mutants
+```
+
+The builder refuses existing output/report paths, altered source/donor hashes,
+unsupported skin encodings or missing weight slots. Before publication it runs
+the causal numeric gate and validates the full original and new packs, including
+the unchanged complete eleven-state clip file. It records exact commands, source,
+tool and annotation hashes, output manifest/model hashes, donor influences and
+per-finger measurements outside the pack. Local version 0.2.0 is immutable.
+
+The gate rejects zero finger influence, rotation of palm/thumb, wrong flexion
+frame/sign, bind error above 0.1 mm, geometry/attribute/topology changes, unrelated
+weight changes, or curl edge stretch above 2.5x. All four fingers must move inward
+at both runtime endpoint curls (0.55 and 0.95 rad). `--mutants` includes the actual
+zero-weight source, changed silhouette, palm-as-finger and reversed-frame defects.
+Passing establishes only a real deformation prerequisite: the parent must render
+the pilot with the actual AK and obtain independent visual acceptance. Do not
+publish/integrate the remaining 29 or generalize an annotation across characters.
+
+The hand edge ceiling is shared with `POSE_THRESHOLDS.synthetic.handMaxEdge` in
+`tools/lib/character-rig.mjs`, not a new aesthetic threshold. Its existing RM1
+provenance is documented there; the calibration table above records mst hand
+L/R=1.68x/1.30x on shared clips, measured by `tools/characters/rig-pose-test.mjs`.
+The grip production report records the additional synthetic Curl endpoints:
+left 1.484x and right 1.747x maximum at 0.95 rad. None of these numbers approves
+actual AK contact or replaces the parent browser/visual evaluation.
+
