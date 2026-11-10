@@ -18,8 +18,8 @@ import { Document } from '@gltf-transform/core';
 import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import {
-  ALIGNED_BONES, MESHY28_REST_WORLD, SYNTHETIC_POSES, assembleMeshy28Model, buildMeshy28Skeleton, deformJointNames, evaluatePoseReport,
-  loadRig, measurePose, measureSetup, skinPositions, summarize, syntheticOverrides, uniqueJointNames, validateJoints,
+  ALIGNED_BONES, MESHY28_REST_WORLD, SYNTHETIC_POSES, armAngles, armProportions, assembleMeshy28Model, buildMeshy28Skeleton, deformJointNames,
+  evaluatePoseReport, loadRig, measurePose, measureSetup, skinPositions, summarize, syntheticOverrides, uniqueJointNames, validateJoints,
 } from '../lib/character-rig.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -71,6 +71,9 @@ clause('R1 character rig configs are well formed', () => {
     for (const [parent, child] of cfg.weights?.linearBlends || []) {
       assert(deformJointNames.includes(parent) && deformJointNames.includes(child), `${file}: linearBlends names a bone that does not deform`);
     }
+    const { armpitX, armMinLength } = cfg.parts || {};
+    assert(armpitX === undefined || (Number.isFinite(armpitX) && Math.abs(armpitX) > 0 && Math.abs(armpitX) < 1.5), `${file}: parts.armpitX must be an x in metres`);
+    assert(armMinLength === undefined || armMinLength === null || (armMinLength > 0 && armMinLength <= 0.3), `${file}: parts.armMinLength must be null or in (0, 0.3] x height`);
     for (const joint of cfg.weights?.smoothJoints || []) assert(uniqueJointNames.includes(joint), `${file}: smoothJoints names unknown joint ${joint}`);
     for (const key of ['waistBand', 'neckBand', 'flankBand', 'flankFade']) {
       const v = cfg.weights?.[key];
@@ -104,12 +107,22 @@ const J = {
 const TIPS = { LeftHandTip: [0.72, 1.25, 0], RightHandTip: [-0.72, 1.25, 0] };
 const cleanJoints = Object.fromEntries(Object.entries(J).map(([n, [x, y, z]]) => [n, [x, -z, y]]));
 
+/* Arm mutants move joints of the left arm (mesh and skeleton alike): `elbow-at-wrist` puts
+   the elbow 4 cm from the wrist (proportions), `arm-at-wrist` puts shoulder and elbow there,
+   so the clavicle carries the whole arm, the defect of a sleeve read as torso. */
+const mutantJoints = (mutant) => ({
+  ...J,
+  ...(mutant === 'elbow-at-wrist' ? { LeftForeArm: [0.58, 1.25, 0] } : {}),
+  ...(mutant === 'arm-at-wrist' ? { LeftArm: [0.54, 1.25, 0], LeftForeArm: [0.58, 1.25, 0] } : {}),
+});
+
 /** Tubes along joint chains; each ring is weighted by a smoothstep blend around every joint. */
 function synthBody({ mutant = null } = {}) {
+  const JM = mutantJoints(mutant);
   const positions = [], joints = [], weights = [], indices = [];
   const slot = new Map(meshy28Joints.map(([name], i) => [name, i]).reverse());
   const tube = (chain, radius, step = 0.02, sides = 8, blend = 0.05) => {
-    const points = chain.map((n) => new THREE.Vector3(...(Array.isArray(n) ? n : J[n])));
+    const points = chain.map((n) => new THREE.Vector3(...(Array.isArray(n) ? n : JM[n])));
     const names = chain.map((n) => (Array.isArray(n) ? null : n));
     const total = points.slice(1).reduce((s, p, i) => s + p.distanceTo(points[i]), 0);
     const rings = Math.max(2, Math.round(total / step) + 1);
@@ -192,7 +205,7 @@ function synthDocument(options = {}) {
     .setAttribute('WEIGHTS_0', doc.createAccessor().setType('VEC4').setArray(new Float32Array(body.weights)).setBuffer(buffer))
     .setIndices(doc.createAccessor().setType('SCALAR').setArray(new Uint32Array(body.indices)).setBuffer(buffer));
   const meshNode = doc.createNode('Body').setMesh(doc.createMesh('Body').addPrimitive(prim));
-  const skeleton = buildMeshy28Skeleton(doc, { ...J, ...TIPS });
+  const skeleton = buildMeshy28Skeleton(doc, { ...mutantJoints(options.mutant), ...TIPS });
   if (options.mutant === 'stale-ibm') skeleton.joints[13].setTranslation(skeleton.joints[13].getTranslation().map((v, i) => v + (i === 1 ? 5 : 0)));
   const skin = doc.createSkin('meshy-28').setSkeleton(skeleton.joints[0])
     .setInverseBindMatrices(doc.createAccessor().setType('MAT4').setArray(skeleton.inverseBindMatrices).setBuffer(buffer));
@@ -202,11 +215,17 @@ function synthDocument(options = {}) {
   return doc;
 }
 
+/* A stand-in idle: both arms lowered 60° from T (the donor's idle arm angles are 50.8° and
+   38.0° from down), measured as a clip pose so the idle arm gate applies. */
+const SYNTH_IDLE = { name: 'idle', steps: [['LeftArm', 'z', -60], ['RightArm', 'z', 60]] };
 function poseReport(doc) {
   const rig = loadRig(doc);
   const setup = measureSetup(rig);
   const poses = SYNTHETIC_POSES.map((pose) => ({ kind: 'synthetic', name: pose.name, ...measurePose(rig, setup, skinPositions(rig, syntheticOverrides(rig, pose))) }));
-  return { bindError: setup.bindError, poses, summary: summarize(poses) };
+  const idle = syntheticOverrides(rig, SYNTH_IDLE);
+  const idlePosed = skinPositions(rig, idle);
+  poses.push({ kind: 'clip', name: 'idle', time: 0, ...measurePose(rig, setup, idlePosed) });
+  return { bindError: setup.bindError, poses, summary: summarize(poses), arms: armProportions(rig), armIdle: armAngles(rig, setup, idlePosed, idle) };
 }
 
 // ------------------------------------------------------------------------------ R2 joints.json
@@ -341,7 +360,7 @@ clause('R4 synthetic humanoid passes the pose thresholds', () => {
   const report = poseReport(synthDocument());
   const failed = evaluatePoseReport(report);
   assert(!failed.length, failed.join('; '));
-  return `worst ${report.summary.synthetic.maxEdge.value}× (${report.summary.synthetic.maxEdge.pose})`;
+  return `worst ${report.summary.synthetic.maxEdge.value}× (${report.summary.synthetic.maxEdge.pose}); arm ratio ${report.arms.L.ratio}, idle arm ${report.armIdle.L}°/${report.armIdle.R}°`;
 });
 const poseMutants = [
   ['arm-weight-on-torso', /back stretch/],
@@ -349,6 +368,8 @@ const poseMutants = [
   ['stale-ibm', /bind pose does not reproduce/],
   ['hard-step', /max edge stretch/],
   ['hand-on-spine', /hand L stretch/],
+  ['elbow-at-wrist', /arm L: Arm→ForeArm \/ ForeArm→Hand/],
+  ['arm-at-wrist', /idle arm L: /],
 ];
 for (const [mutant, expected] of poseMutants) {
   clause(`R4 pose-test mutant rejected: ${mutant}`, () => {
@@ -360,6 +381,13 @@ for (const [mutant, expected] of poseMutants) {
 clause('R4 a report without synthetic poses is rejected', () => {
   const failed = evaluatePoseReport({ bindError: 0, poses: [] });
   assert(failed.some((f) => /no synthetic poses/.test(f)), failed.join('; '));
+  assert(failed.some((f) => /no arm proportions/.test(f)), failed.join('; '));
+});
+clause('R4 a clip report without the idle arm angle is rejected', () => {
+  const report = poseReport(synthDocument());
+  delete report.armIdle;
+  const failed = evaluatePoseReport(report);
+  assert(failed.some((f) => /no idle arm angle/.test(f)), failed.join('; ') || 'a pass');
 });
 
 // ------------------------------------------------------------------------------ R5 runner

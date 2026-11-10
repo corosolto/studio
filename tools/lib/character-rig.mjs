@@ -316,7 +316,9 @@ export function measureSetup(rig) {
       const list = groups.get(key); if (list) list.push(v); else groups.set(key, [v]);
     }
     const seams = [...groups.values()].filter((g) => g.length > 1);
-    return { edges, regions, seams, bind: s };
+    const hands = { L: [], R: [] };
+    for (let v = 0; v < p.count; v += 1) for (const side of ['L', 'R']) if (handWeight(side, v) >= 0.5) hands[side].push(v);
+    return { edges, regions, seams, hands, bind: s };
   });
   return {
     bind, bindError, prims,
@@ -378,18 +380,63 @@ export function measurePose(rig, setup, posed, { worst = 10 } = {}) {
   };
 }
 
+/** Bind-pose arm proportions per side: Arm→ForeArm and ForeArm→Hand lengths (m) and their ratio. */
+export function armProportions(rig) {
+  const world = worldMatrices(rig);
+  const at = (name) => new THREE.Vector3().setFromMatrixPosition(world(rig.byName.get(name)[0]));
+  const out = {};
+  for (const [side, prefix] of [['L', 'Left'], ['R', 'Right']]) {
+    const upper = at(`${prefix}Arm`).distanceTo(at(`${prefix}ForeArm`));
+    const lower = at(`${prefix}ForeArm`).distanceTo(at(`${prefix}Hand`));
+    out[side] = { upper: +upper.toFixed(4), lower: +lower.toFixed(4), ratio: +(upper / Math.max(lower, 1e-6)).toFixed(3) };
+  }
+  return out;
+}
+
+/* Visible arm angle of a posed state per side, in degrees: the angle between world down and the
+   line from the posed `<Side>Shoulder` (clavicle) joint to the centroid of the posed hand
+   vertices (hand weight >= 0.5). It follows the skinned mesh, not the arm bones: the clips
+   turn the Arm bone the same way whatever its position, but when the Arm joint sits near the
+   wrist the clavicle carries the whole arm and the mesh stays in T. 0° = hanging straight
+   down, 90° = T. null when the side has no hand vertices. */
+export function armAngles(rig, setup, posed, overrides) {
+  const world = worldMatrices(rig, overrides);
+  const out = {};
+  for (const [side, prefix] of [['L', 'Left'], ['R', 'Right']]) {
+    const c = new THREE.Vector3();
+    let count = 0;
+    setup.prims.forEach((sp, pi) => {
+      for (const v of sp.hands[side]) { c.x += posed[pi][v * 3]; c.y += posed[pi][v * 3 + 1]; c.z += posed[pi][v * 3 + 2]; count += 1; }
+    });
+    if (!count) { out[side] = null; continue; }
+    c.divideScalar(count).sub(new THREE.Vector3().setFromMatrixPosition(world(rig.byName.get(`${prefix}Shoulder`)[0])));
+    out[side] = +THREE.MathUtils.radToDeg(c.angleTo(new THREE.Vector3(0, -1, 0))).toFixed(1);
+  }
+  return out;
+}
+
 export const CLIP_STATES = Object.freeze(['idle', 'walk', 'run', 'shoot', 'death', 'crouch', 'crouchwalk', 'jump', 'idle1h', 'walk1h', 'walkfire']);
 export const CLIP_SAMPLES = 8;
 
 /* Pass/fail limits of the pose test. Hands follow the client's hand gate (RM1 2.5x,
    tools/eval/rig-maos-check.mjs). Body and upper-back limits sit just above the meshy-28
    donor's own result on its shared clips (mst: 3.04x max edge, 3.04x back, 2.19x synthetic;
-   docs/character-rig.md). Seams welded in the clean step must not open: 5 mm. */
+   docs/character-rig.md). Seams welded in the clean step must not open: 5 mm.
+   Arms: the bind-pose Arm→ForeArm / ForeArm→Hand length ratio must lie in armRatio (the
+   donor is 0.99 / 1.06), and the visible arm angle at idle@0.5 (armAngles(): world down vs
+   clavicle joint → hand centroid of the skinned mesh) must lie within idleArmDeg of the
+   donor's own (mst on its idle clip at 0.5: 50.8° left, 38.0° right, rifle idle). A rig
+   whose Arm joint sits near the wrist keeps every clip's arms in T (60-80°). */
 export const POSE_THRESHOLDS = Object.freeze({
   clip: { maxEdge: 3.5, backMaxEdge: 3.5, handMaxEdge: 2.5, seamGapMax: 0.005 },
   synthetic: { maxEdge: 3.5, backMaxEdge: 3.5, handMaxEdge: 2.5, seamGapMax: 0.005 },
   bindError: 0.002,
+  armRatio: [0.6, 1.7],
+  idleArmDeg: 25,
+  donorIdleArmDeg: Object.freeze({ L: 50.8, R: 38.0 }),
 });
+/* Sample of the idle clip for the arm-angle gate (fraction of its duration). */
+export const IDLE_ARM_SAMPLE = 0.5;
 
 export function summarize(poses) {
   const pick = (kind, key, side) => {
@@ -434,6 +481,22 @@ export function evaluatePoseReport(report, thresholds = POSE_THRESHOLDS) {
       if (v != null && v > limit.handMaxEdge) failures.push(`${at}: hand ${side} stretch ${v} > ${limit.handMaxEdge}`);
     }
     if (pose.seamGapMax > limit.seamGapMax) failures.push(`${at}: seam opens ${pose.seamGapMax} m > ${limit.seamGapMax}`);
+  }
+  const [lo, hi] = thresholds.armRatio;
+  if (!report?.arms) failures.push('no arm proportions measured');
+  for (const side of ['L', 'R']) {
+    const a = report?.arms?.[side];
+    if (a && !(a.ratio >= lo && a.ratio <= hi)) failures.push(`arm ${side}: Arm→ForeArm / ForeArm→Hand ${a.ratio} outside [${lo}, ${hi}]`);
+  }
+  if (kinds.has('clip')) {
+    if (!report.armIdle) failures.push('no idle arm angle measured');
+    for (const side of ['L', 'R']) {
+      if (!report.armIdle) break;
+      const deg = report.armIdle[side];
+      const ref = thresholds.donorIdleArmDeg[side];
+      if (deg == null) failures.push(`idle arm ${side}: not measurable (no hand vertices)`);
+      else if (Math.abs(deg - ref) > thresholds.idleArmDeg) failures.push(`idle arm ${side}: ${deg}° vs donor ${ref}° (more than ±${thresholds.idleArmDeg}°)`);
+    }
   }
   return failures;
 }

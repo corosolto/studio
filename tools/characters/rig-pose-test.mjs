@@ -9,7 +9,9 @@
 // 8 instants of each of the 11 state clips (use the clips retargeted to this model): the
 // longest edge stretch versus the bind pose, the 99th percentile, the upper-back and hand
 // regions, how far welded seam vertices drift apart, and the 10 worst vertices with their
-// bones. --strict exits 1 when tools/lib/character-rig.mjs#POSE_THRESHOLDS fail.
+// bones. It also records the bind-pose arm proportions and, with --clips, the visible arm
+// angle at idle@0.5 against the donor's (armAngles in tools/lib/character-rig.mjs).
+// --strict exits 1 when tools/lib/character-rig.mjs#POSE_THRESHOLDS fail.
 // --bake writes a static posed copy (no skin) for renders, e.g. --bake=walk@0.25:walk.glb or
 // --bake=arms-up-90:up.glb; `rest` bakes the bind pose.
 import { NodeIO } from '@gltf-transform/core';
@@ -17,8 +19,8 @@ import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import {
-  CLIP_SAMPLES, CLIP_STATES, SYNTHETIC_POSES, bakePosedDocument, clipOverrides, clipSampler, evaluatePoseReport,
-  loadRig, measurePose, measureSetup, skinPositions, summarize, syntheticOverrides,
+  CLIP_SAMPLES, CLIP_STATES, IDLE_ARM_SAMPLE, SYNTHETIC_POSES, armAngles, armProportions, bakePosedDocument, clipOverrides,
+  clipSampler, evaluatePoseReport, loadRig, measurePose, measureSetup, skinPositions, summarize, syntheticOverrides,
 } from '../lib/character-rig.mjs';
 
 const args = process.argv.slice(2);
@@ -34,6 +36,7 @@ const rig = loadRig(await io.read(model));
 const setup = measureSetup(rig);
 const poses = [];
 const samplers = new Map();
+let armIdle = null;
 
 for (const pose of SYNTHETIC_POSES) {
   poses.push({ kind: 'synthetic', name: pose.name, ...measurePose(rig, setup, skinPositions(rig, syntheticOverrides(rig, pose))) });
@@ -51,6 +54,9 @@ if (clipsDir) {
       poses.push({ kind: 'clip', name: state, time, ...measurePose(rig, setup, skinPositions(rig, clipOverrides(rig, sampler, time))) });
     }
   }
+  const idle = samplers.get('idle');
+  const idleOverrides = clipOverrides(rig, idle, idle.duration * IDLE_ARM_SAMPLE);
+  armIdle = armAngles(rig, setup, skinPositions(rig, idleOverrides), idleOverrides);
 }
 
 const triangles = rig.prims.reduce((sum, p) => sum + (p.idx ? p.idx.length : p.count) / 3, 0);
@@ -60,7 +66,7 @@ const report = {
   model: path.resolve(model), label: flag('label') || path.basename(model, '.glb'), clips: clipsDir ? path.resolve(clipsDir) : null,
   triangles, vertices: rig.prims.reduce((sum, p) => sum + p.count, 0), height: +(maxY - minY).toFixed(4),
   bindError: +setup.bindError.toExponential(3), hasBack: setup.hasBack, hasHands: setup.hasHands,
-  summary: summarize(poses), poses,
+  summary: summarize(poses), arms: armProportions(rig), armIdle, poses,
 };
 report.failures = evaluatePoseReport(report);
 if (flag('out')) writeFileSync(flag('out'), `${JSON.stringify(report, null, 2)}\n`);
@@ -75,6 +81,7 @@ for (const kind of ['synthetic', 'clip']) {
   console.log(`  worst ${kind} vertices (${worstPose.name}${worstPose.time != null ? `@${worstPose.time}s` : ''}):`);
   for (const v of worstPose.worstVertices) console.log(`    ${String(v.ratio).padEnd(7)} v${v.vertex} rest ${v.rest.join(',')} ${v.bones.map(([b, w]) => `${b}:${w}`).join(' ')}`);
 }
+console.log(`  arms L ratio ${report.arms.L.ratio} R ratio ${report.arms.R.ratio}${report.armIdle ? ` | idle arm angle L ${report.armIdle.L}° R ${report.armIdle.R}°` : ''}`);
 console.log(report.failures.length ? `  FAIL ${report.failures.length} threshold(s): ${report.failures.slice(0, 5).join(' | ')}` : '  PASS pose thresholds');
 
 for (const spec of args.filter((a) => a.startsWith('--bake=')).map((a) => a.slice(7))) {
