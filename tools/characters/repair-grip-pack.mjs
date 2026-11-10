@@ -2,14 +2,14 @@
 // Patch only pilot Hand→Curl influences and Curl bind frames. Never regenerate mesh data.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, linkSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { cloneDocument } from '@gltf-transform/functions';
 import { assertGrip, handRegion } from '../checks/character-grip-check.mjs';
-import { loadRig, worldMatrices } from '../lib/character-rig.mjs';
+import { CLIP_STATES, loadRig, worldMatrices } from '../lib/character-rig.mjs';
 import { validatePack } from '../lib/pack.mjs';
 import { readGlb } from '../lib/glb-inspect.mjs';
 
@@ -108,23 +108,30 @@ const measurements = assertGrip(original, await io.readBinary(result), config);
 await validatePack({ manifestPath: path.join(sourcePack, 'manifest.json') });
 const states = await readGlb(path.join(sourcePack, manifest.animations.idle), 'states', { allowMeshoptFallback: true });
 const clipNames = states.document.animations.map(a => a.name);
-assert.equal(clipNames.length, 11, 'existing complete 11-state clip pack required');
+assert(CLIP_STATES.every(state => manifest.animations[state] === manifest.animations.idle),
+  'all eleven runtime states must map to the shared states pack');
+assert.deepEqual([...clipNames].sort(), [...CLIP_STATES].sort(), 'existing complete eleven named runtime states required');
 manifest.version = '0.2.1';
 manifest.source.provenance.push(`Offline pilot Curl repair: ${config.id}/grip.json; source model ${config.sourceSha256}; donor ${config.donorSha256}; palm/thumb and all non-skin payload bytes unchanged. Numeric prerequisite only; visual approval pending.`);
 const entry = manifest.files.find(f => f.path === manifest.model); entry.sha256 = sha(result); entry.bytes = result.length;
 mkdirSync(path.dirname(targetPack), { recursive: true });
 const temporary = mkdtempSync(path.join(path.dirname(targetPack), '.grip-pack-'));
+let reportTemporary = null, published = false, complete = false;
 try {
-  cpSync(sourcePack, temporary, { recursive: true });
-  writeFileSync(path.join(temporary, manifest.model), result);
+  // Materialize only validated, declared payloads as fresh regular files. Copying a
+  // source tree can preserve symlinks or undeclared files and write back into it.
+  for (const file of manifest.files) {
+    const destination = path.join(temporary, file.path);
+    mkdirSync(path.dirname(destination), { recursive: true });
+    const bytes = file.path === manifest.model ? result : readFileSync(path.join(sourcePack, file.path));
+    writeFileSync(destination, bytes, { flag: 'wx' });
+  }
   const manifestBytes = Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`);
-  writeFileSync(path.join(temporary, 'manifest.json'), manifestBytes);
+  writeFileSync(path.join(temporary, 'manifest.json'), manifestBytes, { flag: 'wx' });
   await validatePack({ manifestPath: path.join(temporary, 'manifest.json') });
   for (const f of manifest.files) if (f.path !== manifest.model) {
     assert.equal(sha(readFileSync(path.join(temporary, f.path))), sha(readFileSync(path.join(sourcePack, f.path))), 'non-model pack payload changed');
   }
-  assert(!existsSync(targetPack), 'immutable target appeared during repair');
-  renameSync(temporary, targetPack);
   const report = {
     status: 'numeric-prerequisite-only-visual-review-required', command: [process.execPath, ...process.argv.slice(1)],
     toolSha256: sha(readFileSync(fileURLToPath(import.meta.url))), annotationSha256: sha(readFileSync(annotation)),
@@ -133,6 +140,18 @@ try {
     preserved: ['geometry', 'topology', 'UV', 'normals', 'materials', 'images', 'rights', 'all animation files', 'joint hierarchy/order'],
     measurements,
   };
-  writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`, { flag: 'wx' });
+  // Prepare evidence before making the pack visible. A report failure must not strand
+  // an immutable version that can neither be completed nor retried.
+  reportTemporary = mkdtempSync(path.join(path.dirname(reportPath), '.grip-report-'));
+  const stagedReport = path.join(reportTemporary, 'report.json');
+  writeFileSync(stagedReport, `${JSON.stringify(report, null, 2)}\n`, { flag: 'wx' });
+  assert(!existsSync(targetPack), 'immutable target appeared during repair');
+  renameSync(temporary, targetPack); published = true;
+  // Hard-link publication is atomic and fails rather than replacing existing evidence.
+  linkSync(stagedReport, reportPath); complete = true;
   console.log(JSON.stringify(report, null, 2));
-} finally { rmSync(temporary, { recursive: true, force: true }); }
+} finally {
+  if (published && !complete) rmSync(targetPack, { recursive: true, force: true });
+  if (reportTemporary) rmSync(reportTemporary, { recursive: true, force: true });
+  rmSync(temporary, { recursive: true, force: true });
+}

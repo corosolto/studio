@@ -72,6 +72,9 @@ export function assertGrip(before, after, config) {
   }
   const bindA = skinPositions(a)[0], bindB = skinPositions(b)[0], p = b.prims[0];
   let bindError = 0;
+  for (const rig of [a, b]) for (const primitive of rig.prims) for (const weight of primitive.W) {
+    assert(Number.isFinite(weight) && weight >= 0, 'skin components must be finite and nonnegative');
+  }
   for (let v = 0; v < p.count; v++) {
     bindError = Math.max(bindError, distance(bindA, bindB, v));
     const sum = [0, 1, 2, 3].reduce((s, k) => s + p.W[v * 4 + k], 0);
@@ -161,8 +164,21 @@ export function assertGripMutants(before, after, config) {
   }
   assert(changed, 'palm mutant did not change an influence');
   reject('whole-palm-as-fingers', wholeHand, /palm\/thumb acquired Curl influence/);
-  const wrongFrame = cloneDocument(after); wrongFrame.getRoot().listNodes().find(n => n.getName() === h.curl).setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI).toArray());
-  reject('reversed-flexion-frame', wrongFrame, /bind shape error|wrong flexion frame/);
+  const wrongFrame = cloneDocument(after), reversed = loadRig(wrongFrame), ci = reversed.names.indexOf(h.curl);
+  // XYZ x-addition rotates about the parent X axis: changing only rest Y does
+  // not reverse it. Put the hinge beyond the fingertips so the same runtime
+  // operator bends outward, and refresh IBM so bind error cannot kill the mutant.
+  const fingertipY = region.points.reduce((max, q, i) => region.members[i] ? Math.max(max, q.y) : max, 0);
+  reversed.joints[ci].setTranslation([0, (fingertipY + 0.05) / region.scale, 0]);
+  const updated = loadRig(wrongFrame);
+  wrongFrame.getRoot().listSkins()[0].getInverseBindMatrices().setElement(ci, worldMatrices(updated)(updated.joints[ci]).clone().invert().elements);
+  reject('reversed-flexion-frame', wrongFrame, /wrong flexion frame\/sign/);
+  const negative = cloneDocument(after), invalid = loadRig(negative).prims[0];
+  // Cancelling weights aggregate to zero but GLTFLoader's absolute-mass normalization
+  // changes them. Reject the individual invalid components, not just the signed sum.
+  invalid.J[v * 4 + 1] = region.ci; invalid.J[v * 4 + 2] = region.ci;
+  invalid.W[v * 4 + 1] = -0.25; invalid.W[v * 4 + 2] = 0.25;
+  reject('cancelling-negative-weights', negative, /finite and nonnegative/);
 }
 
 if (process.argv[1]?.endsWith('/character-grip-check.mjs')) {

@@ -165,12 +165,19 @@ the causal numeric gate and validates the full original and new packs, including
 the unchanged complete eleven-state clip file. It records exact commands, source,
 tool and annotation hashes, output manifest/model hashes, donor influences and
 per-finger measurements outside the pack. Local version 0.2.0 is immutable.
+The eleven canonical state names and all eleven manifest mappings are required,
+not just an animation count. Internal source symlinks are materialized when
+staging, so writing the repaired model cannot follow a link back into the source.
+Evidence is prepared before publication; a failed evidence commit removes the
+newly published candidate, allowing a safe retry without changing the source.
 
 The gate rejects zero finger influence, rotation of palm/thumb, wrong flexion
 frame/sign, bind error above 0.1 mm, geometry/attribute/topology changes, unrelated
-weight changes, or curl edge stretch above 2.5x. All four fingers must move inward
-at both runtime endpoint curls (0.55 and 0.95 rad). `--mutants` includes the actual
-zero-weight source, changed silhouette, palm-as-finger and reversed-frame defects.
+weight changes, negative/nonfinite weight components, or curl edge stretch above
+2.5x. All four fingers must move inward at both runtime endpoint curls (0.55 and
+0.95 rad). `--mutants` includes the actual zero-weight source, changed silhouette,
+palm-as-finger, a reversed frame with corrected inverse bind, and cancelling
+negative weights. The frame mutant must fail on flexion direction, not bind error.
 Passing establishes only a real deformation prerequisite: the parent must render
 the pilot with the actual AK and obtain independent visual acceptance. Do not
 publish/integrate the remaining 29 or generalize an annotation across characters.
@@ -187,11 +194,15 @@ actual AK contact or replaces the parent browser/visual evaluation.
 
 `npm run check:character-grip` generates a synthetic skinned hand pair in memory,
 with four distal branches, a separate shorter thumb and a protected palm. It runs
-the same nominal gate and four causal mutants as the private pilot: zero finger
-influence, changed rest shape, palm-as-finger and reversed frame. The fixture also
-constructs an actual Three.js `SkinnedMesh` and compares every vertex against the
-offline skinning at the two runtime endpoint curls using Euler XYZ addition.
-No GLB, texture, clip, private directory, paid service or browser is needed.
+the same nominal gate and five causal mutants as the private pilot: zero finger
+influence, changed rest shape, palm-as-finger, reversed frame and cancelling
+negative weights. The fixture also constructs an actual Three.js `SkinnedMesh`
+and compares every vertex against the offline skinning at the two runtime
+endpoint curls using Euler XYZ addition. It generates temporary pack/clip bytes
+to exercise the real repair CLI: successful symlink materialization, unchanged
+source, missing report parent, injected evidence-link failure rollback, and
+eleven animation names that omit required runtime states. No private GLB, texture,
+clip, directory, paid service or browser is needed.
 
 `npm run check` runs this proof through `tools/studio-check.mjs`, so the existing
 Studio CI executes the nominal case and mutants, not merely a syntax check.

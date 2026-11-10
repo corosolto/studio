@@ -2,12 +2,17 @@
 // Public synthetic anatomy only: no private model, texture, animation, Blender or renderer.
 // The gate proves a deformation prerequisite, never visual weapon-contact approval.
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { Document } from '@gltf-transform/core';
+import { createHash } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Document, NodeIO } from '@gltf-transform/core';
 import { cloneDocument } from '@gltf-transform/functions';
 import * as THREE from 'three';
 import { assertGrip, assertGripMutants, handRegion } from './character-grip-check.mjs';
-import { buildMeshy28Skeleton, loadRig, skinPositions, worldMatrices } from '../lib/character-rig.mjs';
+import { buildMeshy28Skeleton, CLIP_STATES, loadRig, skinPositions, worldMatrices } from '../lib/character-rig.mjs';
 
 const config = JSON.parse(readFileSync(new URL('../../characters/capitao-caveira/grip.json', import.meta.url), 'utf8'));
 const points = {
@@ -105,3 +110,77 @@ for (const angle of [.55, .95]) {
 assert(maxEngineError < 1e-6, `offline/runtime skinning mismatch ${maxEngineError}m`);
 console.log(`PASS Three.js SkinnedMesh parity: ${maxEngineError}m maximum error`);
 geometry.dispose(); skinned.material.dispose(); skeleton.dispose();
+
+// Exercise the real repair CLI, not a mock, using only generated temporary bytes.
+const work = mkdtempSync(path.join(os.tmpdir(), 'studio-grip-public-'));
+try {
+  const io = new NodeIO(), sha = bytes => createHash('sha256').update(bytes).digest('hex');
+  const modelBytes = Buffer.from(await io.writeBinary(before)), donorBytes = Buffer.from(await io.writeBinary(after));
+  const sourcePack = path.join(work, 'source'), modelPath = 'model/pilot.glb', statesPath = 'animations/states.glb', previewPath = 'previews/front.png';
+  for (const dir of ['model', 'animations', 'previews']) mkdirSync(path.join(sourcePack, dir), { recursive: true });
+  writeFileSync(path.join(sourcePack, 'payload.glb'), modelBytes);
+  symlinkSync('../payload.glb', path.join(sourcePack, modelPath));
+  const donorPath = path.join(work, 'donor.glb'), annotationPath = path.join(work, 'grip.json');
+  writeFileSync(donorPath, donorBytes);
+  writeFileSync(annotationPath, JSON.stringify({ ...config, sourceSha256: sha(modelBytes), donorSha256: sha(donorBytes) }));
+  const preview = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
+  writeFileSync(path.join(sourcePack, previewPath), preview);
+  const statesBytes = async names => {
+    const doc = new Document(), buf = doc.createBuffer(), hips = doc.createNode('Hips');
+    doc.createScene().addChild(hips);
+    const time = doc.createAccessor().setType('SCALAR').setArray(new Float32Array([0, 1])).setBuffer(buf);
+    const values = doc.createAccessor().setType('VEC3').setArray(new Float32Array([0, 83, 0, 0, 83, 0])).setBuffer(buf);
+    for (const name of names) {
+      const sampler = doc.createAnimationSampler().setInput(time).setOutput(values).setInterpolation('LINEAR');
+      doc.createAnimation(name).addSampler(sampler).addChannel(doc.createAnimationChannel().setTargetNode(hips).setTargetPath('translation').setSampler(sampler));
+    }
+    return Buffer.from(await io.writeBinary(doc));
+  };
+  const setSourceManifest = async (names, declared) => {
+    const clips = await statesBytes(names);
+    writeFileSync(path.join(sourcePack, statesPath), clips);
+    const files = [[modelPath, modelBytes], [statesPath, clips], [previewPath, preview]].map(([p, bytes]) => ({ path: p, bytes: bytes.length, sha256: sha(bytes) }));
+    writeFileSync(path.join(sourcePack, 'manifest.json'), JSON.stringify({
+      schemaVersion: 1, kind: 'character', id: config.id, version: '0.2.0',
+      source: { revision: 'synthetic-public-fixture', provenance: ['Generated mathematical fixture; no private source assets'] },
+      files, model: modelPath, skeleton: 'meshy-28', animations: Object.fromEntries(declared.map(name => [name, statesPath])),
+      previews: [previewPath], rights: { status: 'original', basis: 'Programmatic public test geometry' },
+      budgets: { triangles: 5000, bytes: 8388608 },
+    }));
+  };
+  await setSourceManifest(CLIP_STATES, CLIP_STATES);
+  const script = fileURLToPath(new URL('../characters/repair-grip-pack.mjs', import.meta.url));
+  const run = (name, { reportParent = true, injectLinkFailure = false } = {}) => {
+    const directory = path.join(work, name); mkdirSync(directory);
+    const target = path.join(directory, '0.2.1');
+    const evidence = reportParent ? path.join(directory, 'report.json') : path.join(directory, 'missing-parent/report.json');
+    const hook = "import fs from 'node:fs';import {syncBuiltinESMExports} from 'node:module';fs.linkSync=()=>{throw new Error('injected evidence-link failure')};syncBuiltinESMExports();";
+    const preload = injectLinkFailure ? ['--import', `data:text/javascript,${encodeURIComponent(hook)}`] : [];
+    const result = spawnSync(process.execPath, [...preload, script, sourcePack, target, annotationPath, donorPath, evidence], { encoding: 'utf8' });
+    assert.equal(sha(readFileSync(path.join(sourcePack, modelPath))), sha(modelBytes), 'repair changed immutable source bytes');
+    assert(lstatSync(path.join(sourcePack, modelPath)).isSymbolicLink(), 'repair replaced source symlink');
+    return { result, target, evidence };
+  };
+  const valid = run('valid');
+  assert.equal(valid.result.status, 0, valid.result.stderr);
+  assert(!lstatSync(path.join(valid.target, modelPath)).isSymbolicLink(), 'staged model must be materialized');
+  assert(existsSync(valid.evidence), 'successful repair lacks evidence');
+  assertGrip(before, await io.read(path.join(valid.target, modelPath)), config);
+  console.log('PASS real repair CLI materializes symlinks, preserves source and publishes a validated pack plus evidence');
+  const absentParent = run('missing-evidence-parent', { reportParent: false });
+  assert.notEqual(absentParent.result.status, 0, 'missing report parent unexpectedly accepted');
+  assert(!existsSync(absentParent.target) && !existsSync(absentParent.evidence), 'report preparation failure published a partial version');
+  console.log('PASS missing evidence parent leaves no immutable partial version');
+  const linkFailure = run('evidence-link-failure', { injectLinkFailure: true });
+  assert.notEqual(linkFailure.result.status, 0, 'injected report publication failure was not applied');
+  assert.match(linkFailure.result.stderr, /injected evidence-link failure/);
+  assert(!existsSync(linkFailure.target) && !existsSync(linkFailure.evidence), 'evidence failure did not roll back the published version');
+  console.log('PASS injected evidence publication failure rolls back the new pack');
+  const requiredEight = CLIP_STATES.slice(0, 8);
+  await setSourceManifest([...requiredEight, 'unrelated_a', 'unrelated_b', 'unrelated_c'], requiredEight);
+  const incomplete = run('missing-optional-runtime-states');
+  assert.notEqual(incomplete.result.status, 0, 'eleven unrelated clip names unexpectedly accepted');
+  assert.match(incomplete.result.stderr, /all eleven runtime states/);
+  assert(!existsSync(incomplete.target), 'incomplete runtime states published a version');
+  console.log('PASS eleven-clip count cannot substitute for all eleven named runtime states');
+} finally { rmSync(work, { recursive: true, force: true }); }
