@@ -20,9 +20,9 @@
 // as they are: joints match by name, helpers stay at rest and are listed in bakedFor.unanimated.
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
-import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { CLIP_FPS, FLOOR_CLAMP_REGIONS, clampToFloor, clipMetadata, closeLoop, holdTwoHandGrip, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
+import { CLIP_FPS, FLOOR_CLAMP_REGIONS, clampToFloor, clipMetadata, closeLoop, holdTwoHandGrip, spreadNeckBend, gltfPoseSource, retargetClip, skeletonGraph, writeClipDocument } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS } from '../lib/animation-sources.mjs';
 import { loadRig } from '../lib/character-rig.mjs';
 import { TWO_HAND_HOLDS } from '../lib/clip-qa.mjs';
@@ -31,7 +31,7 @@ const args = process.argv.slice(2);
 const flag = (name) => args.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const model = flag('model'), clipsDir = flag('clips'), outDir = flag('out');
 if (!model || !clipsDir || !outDir) {
-  console.error('usage: bake-character.mjs --model=<character.glb> --clips=<reference dir> --out=<dir> [--states=<a,b>] [--no-foot-contact] [--no-foot-ik] [--no-floor-clamp] [--no-limb-align] [--no-grip] [--passive-knees]');
+  console.error('usage: bake-character.mjs --model=<character.glb> --clips=<reference dir> --out=<dir> [--states=<a,b>] [--no-foot-contact] [--no-foot-ik] [--no-floor-clamp] [--no-limb-align] [--no-grip] [--no-neck-spread] [--passive-knees] [--state-source=<state>:<reference clip>]');
   process.exit(1);
 }
 mkdirSync(outDir, { recursive: true });
@@ -55,9 +55,14 @@ const inPlaceVelocity = (meta, tgt, src) => {
   const scale = tgt.byName.get('Hips').restWorldP.y / src.rest().get('Hips').p.y;
   return rm.velocity.map((v) => v * scale);
 };
+// --state-source=<state>:<reference clip>: bake that state from another reference clip of the
+// same kind (a death from another death) on a rig where the state's primary fails the clip QA
+// gate; recorded in extras.clip.stateSource. Repeatable.
+const stateSource = new Map(args.filter((a) => a.startsWith('--state-source=')).map((a) => a.slice(15).split(':')));
+for (const [state, src] of stateSource) if (!state || !src || !existsSync(path.join(clipsDir, `${src}.glb`))) throw new Error(`--state-source ${state}:${src}: no reference clip ${src}.glb`);
 const baked = [];
 for (const state of states) {
-  const doc = await io.read(path.join(clipsDir, `${state}.glb`));
+  const doc = await io.read(path.join(clipsDir, `${stateSource.get(state) || state}.glb`));
   const animation = doc.getRoot().listAnimations()[0];
   if (!animation) throw new Error(`${state}: no animation`);
   const meta = clipMetadata(doc);
@@ -67,6 +72,8 @@ for (const state of states) {
   // --passive-knees: shins never lift the body (a rig with a tail or a robe skinned to a shin, or
   // a bent-leg mascot whose shins meet the floor, would otherwise be hoisted); recorded in
   // bakedFor.passiveRegions so the QA gate reports them as the rig's instead of gating them.
+  // Head bends beyond HEAD_BEND_LIMIT spread half their excess down the neck (--no-neck-spread: off).
+  const neckSpread = args.includes('--no-neck-spread') ? null : spreadNeckBend(target, result);
   const regions = args.includes('--passive-knees') ? FLOOR_CLAMP_REGIONS.map((r) => (r.name === 'knee' ? { ...r, lift: false, passive: true } : r)) : FLOOR_CLAMP_REGIONS;
   const floorClamp = args.includes('--no-floor-clamp') ? null : clampToFloor(rig, result, { clearance: meta.footClearance?.map(scale), regions, contacts: result.contacts });
   // Two-handed holds: the support hand stays on the weapon (--no-grip switches it off).
@@ -75,11 +82,11 @@ for (const state of states) {
   const rm = meta.rootMotion;
   const frames = result.times.length;
   const extras = {
-    ...meta, fps: meta.fps || CLIP_FPS, frames, duration: +result.times[frames - 1].toFixed(4),
+    ...meta, ...(stateSource.has(state) ? { stateSource: stateSource.get(state) } : {}), fps: meta.fps || CLIP_FPS, frames, duration: +result.times[frames - 1].toFixed(4),
     contactSlide: meta.contactSlide != null ? scale(meta.contactSlide) : undefined,
     footClearance: meta.footClearance ? meta.footClearance.map(scale) : undefined,
     rootMotion: rm ? { ...rm, displacement: rm.displacement.map(scale), velocity: rm.velocity.map(scale), speed: scale(rm.speed) } : undefined,
-    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, unanimated: unanimated(result), footContact: result.contactCorrection, footIk: result.ik, floorClamp, grip, passiveRegions: args.includes('--passive-knees') ? ['knee'] : [], alignedLimbs: result.aligned },
+    bakedFor: { model: path.basename(model), hipsScale: +result.hipsScale.toFixed(6), joints: result.mapped.length, unanimated: unanimated(result), footContact: result.contactCorrection, footIk: result.ik, floorClamp, grip, neckSpread, passiveRegions: args.includes('--passive-knees') ? ['knee'] : [], alignedLimbs: result.aligned },
   };
   await io.write(path.join(outDir, `${state}.glb`), writeClipDocument(target, result, state, extras));
   if (!reported) { console.log(`skin joints left at rest: ${unanimated(result).join(', ') || 'none'}`); reported = true; }

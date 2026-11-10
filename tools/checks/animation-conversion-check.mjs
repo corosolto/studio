@@ -21,7 +21,7 @@ import { meshy28Joints } from '../lib/character-pack.mjs';
 import { clipSampler, deformJointNames, loadRig } from '../lib/character-rig.mjs';
 import {
   FLOOR_CLAMP_REGIONS, GRIP_MAX_DRIFT, GRIP_TOLERANCE, MAX_ALIGN_KNEE_BEND, MESHY28_REFERENCE_JOINTS, MIXAMO_TO_MESHY28, UAL_TO_MESHY28, clampToFloor, closeLoop, facingYaw, vertexRegions, clipMetadata, gltfPoseSource, mixamoBaseName,
-  holdTwoHandGrip, objectPoseSource, referenceSkeletonDocument, resultJointPositions, retargetClip, skeletonGraph, writeClipDocument,
+  HEAD_BEND_LIMIT, NECK_SPREAD_FRACTION, holdTwoHandGrip, objectPoseSource, solveTwoBone, spreadNeckBend, referenceSkeletonDocument, resultJointPositions, retargetClip, skeletonGraph, writeClipDocument,
 } from '../lib/animation-retarget.mjs';
 import { RIG_MAPS, detectRig, fbxNodeListEnd } from '../lib/animation-sources.mjs';
 import { LIBRARY_EXTRA_NAMES, RUNTIME_STATES, libraryName, planLibrary } from '../lib/animation-library.mjs';
@@ -434,6 +434,33 @@ await clause('A13 legs bound with the knee bent past MAX_ALIGN_KNEE_BEND keep th
   assert(rest > THREE.MathUtils.radToDeg(MAX_ALIGN_KNEE_BEND), `fixture knee ${rest}° is not past the limit`);
   assert(Math.abs(kept - rest) < 0.5, `bent-bind knee went from ${rest.toFixed(1)}° to ${kept.toFixed(1)}° (expected kept)`);
   return `bind knee ${rest.toFixed(1)}°, retargeted ${kept.toFixed(1)}°`;
+});
+
+await clause('A14 foot IK keeps a knee folded the wrong way on its own bend side (keepSide)', () => {
+  const H = V([0, 1, 0]), K = V([0, 0.5, 0.1]), A = V([0, 0, 0]), goal = V([0, 0.1, 0.05]);
+  const hint = V(X); // this knee bends about +X; K in front of the hip-ankle line folds it about -X
+  const knee = (solved) => H.clone().add(K.clone().sub(H).applyQuaternion(solved.hip));
+  const free = knee(solveTwoBone(H, K, A, goal, new THREE.Quaternion(), new THREE.Quaternion(), hint));
+  const kept = knee(solveTwoBone(H, K, A, goal, new THREE.Quaternion(), new THREE.Quaternion(), hint, { keepSide: true }));
+  const side = (k) => H.clone().sub(k).cross(goal.clone().sub(k)).dot(hint); // solveTwoBone's (H-K)x(A-K) convention
+  assert(side(free) < 0 && side(kept) > 0, `knee side free ${side(free)}, kept ${side(kept)}`);
+  return `free solve stays folded (${free.z.toFixed(3)} z), keepSide puts the knee on its bend side (${kept.z.toFixed(3)} z)`;
+});
+
+await clause('A15 neck spread: a head bent past HEAD_BEND_LIMIT shares the excess with the neck, gaze unchanged', () => {
+  const frames = (t) => ({ deltas: { Head: Q(Y, 70 * t) } });
+  const r = retargetClip(mixamoSource({ frames }), reference, { footIk: false });
+  const gaze = (i) => { const p = fk(reference, r, i); return p.get('headfront').clone().sub(p.get('Head')).normalize(); };
+  const last = r.times.length - 1;
+  const before = gaze(last);
+  const stats = spreadNeckBend(reference, r);
+  const after = gaze(last);
+  const headE = reference.byName.get('Head');
+  const bend = THREE.MathUtils.radToDeg(new THREE.Quaternion().angleTo(new THREE.Quaternion().fromArray(r.rotations.get('Head'), last * 4).multiply(new THREE.Quaternion(...headE.r).invert())));
+  const want = HEAD_BEND_LIMIT + (1 - NECK_SPREAD_FRACTION) * (stats.maxDeg - HEAD_BEND_LIMIT);
+  assert(stats.frames > 0 && Math.abs(bend - want) < 0.5, `head bend ${bend}° (expected ${want}°, before ${stats.maxDeg}°)`);
+  assert(THREE.MathUtils.radToDeg(before.angleTo(after)) < 0.05, `gaze turned ${THREE.MathUtils.radToDeg(before.angleTo(after))}°`);
+  return `head bend ${stats.maxDeg}° -> ${bend.toFixed(1)}°, gaze kept within ${THREE.MathUtils.radToDeg(before.angleTo(after)).toFixed(3)}°`;
 });
 
 // ----------------------------------------------------------------------------- B bake

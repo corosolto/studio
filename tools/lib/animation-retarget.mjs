@@ -318,10 +318,10 @@ export const LEG_CHAINS = Object.freeze([
 export const IK_BLEND_FRAMES = 4;
 
 /** Largest hips drop per frame that foot IK may ask for to reach a planted ankle (m). */
-export const MAX_REACH_DROP = 0.05;
+export const MAX_REACH_DROP = 0.12;
 
 /** Rest knee bend (thigh to shin, radians) above which a leg is not aligned; see LIMB_ALIGNMENT. */
-export const MAX_ALIGN_KNEE_BEND = THREE.MathUtils.degToRad(45);
+export const MAX_ALIGN_KNEE_BEND = THREE.MathUtils.degToRad(37.5);
 
 /** Largest rest-direction correction per limb bone (radians); see LIMB_ALIGNMENT. */
 export const MAX_REST_ALIGN = THREE.MathUtils.degToRad(20);
@@ -337,6 +337,9 @@ export const LIMB_ALIGNMENT = Object.freeze([
  * Per-frame IK weight of one leg from its contact windows (1 inside, smooth ramp outside).
  * In a loop the last frame is the first frame again, so ramps wrap around the seam.
  */
+/** Rest knee bend (degrees) from which the rest bend plane defines the knee's side for the foot IK. */
+export const KNEE_SIDE_MIN_BEND = 15;
+
 function ikWeights(windows, frames, loop = false) {
   const w = new Float32Array(frames);
   const period = frames - 1;
@@ -358,14 +361,18 @@ function ikWeights(windows, frames, loop = false) {
  * current bend axis, else `fallbackAxis`), then swing the hip so the ankle lands on the goal.
  * Returns the new world rotations { hip, knee } (the ankle keeps its world rotation).
  */
-export function solveTwoBone(H, K, A, goal, hipQ, kneeQ, fallbackAxis) {
+export function solveTwoBone(H, K, A, goal, hipQ, kneeQ, fallbackAxis, { keepSide = false } = {}) {
   const a = K.distanceTo(H), b = A.distanceTo(K);
   const u = H.clone().sub(K), v = A.clone().sub(K);
   let axis = u.clone().cross(v);
+  let current = u.angleTo(v);
+  // keepSide: `fallbackAxis` is the knee's own bend axis; a knee currently folded the other
+  // way (thigh-to-shin rotation about -axis) is solved back onto its side instead of being
+  // bent further backwards (that folded the bent-bound legs of short rigs through themselves).
+  if (keepSide && axis.dot(fallbackAxis) < 0) { axis = fallbackAxis.clone(); current = -current; }
   if (axis.lengthSq() < 1e-12) axis = fallbackAxis.clone();
   axis.normalize();
   const d = THREE.MathUtils.clamp(goal.distanceTo(H), Math.abs(a - b) + 1e-6, a + b - 1e-6);
-  const current = u.angleTo(v);
   const wanted = Math.acos(THREE.MathUtils.clamp((a * a + b * b - d * d) / (2 * a * b), -1, 1));
   const bend = new THREE.Quaternion().setFromAxisAngle(axis, wanted - current);
   const ankle = K.clone().add(v.clone().applyQuaternion(bend));
@@ -568,6 +575,9 @@ export function retargetClip(source, target, {
       const restAxisLocal = hip.restWorldP.clone().sub(knee.restWorldP).cross(ankle.restWorldP.clone().sub(knee.restWorldP));
       if (restAxisLocal.lengthSq() < 1e-12) restAxisLocal.set(1, 0, 0); else restAxisLocal.normalize();
       restAxisLocal.applyQuaternion(hip.restWorldQ.clone().invert());
+      // A nearly straight rest leg has no reliable bend plane (a few degrees either way): only a
+      // knee bound bent at least KNEE_SIDE_MIN_BEND is held on its side.
+      const keepSide = THREE.MathUtils.radToDeg(hip.restWorldP.clone().sub(knee.restWorldP).angleTo(ankle.restWorldP.clone().sub(knee.restWorldP))) <= 180 - KNEE_SIDE_MIN_BEND;
       // Ball contact: the ball stays where it landed by turning the foot about the pinned ankle
       // (no extra reach asked of the leg), through flat stance and heel-off alike.
       const toe = target.byName.get(leg.toe);
@@ -582,7 +592,7 @@ export function retargetClip(source, target, {
         const H = at(hip), K = at(knee), A = at(ankle);
         const goal = A.clone().lerp(ankle.restWorldP.clone().add(goals[leg.ankle]), weights[i]);
         ik.maxCorrection = Math.max(ik.maxCorrection, goal.distanceTo(A));
-        const solved = solveTwoBone(H, K, A, goal, worldQ.get(hip), worldQ.get(knee), restAxisLocal.clone().applyQuaternion(worldQ.get(hip)));
+        const solved = solveTwoBone(H, K, A, goal, worldQ.get(hip), worldQ.get(knee), restAxisLocal.clone().applyQuaternion(worldQ.get(hip)), { keepSide });
         const ankleW = worldQ.get(ankle);
         worldQ.set(hip, solved.hip);
         worldQ.set(knee, solved.knee);
@@ -893,6 +903,47 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
   }
   for (const v of Object.values(stats)) v.max = +v.max.toFixed(4);
   return { ...stats, unresolvedFrames: unresolved };
+}
+
+/** Head bend (relative to its rest, in the neck's frame, degrees) above which bake spreads the excess down the neck. */
+export const HEAD_BEND_LIMIT = 20;
+/** Share of the head bend beyond HEAD_BEND_LIMIT that spreadNeckBend moves to the neck. */
+export const NECK_SPREAD_FRACTION = 0.6;
+
+/**
+ * Bake-time neck spread: where the Head is bent more than `limit` degrees from its rest
+ * relative to the neck, `fraction` of the excess moves to the neck joint and the Head is
+ * counter-rotated so its world orientation (gaze, face) is unchanged. A large single-joint
+ * bend at the head stretches the head-to-neck skin blend of short-necked rigs (death clips
+ * lying with the face turned); spread over two joints the same head pose stays within the
+ * stretch gate. Rewrites `result.rotations` in place; returns { frames, maxDeg } (maxDeg:
+ * largest head bend before).
+ */
+export function spreadNeckBend(target, result, { limit = HEAD_BEND_LIMIT, fraction = NECK_SPREAD_FRACTION } = {}) {
+  const head = target.byName.get('Head'), neck = target.byName.get('neck');
+  const stats = { frames: 0, maxDeg: 0 };
+  if (!head || !neck || head.parent !== neck || !result.rotations.has('Head') || !result.rotations.has('neck')) return stats;
+  const restH = new THREE.Quaternion(...head.r);
+  const hTrack = result.rotations.get('Head'), nTrack = result.rotations.get('neck');
+  const identity = new THREE.Quaternion();
+  for (let i = 0; i < result.times.length; i += 1) {
+    const lh = new THREE.Quaternion().fromArray(hTrack, i * 4), ln = new THREE.Quaternion().fromArray(nTrack, i * 4);
+    const bend = lh.clone().multiply(restH.clone().invert()); // rest -> current, in the neck's frame
+    const angle = THREE.MathUtils.radToDeg(identity.angleTo(bend));
+    stats.maxDeg = Math.max(stats.maxDeg, angle);
+    if (angle <= limit) continue;
+    const share = identity.clone().slerp(bend, (fraction * (angle - limit)) / angle);
+    const newNeck = ln.clone().multiply(share).normalize();
+    const newHead = share.clone().invert().multiply(lh).normalize();
+    for (const [track, q] of [[nTrack, newNeck], [hTrack, newHead]]) {
+      const prev = track.slice(i * 4, i * 4 + 4);
+      if (prev[0] * q.x + prev[1] * q.y + prev[2] * q.z + prev[3] * q.w < 0) q.set(-q.x, -q.y, -q.z, -q.w);
+      track.set(q.toArray(), i * 4);
+    }
+    stats.frames += 1;
+  }
+  stats.maxDeg = +stats.maxDeg.toFixed(1);
+  return stats;
 }
 
 /** Two-hand grip: band (m) around the clip's median hand distance the support hand is kept in. */
