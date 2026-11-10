@@ -112,7 +112,9 @@ def main():
     body_mask = (parts < n_body) | np.isin(parts, measured)
     parts_report = json.loads((args.work / "parts.json").read_text())
     # The crotch comes from the parts step (full, closed mesh); see common.landmarks.
-    lm = C.landmarks(body, face_mask=body_mask, crotch_z=float(parts_report["landmarks"]["crotchZ"]))
+    pcfg = cfg.get("parts", {})
+    lm = C.landmarks(body, face_mask=body_mask, crotch_z=float(parts_report["landmarks"]["crotchZ"]),
+                     arm_min=pcfg.get("armMinLength", 0.1), wrist_x=pcfg.get("wristX"), armpit_x=pcfg.get("armpitX"))
     bvh = lm["_bvh"]
     ymin, ymax = lm["_y"]
     H = lm["height"]
@@ -151,6 +153,7 @@ def main():
         joints[f"{prefix}Shoulder"] = Vector((J["clavicleRatio"] * x_sh * s, shoulder.y, shoulder.z))
         joints[f"Curl_{side}"] = hand.copy()
         notes[f"{prefix}Hand"] = parts_report["wrists"][side]["source"] if override_wrist is None else "config wristX"
+        notes[f"{prefix}Arm"] = arm.get("armpitSource", "torso run")
         tip_x = arm["tip"]
         tip, _ = arm_section(bvh, lm, side, tip_x - 0.01, ymin, ymax)
         notes[f"{prefix}HandTip"] = C.r(tip)

@@ -329,11 +329,14 @@ def run_main(main):
     sys.stdout.flush()
 
 
-def landmarks(obj, face_mask=None, step=0.01, crotch_z=None):
+def landmarks(obj, face_mask=None, step=0.01, crotch_z=None, arm_min=0.1, wrist_x=None, armpit_x=None):
     """Body landmarks measured from a 1 cm front silhouette and Y-ray cross-sections.
 
     Only faces in ``face_mask`` are measured (the joints step passes the body without
     extras such as a backpack or an antenna).  Everything is in clean-space metres.
+    ``arm_min`` (x height, ``parts.armMinLength``; None disables) is the shortest plausible
+    armpit -> wrist distance, ``wrist_x`` the configured wrist (``parts.wristX``) and
+    ``armpit_x`` the configured armpit (``parts.armpitX``); see the short-arm guard below.
     """
     bvh = bvh_for_faces(obj, face_mask)
     co, _ = mesh_arrays(obj)
@@ -483,6 +486,41 @@ def landmarks(obj, face_mask=None, step=0.01, crotch_z=None):
             "wristX": x_wrist, "column": column,
         }
 
+    # Short-arm guard: a sleeve or a costume that fills the space under the arm (clovis'
+    # puffed sleeves, bebezao's and boneca's short sleeves over a wide body, the cords on
+    # coronel's right shoulder) makes the torso run under the arm band reach the sleeve end,
+    # so the armpit lands a few centimetres from the wrist; the arm part then starts there,
+    # the sleeve stays torso and every clip leaves the arm in T.  When armpit -> wrist is
+    # shorter than ``arm_min`` x height, the armpit takes the other side's (mirrored) when
+    # that side is long enough, else the arm-torso junction when that is; otherwise it stays
+    # and the pose test's idle arm angle fails the rig.  ``armpit_x`` (``parts.armpitX``,
+    # absolute x measured on the 5 cm grid) sets both armpits instead, for sleeves where
+    # neither works (clovis: the junction lies under the puff too).
+    for a in sides.values():
+        a["armpitSource"] = "torso run"
+    moves = {}
+    if armpit_x is not None:
+        moves = {s: (abs(float(armpit_x)), "config armpitX") for s in sides}
+    elif arm_min:
+        reach = {s: (abs(float(wrist_x)) if wrist_x is not None else a["wristX"]) for s, a in sides.items()}
+        short = {s: reach[s] - a["armpitX"] < arm_min * H for s, a in sides.items()}
+        for s, a in sides.items():
+            if not short[s]:
+                continue
+            o = "R" if s == "L" else "L"
+            if not short[o]:
+                moves[s] = (sides[o]["armpitX"], "mirrored from the other side (short arm)")
+            elif reach[s] - a["junctionX"] >= arm_min * H:
+                moves[s] = (a["junctionX"], "junction (short arm)")
+            else:
+                a["armpitSource"] = "torso run; arm shorter than parts.armMinLength, set parts.armpitX"
+    for s, (x_new, source) in moves.items():
+        a = sides[s]
+        cols = a["column"]
+        near = lambda x: cols[min(cols, key=lambda k: abs(k - x))]  # noqa: E731
+        a.update(armpitX=float(x_new), armpitSource=source, torsoRunX=a["armpitX"],
+                 armThickness=near(x_new + 0.03)[1], armpitZ=near(x_new + 0.02)[2])
+
     # Neck: narrowest central run above the arm band (lower half of what is above it).
     neck_z, neck_w = None, None
     top_iz = nz - 1
@@ -520,7 +558,7 @@ def public_landmarks(lm):
     """JSON-friendly subset of :func:`landmarks`."""
     out = {k: (r(v) if isinstance(v, float) else v) for k, v in lm.items()
            if not k.startswith("_") and k not in ("arms", "legs")}
-    out["arms"] = {s: {k: r(v) for k, v in a.items() if k not in ("column",)} for s, a in lm["arms"].items()}
+    out["arms"] = {s: {k: (v if isinstance(v, str) else r(v)) for k, v in a.items() if k not in ("column",)} for s, a in lm["arms"].items()}
     return out
 
 

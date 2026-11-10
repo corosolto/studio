@@ -123,9 +123,9 @@ def main():
     islands = C.connected_face_islands(body)
     island_size = np.bincount(islands)
 
-    lm = C.landmarks(body)
-    H = lm["height"]
     pcfg = cfg.get("parts", {})
+    lm = C.landmarks(body, arm_min=pcfg.get("armMinLength", 0.1), wrist_x=pcfg.get("wristX"), armpit_x=pcfg.get("armpitX"))
+    H = lm["height"]
     # The arm region reaches this far inside the armpit line above the armpit (the deltoid);
     # default is a quarter of the arm thickness, clamped to 1..5 cm.
     inset_cfg = pcfg.get("armShoulderInset")
@@ -144,8 +144,10 @@ def main():
         inset = float(inset_cfg) if inset_cfg is not None else min(max(0.25 * arm["armThickness"], 0.01), 0.05)
         # Arm faces are outside the armpit line and no lower than the armpit (a hip pouch or a
         # tail can reach past the armpit x); only far outside the torso (drooping hands) may
-        # they hang lower.
-        far_out = xs > arm["armpitX"] + 0.5 * (arm["tip"] - arm["armpitX"])
+        # they hang lower.  "Far outside" is measured from the torso run, also when the
+        # short-arm guard moved the armpit inward (a wide skirt hem is not a drooping hand).
+        run_x = max(arm["armpitX"], arm.get("torsoRunX", arm["armpitX"]))
+        far_out = xs > run_x + 0.5 * (arm["tip"] - run_x)
         is_arm = (z > lm["crotchZ"]) & (z < lm["neckZ"]) & (
             ((xs > arm["armpitX"] + 0.01) & ((z > arm["armpitZ"] - 0.03 * H) | far_out))
             | ((xs > arm["armpitX"] - inset) & (z > arm["armpitZ"] - 0.01) & (z < arm_hi + 0.06 * H)))

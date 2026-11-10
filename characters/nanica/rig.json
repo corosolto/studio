@@ -5,7 +5,8 @@
   "parts": {
     "handPartOffset": 0.03,
     "armShoulderInset": 0.3,
-    "wristX": 0.56
+    "wristX": 0.56,
+    "armMinLength": null
   },
   "weights": {
     "linearBlends": [
