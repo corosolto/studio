@@ -1,0 +1,83 @@
+{
+  "id": "nanica",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03,
+    "armShoulderInset": 0.3,
+    "wristX": 0.56,
+    "armMinLength": null
+  },
+  "weights": {
+    "jointSmooth": { "joints": ["LeftShoulder", "RightShoulder", "LeftArm", "RightArm"], "radius": 0.06, "iterations": 20, "alpha": 0.5 },
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ],
+    "headRigidAbove": 1.0
+  },
+  "extras": [
+    {
+      "name": "sleeve-lower-L",
+      "select": {
+        "from": [
+          "torso"
+        ],
+        "box": {
+          "min": [
+            0.22,
+            null,
+            0.85
+          ],
+          "max": [
+            null,
+            null,
+            1.08
+          ]
+        }
+      },
+      "bones": [
+        "LeftShoulder",
+        "LeftArm",
+        "LeftForeArm",
+        "LeftHand",
+        "Spine"
+      ]
+    },
+    {
+      "name": "sleeve-lower-R",
+      "select": {
+        "from": [
+          "torso"
+        ],
+        "box": {
+          "min": [
+            null,
+            null,
+            0.85
+          ],
+          "max": [
+            -0.22,
+            null,
+            1.08
+          ]
+        }
+      },
+      "bones": [
+        "RightShoulder",
+        "RightArm",
+        "RightForeArm",
+        "RightHand",
+        "Spine"
+      ]
+    }
+  ]
+}

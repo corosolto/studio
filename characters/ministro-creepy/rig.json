@@ -1,0 +1,96 @@
+{
+  "id": "ministro-creepy",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.04
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ],
+    "voxelSize": 0.012,
+    "heatFailShare": 0,
+    "waistBand": 0.06
+  },
+  "extras": [
+    {
+      "name": "coat-skirt",
+      "select": {
+        "from": [
+          "leg_L",
+          "leg_R",
+          "torso"
+        ],
+        "box": {
+          "max": [
+            null,
+            null,
+            0.95
+          ]
+        },
+        "grow": {
+          "seeds": [
+            [
+              0,
+              0.237,
+              0.5
+            ],
+            [
+              0.15,
+              -0.2245,
+              0.4
+            ],
+            [
+              -0.15,
+              -0.2245,
+              0.4
+            ]
+          ],
+          "crease": 40,
+          "thickness": 0.02
+        }
+      },
+      "kind": "cape",
+      "cut": [
+        "leg_L",
+        "leg_R"
+      ],
+      "measure": true
+    },
+    {
+      "name": "waist-front",
+      "select": {
+        "from": [
+          "torso"
+        ],
+        "box": {
+          "min": [
+            null,
+            null,
+            0.78
+          ],
+          "max": [
+            null,
+            -0.1,
+            1.0
+          ]
+        }
+      },
+      "bones": [
+        "Hips",
+        "Spine02",
+        "Spine01"
+      ]
+    }
+  ]
+}

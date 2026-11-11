@@ -6,16 +6,20 @@
 //   R3  the meshy-28 skeleton the assembler builds has the contract's 28 joints in skin
 //       order, the donor rest frames, and inverse bind matrices that reproduce the mesh;
 //   R4  the pose test passes a synthetic, well-skinned humanoid (programmatic tubes, no real
-//       asset bytes) and fails each mutant on the clause it breaks.
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+//       asset bytes) and fails each mutant on the clause it breaks;
+//   R5  every Blender step exits non-zero on exceptions, and the runner (with a fake Blender)
+//       records input/output hashes and never continues on missing, stale or edited files.
+import { spawnSync } from 'node:child_process';
+import { chmodSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Document } from '@gltf-transform/core';
 import * as THREE from 'three';
 import { meshy28Joints } from '../lib/character-pack.mjs';
 import {
-  ALIGNED_BONES, MESHY28_REST_WORLD, SYNTHETIC_POSES, assembleMeshy28Model, buildMeshy28Skeleton, deformJointNames, evaluatePoseReport,
-  loadRig, measurePose, measureSetup, skinPositions, summarize, syntheticOverrides, uniqueJointNames, validateJoints,
+  ALIGNED_BONES, MESHY28_REST_WORLD, SYNTHETIC_POSES, armAngles, armProportions, assembleMeshy28Model, buildMeshy28Skeleton, deformJointNames,
+  evaluatePoseReport, loadRig, measurePose, measureSetup, skinPositions, summarize, syntheticOverrides, uniqueJointNames, validateJoints,
 } from '../lib/character-rig.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -44,14 +48,44 @@ clause('R1 character rig configs are well formed', () => {
     for (const extra of cfg.extras || []) {
       assert(extra.name && !partNames.has(extra.name) && !names.has(extra.name), `${file}: extra names must be unique and not body parts (${extra.name})`);
       names.add(extra.name);
-      assert(Boolean(extra.rigid) !== Boolean(extra.bones), `${file}: extra ${extra.name} needs exactly one of rigid or bones`);
-      for (const bone of extra.rigid ? [extra.rigid] : extra.bones) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
+      const modes = [Boolean(extra.rigid), Boolean(extra.bones), Boolean(extra.kind), extra.remove === true].filter(Boolean).length;
+      assert(modes === 1, `${file}: extra ${extra.name} needs exactly one of rigid, bones, kind or remove: true`);
+      assert(extra.remove === undefined || (extra.remove === true && !extra.cut && extra.measure === undefined), `${file}: extra ${extra.name} remove must be true, without cut or measure`);
+      assert(!extra.kind || ['skirt', 'cape'].includes(extra.kind), `${file}: extra ${extra.name} has unknown kind ${extra.kind}`);
+      assert(extra.measure === undefined || typeof extra.measure === 'boolean', `${file}: extra ${extra.name} measure must be true or false`);
+      const fp = extra.frontPanel;
+      const fpObject = fp !== null && typeof fp === 'object' && Object.keys(fp).every((k) => ['share', 'spread'].includes(k))
+        && (fp.share === undefined || (fp.share >= 0 && fp.share <= 1)) && (fp.spread === undefined || fp.spread > 0);
+      assert(fp === undefined || (Boolean(extra.kind) && (typeof fp === 'boolean' || fpObject)),
+        `${file}: extra ${extra.name} frontPanel must be a boolean or { share in [0, 1], spread > 0 } on a kind extra`);
+      for (const bone of extra.rigid ? [extra.rigid] : extra.bones || []) assert(deformJointNames.includes(bone), `${file}: ${extra.name} names ${bone}, which is not a deforming meshy-28 bone`);
       for (const from of extra.select?.from || []) assert(partNames.has(from) || names.has(from), `${file}: ${extra.name} selects from unknown part ${from}`);
+      const grow = extra.select?.grow;
+      if (grow) {
+        assert(Array.isArray(grow.seeds) && grow.seeds.length && grow.seeds.every((p) => Array.isArray(p) && p.length === 3 && p.every(Number.isFinite)), `${file}: ${extra.name} grow.seeds must be [x, y, z] points`);
+        assert(grow.crease === undefined || (grow.crease > 0 && grow.crease <= 180), `${file}: ${extra.name} grow.crease must be in (0, 180] degrees`);
+        assert(grow.thickness === undefined || grow.thickness >= 0, `${file}: ${extra.name} grow.thickness must be >= 0`);
+      }
+      for (const part of extra.cut || []) assert(partNames.has(part), `${file}: ${extra.name} cuts from unknown body part ${part}`);
     }
     for (const [parent, child] of cfg.weights?.linearBlends || []) {
       assert(deformJointNames.includes(parent) && deformJointNames.includes(child), `${file}: linearBlends names a bone that does not deform`);
     }
+    const { armpitX, armMinLength } = cfg.parts || {};
+    assert(armpitX === undefined || (Number.isFinite(armpitX) && Math.abs(armpitX) > 0 && Math.abs(armpitX) < 1.5), `${file}: parts.armpitX must be an x in metres`);
+    assert(armMinLength === undefined || armMinLength === null || (armMinLength > 0 && armMinLength <= 0.3), `${file}: parts.armMinLength must be null or in (0, 0.3] x height`);
     for (const joint of cfg.weights?.smoothJoints || []) assert(uniqueJointNames.includes(joint), `${file}: smoothJoints names unknown joint ${joint}`);
+    for (const key of ['waistBand', 'neckBand', 'flankBand', 'flankFade']) {
+      const v = cfg.weights?.[key];
+      assert(v === undefined || v === null || (v > 0 && v <= 0.2), `${file}: weights.${key} must be null or in (0, 0.2] x height`);
+    }
+    const js = cfg.weights?.jointSmooth;
+    assert(js === undefined || js === null || (typeof js === 'object' && Object.keys(js).every((k) => ['joints', 'radius', 'iterations', 'alpha'].includes(k))
+      && Array.isArray(js.joints) && js.joints.length && js.joints.every((j) => uniqueJointNames.includes(j))
+      && js.radius > 0 && js.radius <= 0.2 && (js.iterations === undefined || (Number.isInteger(js.iterations) && js.iterations > 0 && js.iterations <= 200))
+      && (js.alpha === undefined || (js.alpha > 0 && js.alpha <= 1))),
+    `${file}: weights.jointSmooth must be null or { joints: [meshy-28 joints], radius in (0, 0.2] x height, iterations in 1..200, alpha in (0, 1] }`);
+    assert([undefined, 'armpit', 'junction'].includes(cfg.joints?.shoulderAt), `${file}: joints.shoulderAt must be "armpit" or "junction"`);
   }
   return configs.map(([dir]) => dir).join(', ');
 });
@@ -79,12 +113,22 @@ const J = {
 const TIPS = { LeftHandTip: [0.72, 1.25, 0], RightHandTip: [-0.72, 1.25, 0] };
 const cleanJoints = Object.fromEntries(Object.entries(J).map(([n, [x, y, z]]) => [n, [x, -z, y]]));
 
+/* Arm mutants move joints of the left arm (mesh and skeleton alike): `elbow-at-wrist` puts
+   the elbow 4 cm from the wrist (proportions), `arm-at-wrist` puts shoulder and elbow there,
+   so the clavicle carries the whole arm, the defect of a sleeve read as torso. */
+const mutantJoints = (mutant) => ({
+  ...J,
+  ...(mutant === 'elbow-at-wrist' ? { LeftForeArm: [0.58, 1.25, 0] } : {}),
+  ...(mutant === 'arm-at-wrist' ? { LeftArm: [0.54, 1.25, 0], LeftForeArm: [0.58, 1.25, 0] } : {}),
+});
+
 /** Tubes along joint chains; each ring is weighted by a smoothstep blend around every joint. */
 function synthBody({ mutant = null } = {}) {
+  const JM = mutantJoints(mutant);
   const positions = [], joints = [], weights = [], indices = [];
   const slot = new Map(meshy28Joints.map(([name], i) => [name, i]).reverse());
   const tube = (chain, radius, step = 0.02, sides = 8, blend = 0.05) => {
-    const points = chain.map((n) => new THREE.Vector3(...(Array.isArray(n) ? n : J[n])));
+    const points = chain.map((n) => new THREE.Vector3(...(Array.isArray(n) ? n : JM[n])));
     const names = chain.map((n) => (Array.isArray(n) ? null : n));
     const total = points.slice(1).reduce((s, p, i) => s + p.distanceTo(points[i]), 0);
     const rings = Math.max(2, Math.round(total / step) + 1);
@@ -167,7 +211,7 @@ function synthDocument(options = {}) {
     .setAttribute('WEIGHTS_0', doc.createAccessor().setType('VEC4').setArray(new Float32Array(body.weights)).setBuffer(buffer))
     .setIndices(doc.createAccessor().setType('SCALAR').setArray(new Uint32Array(body.indices)).setBuffer(buffer));
   const meshNode = doc.createNode('Body').setMesh(doc.createMesh('Body').addPrimitive(prim));
-  const skeleton = buildMeshy28Skeleton(doc, { ...J, ...TIPS });
+  const skeleton = buildMeshy28Skeleton(doc, { ...mutantJoints(options.mutant), ...TIPS });
   if (options.mutant === 'stale-ibm') skeleton.joints[13].setTranslation(skeleton.joints[13].getTranslation().map((v, i) => v + (i === 1 ? 5 : 0)));
   const skin = doc.createSkin('meshy-28').setSkeleton(skeleton.joints[0])
     .setInverseBindMatrices(doc.createAccessor().setType('MAT4').setArray(skeleton.inverseBindMatrices).setBuffer(buffer));
@@ -177,11 +221,17 @@ function synthDocument(options = {}) {
   return doc;
 }
 
+/* A stand-in idle: both arms lowered 60° from T (the donor's idle arm angles are 50.8° and
+   38.0° from down), measured as a clip pose so the idle arm gate applies. */
+const SYNTH_IDLE = { name: 'idle', steps: [['LeftArm', 'z', -60], ['RightArm', 'z', 60]] };
 function poseReport(doc) {
   const rig = loadRig(doc);
   const setup = measureSetup(rig);
   const poses = SYNTHETIC_POSES.map((pose) => ({ kind: 'synthetic', name: pose.name, ...measurePose(rig, setup, skinPositions(rig, syntheticOverrides(rig, pose))) }));
-  return { bindError: setup.bindError, poses, summary: summarize(poses) };
+  const idle = syntheticOverrides(rig, SYNTH_IDLE);
+  const idlePosed = skinPositions(rig, idle);
+  poses.push({ kind: 'clip', name: 'idle', time: 0, ...measurePose(rig, setup, idlePosed) });
+  return { bindError: setup.bindError, poses, summary: summarize(poses), arms: armProportions(rig), armIdle: armAngles(rig, setup, idlePosed, idle) };
 }
 
 // ------------------------------------------------------------------------------ R2 joints.json
@@ -316,7 +366,7 @@ clause('R4 synthetic humanoid passes the pose thresholds', () => {
   const report = poseReport(synthDocument());
   const failed = evaluatePoseReport(report);
   assert(!failed.length, failed.join('; '));
-  return `worst ${report.summary.synthetic.maxEdge.value}× (${report.summary.synthetic.maxEdge.pose})`;
+  return `worst ${report.summary.synthetic.maxEdge.value}× (${report.summary.synthetic.maxEdge.pose}); arm ratio ${report.arms.L.ratio}, idle arm ${report.armIdle.L}°/${report.armIdle.R}°`;
 });
 const poseMutants = [
   ['arm-weight-on-torso', /back stretch/],
@@ -324,6 +374,8 @@ const poseMutants = [
   ['stale-ibm', /bind pose does not reproduce/],
   ['hard-step', /max edge stretch/],
   ['hand-on-spine', /hand L stretch/],
+  ['elbow-at-wrist', /arm L: Arm→ForeArm \/ ForeArm→Hand/],
+  ['arm-at-wrist', /idle arm L: /],
 ];
 for (const [mutant, expected] of poseMutants) {
   clause(`R4 pose-test mutant rejected: ${mutant}`, () => {
@@ -335,7 +387,86 @@ for (const [mutant, expected] of poseMutants) {
 clause('R4 a report without synthetic poses is rejected', () => {
   const failed = evaluatePoseReport({ bindError: 0, poses: [] });
   assert(failed.some((f) => /no synthetic poses/.test(f)), failed.join('; '));
+  assert(failed.some((f) => /no arm proportions/.test(f)), failed.join('; '));
 });
+clause('R4 a clip report without the idle arm angle is rejected', () => {
+  const report = poseReport(synthDocument());
+  delete report.armIdle;
+  const failed = evaluatePoseReport(report);
+  assert(failed.some((f) => /no idle arm angle/.test(f)), failed.join('; ') || 'a pass');
+});
+
+// ------------------------------------------------------------------------------ R5 runner
+/* The runner never continues on missing or stale step outputs. Blender itself cannot run in
+   CI, so a fake Blender (a Node script with Blender's command line) writes each step's files;
+   FAKE_SKIP=<step> makes it exit 0 without writing (what Blender did when a Python step
+   raised before the steps called C.run_main), FAKE_FAIL=<step> makes it exit 1. */
+clause('R5 every Blender step exits non-zero on exceptions (C.run_main)', () => {
+  const dir = path.join(root, 'tools/blender/character_rig');
+  const steps = readdirSync(dir).filter((f) => /^rig_.*\.py$/.test(f));
+  for (const file of steps) assert(/\nC\.run_main\(main\)\s*$/.test(readFileSync(path.join(dir, file), 'utf8')), `${file} does not end with C.run_main(main)`);
+  assert(/os\._exit\(1\)/.test(readFileSync(path.join(dir, 'common.py'), 'utf8')), 'common.run_main does not exit 1');
+  return steps.join(', ');
+});
+{
+  const tmp = mkdtempSync(path.join(os.tmpdir(), 'rig-runner-'));
+  const fake = path.join(tmp, 'fake-blender.mjs');
+  writeFileSync(fake, `#!/usr/bin/env node
+import { writeFileSync } from 'node:fs';
+import path from 'node:path';
+const argv = process.argv.slice(2);
+const step = path.basename(argv[argv.indexOf('--python') + 1]).replace(/^rig_|\\.py$/g, '');
+const work = argv[argv.indexOf('--work') + 1];
+if (process.env.FAKE_FAIL === step) process.exit(1);
+if (process.env.FAKE_SKIP === step) process.exit(0);
+const views = { clean: ['front', 'back', 'side'], parts: ['front', 'back', 'side'], joints: ['front', 'side'] }[step];
+const renders = views.flatMap((v) => [step + '-' + v + '.png', step + '-' + v + '.png.view.json']).filter((f) => f !== process.env.FAKE_NO_RENDER);
+const files = { clean: ['clean.blend', 'clean.json'], parts: ['parts.blend', 'parts.json', 'parts-legend.json'], joints: ['joints-estimate.json'] }[step];
+for (const f of [...files, ...renders]) writeFileSync(path.join(work, f), step + Date.now());
+if (step === 'joints') writeFileSync(path.join(work, 'joints.json'), process.env.FAKE_JOINTS);
+`);
+  chmodSync(fake, 0o755);
+  const config = path.join(tmp, 'rig.json');
+  const source = path.join(tmp, 'source.glb');
+  writeFileSync(config, JSON.stringify({ id: 'fake', targetHeight: 1.7 }));
+  writeFileSync(source, 'mesh');
+  const work = path.join(tmp, 'work');
+  const runner = (from, env = {}) => spawnSync(process.execPath, [path.join(root, 'tools/characters/rig-character.mjs'),
+    `--config=${config}`, `--work=${work}`, `--source=${source}`, `--from=${from}`, '--to=joints', '--no-clips', '--skip-review', `--blender=${fake}`],
+  { encoding: 'utf8', env: { ...process.env, FAKE_JOINTS: JSON.stringify(baseJoints), ...env } });
+  const expectFail = (result, pattern) => {
+    assert(result.status !== 0, 'runner succeeded');
+    assert(pattern.test(result.stderr), `expected ${pattern}, got ${result.stderr.split('\n').find((l) => /Error/.test(l)) || result.stderr.slice(0, 200)}`);
+  };
+  clause('R5 runner records clean -> parts -> joints with input and output hashes', () => {
+    const result = runner('clean');
+    assert(result.status === 0, result.stderr);
+    const manifest = JSON.parse(readFileSync(path.join(work, 'run-manifest.json'), 'utf8'));
+    assert(['clean', 'parts', 'joints'].every((s) => manifest.steps[s]?.outputs), 'manifest lacks a step');
+    assert(manifest.steps.clean.inputs.source.sha256 && manifest.steps.joints.outputs['joints.json'], 'manifest lacks hashes');
+  });
+  clause('R5 mutant rejected: a step exits 0 without writing (stale joints.json is not reused)', () => {
+    expectFail(runner('joints', { FAKE_SKIP: 'joints' }), /joints did not write joints\.json/);
+    assert(!existsSync(path.join(work, 'joints.json')), 'the stale joints.json survived');
+  });
+  clause('R5 mutant rejected: a step exits 1', () => expectFail(runner('clean', { FAKE_FAIL: 'parts' }), /failed \(exit 1\)/));
+  clause('R5 mutant rejected: a step leaves an old render behind', () => {
+    assert(runner('clean').status === 0, 'baseline run failed');
+    expectFail(runner('parts', { FAKE_NO_RENDER: 'parts-side.png' }), /parts did not write parts-side\.png/);
+    assert(!existsSync(path.join(work, 'parts-side.png')), 'the stale parts-side.png survived');
+  });
+  clause('R5 mutant rejected: resuming after the config changed', () => {
+    assert(runner('clean').status === 0, 'baseline run failed');
+    writeFileSync(config, JSON.stringify({ id: 'fake', targetHeight: 1.6 }));
+    expectFail(runner('joints'), /config .* changed since clean ran/);
+  });
+  clause('R5 mutant rejected: resuming on a hand-edited upstream output', () => {
+    assert(runner('clean').status === 0, 'baseline run failed');
+    writeFileSync(path.join(work, 'parts.json'), '{}');
+    expectFail(runner('joints'), /parts\.json changed or vanished since parts ran/);
+  });
+  rmSync(tmp, { recursive: true, force: true });
+}
 
 if (failures) {
   console.error(`character-rig-check: ${failures} clause(s) failed`);

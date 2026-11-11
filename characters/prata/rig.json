@@ -1,0 +1,43 @@
+{
+  "id": "prata",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "weights": {
+    "jointSmooth": { "joints": ["LeftShoulder", "RightShoulder", "LeftArm", "RightArm"], "radius": 0.03, "iterations": 5, "alpha": 0.5 },
+    "gradientRamp": 0.05,
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.035
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.035
+      ],
+      [
+        "Hips",
+        "LeftUpLeg",
+        0.15
+      ],
+      [
+        "Hips",
+        "RightUpLeg",
+        0.15
+      ],
+      [
+        "LeftShoulder",
+        "LeftArm",
+        0.08
+      ],
+      [
+        "RightShoulder",
+        "RightArm",
+        0.08
+      ],
+      ["LeftArm", "LeftForeArm", 0.05],
+      ["RightArm", "RightForeArm", 0.05]
+    ]
+  }
+}

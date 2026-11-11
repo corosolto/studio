@@ -311,11 +311,32 @@ def _runs(row: np.ndarray):
     return runs
 
 
-def landmarks(obj, face_mask=None, step=0.01):
+def run_main(main):
+    """Run a step's main() and exit non-zero on any exception.
+
+    Blender's ``--python`` swallows script exceptions and exits 0; the runner relies on the
+    exit code (and on fresh outputs) to never reuse a previous step's files.
+    """
+    import os
+    import traceback
+    try:
+        main()
+    except BaseException:  # noqa: BLE001 - every failure must reach the exit code
+        traceback.print_exc()
+        sys.stdout.flush()
+        sys.stderr.flush()
+        os._exit(1)
+    sys.stdout.flush()
+
+
+def landmarks(obj, face_mask=None, step=0.01, crotch_z=None, arm_min=0.1, wrist_x=None, armpit_x=None):
     """Body landmarks measured from a 1 cm front silhouette and Y-ray cross-sections.
 
     Only faces in ``face_mask`` are measured (the joints step passes the body without
     extras such as a backpack or an antenna).  Everything is in clean-space metres.
+    ``arm_min`` (x height, ``parts.armMinLength``; None disables) is the shortest plausible
+    armpit -> wrist distance, ``wrist_x`` the configured wrist (``parts.wristX``) and
+    ``armpit_x`` the configured armpit (``parts.armpitX``); see the short-arm guard below.
     """
     bvh = bvh_for_faces(obj, face_mask)
     co, _ = mesh_arrays(obj)
@@ -338,13 +359,16 @@ def landmarks(obj, face_mask=None, step=0.01):
 
     # Crotch: first height above 15% H where the midline (x = -1, 0, +1 cm) is at least
     # 2.5% H deep front to back.  A silhouette test alone fails when the thighs touch.
-    crotch_z = 0.47 * H
-    for iz in range(int(0.15 * H / step), int(0.8 * H / step)):
-        z = float(zs[iz])
-        depth = np.mean([sum(b - a for a, b in section_y(bvh, x, z, ymin, ymax)) for x in (-0.01, 0.0, 0.01)])
-        if depth >= 0.025 * H:
-            crotch_z = z
-            break
+    # ``crotch_z`` from the caller wins: removing extras (a cape over the back of the legs)
+    # opens the mesh, rays then never exit and the depth test below finds no crotch.
+    if crotch_z is None:
+        crotch_z = 0.47 * H
+        for iz in range(int(0.15 * H / step), int(0.8 * H / step)):
+            z = float(zs[iz])
+            depth = np.mean([sum(b - a for a, b in section_y(bvh, x, z, ymin, ymax)) for x in (-0.01, 0.0, 0.01)])
+            if depth >= 0.025 * H:
+                crotch_z = z
+                break
 
     def central_run(iz):
         for a, b in _runs(occ[iz]):
@@ -364,10 +388,16 @@ def landmarks(obj, face_mask=None, step=0.01):
     # well past the torso (T-pose arms).  Ears or a wide head above it are ignored.
     ext_l = np.array([xs[np.nonzero(occ[iz] & (xs > 0))[0]].max() if (occ[iz] & (xs > 0)).any() else 0.0 for iz in range(nz)])
     ext_r = np.array([-xs[np.nonzero(occ[iz] & (xs < 0))[0]].min() if (occ[iz] & (xs < 0)).any() else 0.0 for iz in range(nz)])
-    wide = (ext_l > 2.2 * w_ref) & (ext_r > 2.2 * w_ref) & (zs > crotch_z + 0.05 * H)
-    rows = np.nonzero(wide)[0]
+    # Arm band: the T-pose test (both sides reach 2.2x the torso half-width) first; A-pose
+    # arms hang closer to the body, so the factor relaxes down to 1.5x before giving up.
+    for factor in (2.2, 1.9, 1.7, 1.5):
+        wide = (ext_l > factor * w_ref) & (ext_r > factor * w_ref) & (zs > crotch_z + 0.05 * H)
+        rows = np.nonzero(wide)[0]
+        if len(rows):
+            break
     if not len(rows):
-        raise RuntimeError("no T-pose arm band found in the front silhouette")
+        raise RuntimeError("no arm band found in the front silhouette (arms closer than 1.5x the torso "
+                           "half-width); override the arm joints in joints.json")
     first = rows[0]
     last = first
     while last + 1 < nz and wide[last + 1]:
@@ -378,11 +408,6 @@ def landmarks(obj, face_mask=None, step=0.01):
     for side, sign in (("L", 1.0), ("R", -1.0)):
         ext = ext_l if sign > 0 else ext_r
         tip = float(ext[first:last + 1].max())
-        # Armpit: half-width of the torso run just below the arm band.
-        below = int(max(first - 3, 0))
-        run = central_run(below) or (-w_ref, w_ref)
-        x_ap = float(run[1] if sign > 0 else -run[0])
-
         # Arm centre line and thickness per column, within a band around the arm rows.
         zlo = max(arm_lo - 0.08 * H, crotch_z)
         zhi = arm_hi + 0.04 * H
@@ -390,7 +415,7 @@ def landmarks(obj, face_mask=None, step=0.01):
         column = {}
         for ix in range(nx):
             x = float(xs[ix]) * sign
-            if x < x_ap * 0.6 or x > tip + 1e-6:
+            if x < 0.3 * w_ref or x > tip + 1e-6:
                 continue
             filled = np.nonzero(occ[izlo:izhi, ix])[0]
             if len(filled):
@@ -402,21 +427,38 @@ def landmarks(obj, face_mask=None, step=0.01):
         def col(x):
             key = min(column, key=lambda k: abs(k - x))
             return column[key]
-        # The torso row under the arm can be a narrow waist (hunched or skinny bodies), so
-        # the armpit is also found where the silhouette column becomes much taller than the
-        # arm itself, scanning inward from mid-arm.
+        # Armpit (the arm part boundary): half-width of the torso run just below the arm
+        # band.  The torso row under the arm can be a narrow waist (hunched or skinny
+        # bodies), so the armpit is also found where the silhouette column becomes much
+        # taller than the arm itself, scanning inward from mid-arm.
+        run = central_run(int(max(first - 3, 0))) or (-w_ref, w_ref)
+        x_ap = float(run[1] if sign > 0 else -run[0])
         keys = np.array(sorted(column))
         mid_arm = keys[(keys > x_ap + 0.3 * (tip - x_ap)) & (keys < x_ap + 0.7 * (tip - x_ap))]
         t_arm = float(np.median([column[k][1] for k in mid_arm])) if len(mid_arm) else 0.0
-        x_body = None
-        for k in keys[keys <= x_ap + 0.3 * (tip - x_ap)][::-1]:
+        for k in keys[(keys >= 0.6 * x_ap) & (keys <= x_ap + 0.3 * (tip - x_ap))][::-1]:
             if t_arm and column[k][1] > 2.0 * t_arm:
-                x_body = float(k) + step
+                x_ap = max(x_ap, float(k) + step)
                 break
-        if x_body is not None and x_body > x_ap:
-            x_ap = x_body
         thick = col(x_ap + 0.03)[1]
         armpit_z = col(x_ap + 0.02)[2]
+        # Arm-torso junction (where the shoulder joint goes): scanning out from the torso,
+        # a column whose run still reaches well below the arm band is the side of the body;
+        # the first column whose run ends above that has open space under it, the underarm
+        # gap.  A wide sleeve, an epaulette or a dropped T-shirt shoulder hangs below the bare
+        # arm but not down the side of the body, so the junction does not land on a sleeve
+        # end the way the torso-run armpit can.  A rounded ribcage opens that gap a little
+        # inside the junction, so it then moves out to the first column whose underside is
+        # within 2% H of the arm's own underside.
+        floor_z = max(arm_lo - 0.06 * H, zlo + step)
+        x_j = next((float(k) for k in keys if column[k][2] > floor_z + 1e-9), None)
+        if x_j is None:
+            x_j = x_ap
+        else:
+            ref = keys[(keys >= x_j + 0.025 * H) & (keys <= x_j + 0.06 * H)]
+            if len(ref):
+                underside = float(np.median([column[k][2] for k in ref]))
+                x_j = next((float(k) for k in keys if k >= x_j and column[k][2] >= underside - 0.02 * H), x_j)
 
         # Wrist: area profile of the distal half; the palm is the widest section of the
         # distal 35% and the wrist is the outermost section within 8% H inside the palm
@@ -440,9 +482,44 @@ def landmarks(obj, face_mask=None, step=0.01):
         else:
             x_wrist = tip - 0.11 * H
         sides[side] = {
-            "sign": sign, "tip": tip, "armpitX": x_ap, "armpitZ": armpit_z, "armThickness": thick,
+            "sign": sign, "tip": tip, "armpitX": x_ap, "armpitZ": armpit_z, "junctionX": x_j, "armThickness": thick,
             "wristX": x_wrist, "column": column,
         }
+
+    # Short-arm guard: a sleeve or a costume that fills the space under the arm (clovis'
+    # puffed sleeves, bebezao's and boneca's short sleeves over a wide body, the cords on
+    # coronel's right shoulder) makes the torso run under the arm band reach the sleeve end,
+    # so the armpit lands a few centimetres from the wrist; the arm part then starts there,
+    # the sleeve stays torso and every clip leaves the arm in T.  When armpit -> wrist is
+    # shorter than ``arm_min`` x height, the armpit takes the other side's (mirrored) when
+    # that side is long enough, else the arm-torso junction when that is; otherwise it stays
+    # and the pose test's idle arm angle fails the rig.  ``armpit_x`` (``parts.armpitX``,
+    # absolute x measured on the 5 cm grid) sets both armpits instead, for sleeves where
+    # neither works (clovis: the junction lies under the puff too).
+    for a in sides.values():
+        a["armpitSource"] = "torso run"
+    moves = {}
+    if armpit_x is not None:
+        moves = {s: (abs(float(armpit_x)), "config armpitX") for s in sides}
+    elif arm_min:
+        reach = {s: (abs(float(wrist_x)) if wrist_x is not None else a["wristX"]) for s, a in sides.items()}
+        short = {s: reach[s] - a["armpitX"] < arm_min * H for s, a in sides.items()}
+        for s, a in sides.items():
+            if not short[s]:
+                continue
+            o = "R" if s == "L" else "L"
+            if not short[o]:
+                moves[s] = (sides[o]["armpitX"], "mirrored from the other side (short arm)")
+            elif reach[s] - a["junctionX"] >= arm_min * H:
+                moves[s] = (a["junctionX"], "junction (short arm)")
+            else:
+                a["armpitSource"] = "torso run; arm shorter than parts.armMinLength, set parts.armpitX"
+    for s, (x_new, source) in moves.items():
+        a = sides[s]
+        cols = a["column"]
+        near = lambda x: cols[min(cols, key=lambda k: abs(k - x))]  # noqa: E731
+        a.update(armpitX=float(x_new), armpitSource=source, torsoRunX=a["armpitX"],
+                 armThickness=near(x_new + 0.03)[1], armpitZ=near(x_new + 0.02)[2])
 
     # Neck: narrowest central run above the arm band (lower half of what is above it).
     neck_z, neck_w = None, None
@@ -481,7 +558,7 @@ def public_landmarks(lm):
     """JSON-friendly subset of :func:`landmarks`."""
     out = {k: (r(v) if isinstance(v, float) else v) for k, v in lm.items()
            if not k.startswith("_") and k not in ("arms", "legs")}
-    out["arms"] = {s: {k: r(v) for k, v in a.items() if k not in ("column",)} for s, a in lm["arms"].items()}
+    out["arms"] = {s: {k: (v if isinstance(v, str) else r(v)) for k, v in a.items() if k not in ("column",)} for s, a in lm["arms"].items()}
     return out
 
 

@@ -1,0 +1,59 @@
+{
+  "id": "bebezao-de-feira",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ],
+      [
+        "Hips",
+        "Spine02",
+        0.1
+      ],
+      [
+        "Spine02",
+        "Spine01",
+        0.1
+      ]
+    ],
+    "chainLocality": 0.02,
+    "clavicleFloor": 0.5,
+    "gradientRamp": 0.04,
+    "flankBand": 0.04,
+    "flankFade": 0.06
+  },
+  "extras": [
+    {
+      "name": "necklace",
+      "select": {
+        "islandMaxFaces": 100,
+        "grow": {
+          "seeds": [
+            [
+              -0.013,
+              -0.314,
+              0.868
+            ]
+          ],
+          "crease": 180
+        }
+      },
+      "rigid": "Spine01"
+    }
+  ],
+  "joints": {
+    "hipsAboveUpLeg": 0.08
+  }
+}

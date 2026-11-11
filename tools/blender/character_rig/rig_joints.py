@@ -6,16 +6,22 @@
 Deterministic first estimate from the body without extras (a backpack or an antenna
 must not pull the spine or the head):
 
-- arms: shoulder just inside the armpit line, elbow at ``elbowRatio`` of shoulder→wrist,
-  wrist where the parts step put it; each joint sits on the centroid of the arm
-  cross-section (rays along Y), and the shoulder on the line fitted through them;
+- arms: shoulder just inside the armpit (``shoulderAt: "armpit"``, the torso run under the
+  arm band) or the arm-torso junction (``"junction"``, where the underarm gap of the front
+  silhouette opens, so a wide sleeve or an epaulette does not push it out), elbow at
+  ``elbowRatio`` of shoulder→wrist, wrist where the parts step put it; each joint sits on
+  the centroid of the arm cross-section (rays along Y), and the shoulder on the line fitted
+  through them;
 - legs: hip at the crotch row (``hipAboveCrotch``) on the leg section; ankle at the thinnest leg
-  section near the floor, knee at the strongest bend of the side profile (or
-  ``kneeRatio`` of ankle→hip on straight legs), toe on the ball of the foot;
+  section near the floor, knee in the middle of the leg (``kneeWindow``) at the strongest
+  forward bend of the side profile, else the narrowest smoothed section between thigh and
+  calf, else ``kneeRatio`` of ankle→hip; toe on the ball of the foot;
 - spine: ``Hips`` above the hip joints, ``Spine`` just under the shoulder line,
-  ``Spine02``/``Spine01`` at thirds, all on the torso section centroid;
-- head: ``Head`` at the narrowest neck row, ``neck`` 60% of the way from ``Spine``,
-  ``head_end`` on the top of the head, ``headfront`` in front of ``Head``.
+  ``Spine02``/``Spine01`` at thirds, all on the torso medial axis (section centroids,
+  outliers dropped, locally line-fitted); ``neck`` at ``neckRatio`` towards ``Head`` on the
+  neck sections;
+- head: ``Head`` at the narrowest neck row, ``head_end`` on the top of the head,
+  ``headfront`` in front of ``Head``.
 
 Ratios default to measurements of the meshy-28 donor and can be set under ``joints`` in
 the config.  A per-character override file (``jointsOverride`` in the config, relative to
@@ -40,19 +46,24 @@ import common as C  # noqa: E402
 # Defaults measured on the meshy-28 donor mesh (client public/models/characters/mst.glb)
 # with tools/blender/character_rig run on it; see docs/character-rig.md.
 DEFAULTS = {
+    "shoulderAt": "armpit",    # "armpit" (torso run under the arm band) or "junction" (underarm gap)
     "shoulderInset": 0.05,     # shoulder joint x = armpit x - shoulderInset * arm thickness
     "shoulderRaise": 0.1,      # shoulder joint z = arm centre line + shoulderRaise * arm thickness
     "clavicleRatio": 0.2,      # LeftShoulder x = clavicleRatio * shoulder x
     "elbowRatio": 0.5,         # elbow at this fraction of shoulder -> wrist
     "hipAboveCrotch": 0.045,   # UpLeg z = crotch + hipAboveCrotch * H
     "hipsAboveUpLeg": 0.049,   # Hips z = UpLeg z + hipsAboveUpLeg * H
-    "kneeRatio": 0.49,         # knee at this fraction of ankle -> hip on straight legs
-    "kneeBendMin": 0.02,       # side-profile deviation (m) that counts as a bent knee
+    "kneeRatio": 0.49,         # knee at this fraction of ankle -> hip without a profile cue
+    "kneeWindow": [0.38, 0.62],  # knee search range, fraction of ankle -> hip
+    "kneeProminence": 0.03,    # narrowest leg section: this much below its sides (smoothed area)
+    "kneeStepMax": 0.15,       # ... with no row-to-row area step above this (boot tops, hems)
+    "kneeBendMin": 0.02,       # forward side-profile deviation (m) that counts as a bent knee
     "kneeForward": 0.25,       # knee joint moves this fraction of the leg depth to the front
     "ankleWindow": [0.035, 0.09],
     "toeRatio": 0.72,          # ball of the foot from heel to toe tip
     "toeHeightRatio": 0.4,     # toe joint height as a fraction of the ankle height
     "spineBelowShoulder": 0.015,
+    "spineDepth": 0.0,         # spine axis this fraction of the way from torso centroid to back
     "neckRatio": 0.6,
     "headAboveNeck": 0.02,     # Head z = narrowest neck row + headAboveNeck * H
     "headfrontForward": 0.069,
@@ -93,9 +104,17 @@ def main():
     body = C.body_object()
     labels, parts = C.read_face_parts(body, cfg)
     n_body = len(C.PART_NAMES)
-    body_mask = parts < n_body
-    lm = C.landmarks(body, face_mask=body_mask)
+    # Joints are measured without accessories, but extras that are the body's own surface
+    # (a coat skirt over the legs, weight-only regions) stay: ``measure: true``, default for
+    # kind skirt.  Removing them would leave no thigh or torso to measure.
+    measured = [n_body + i for i, extra in enumerate(cfg.get("extras", []))
+                if extra.get("measure", extra.get("kind") == "skirt")]
+    body_mask = (parts < n_body) | np.isin(parts, measured)
     parts_report = json.loads((args.work / "parts.json").read_text())
+    # The crotch comes from the parts step (full, closed mesh); see common.landmarks.
+    pcfg = cfg.get("parts", {})
+    lm = C.landmarks(body, face_mask=body_mask, crotch_z=float(parts_report["landmarks"]["crotchZ"]),
+                     arm_min=pcfg.get("armMinLength", 0.1), wrist_x=pcfg.get("wristX"), armpit_x=pcfg.get("armpitX"))
     bvh = lm["_bvh"]
     ymin, ymax = lm["_y"]
     H = lm["height"]
@@ -112,7 +131,9 @@ def main():
         override_wrist = cfg.get("parts", {}).get("wristX")
         if override_wrist is not None:
             wrist = abs(float(override_wrist))
-        x_sh = arm["armpitX"] - J["shoulderInset"] * arm["armThickness"]
+        if J["shoulderAt"] not in ("armpit", "junction"):
+            raise RuntimeError(f'joints.shoulderAt must be "armpit" or "junction", not {J["shoulderAt"]!r}')
+        x_sh = arm["junctionX" if J["shoulderAt"] == "junction" else "armpitX"] - J["shoulderInset"] * arm["armThickness"]
         x_el = x_sh + J["elbowRatio"] * (wrist - x_sh)
         # Fit the arm centre line on the outer 75% of shoulder->wrist: straps, vest edges
         # and the deltoid next to the torso would drag a full-length fit.
@@ -132,6 +153,7 @@ def main():
         joints[f"{prefix}Shoulder"] = Vector((J["clavicleRatio"] * x_sh * s, shoulder.y, shoulder.z))
         joints[f"Curl_{side}"] = hand.copy()
         notes[f"{prefix}Hand"] = parts_report["wrists"][side]["source"] if override_wrist is None else "config wristX"
+        notes[f"{prefix}Arm"] = arm.get("armpitSource", "torso run")
         tip_x = arm["tip"]
         tip, _ = arm_section(bvh, lm, side, tip_x - 0.01, ymin, ymax)
         notes[f"{prefix}HandTip"] = C.r(tip)
@@ -150,9 +172,19 @@ def main():
             return line[key]
 
         def leg_section(z):
-            _mean, xmin_, xmax_ = leg_row(z)
-            xs = np.arange(xmin_, xmax_ + 1e-9, 0.005)
-            return section_xy(bvh, xs, z, ymin, ymax)
+            """Leg centroid at z; a row the silhouette or the rays miss (an extra such as a
+            tail removed from the body, a gap in the mesh) falls back to the nearest row
+            within 3 cm that has a section."""
+            for dz in (0.0, -0.005, 0.005, -0.01, 0.01, -0.02, 0.02, -0.03, 0.03):
+                _mean, xmin_, xmax_ = leg_row(z + dz)
+                cen, area = section_xy(bvh, np.arange(xmin_, xmax_ + 1e-9, 0.005), z + dz, ymin, ymax)
+                if cen is not None:
+                    return cen, area
+            return None, 0.0
+
+        if not len(zs_line):
+            raise RuntimeError(f"{prefix} leg: no leg silhouette below the crotch (z {C.r(crotch, 3)}); "
+                               "check the leg parts in parts-review.png and the extras that select below the crotch")
 
         lo_w, hi_w = J["ankleWindow"]
         best = None
@@ -160,8 +192,14 @@ def main():
             cen, area = leg_section(z)
             if cen is not None and (best is None or area < best[2]):
                 best = (z, cen, area)
+        if best is None:
+            raise RuntimeError(f"{prefix}Foot: no leg section in the ankle window "
+                               f"{C.r(lo_w * H, 3)}..{C.r(hi_w * H, 3)} m; set joints.ankleWindow or override {prefix}Foot")
         ankle_z, ankle_c, _ = best
         thigh_c, _ = leg_section(crotch - 0.03)
+        if thigh_c is None:
+            raise RuntimeError(f"{prefix}UpLeg: no thigh section just below the crotch (z {C.r(crotch - 0.03, 3)} m); "
+                               f"an extra probably removed the thigh faces, or override {prefix}UpLeg")
         pelvis_y = None
         cen_p, _ = section_xy(bvh, np.arange(-lm["torsoHalfWidth"] * 0.6, lm["torsoHalfWidth"] * 0.6 + 1e-9, 0.005),
                               hip_z, ymin, ymax)
@@ -169,22 +207,54 @@ def main():
             pelvis_y = cen_p[1]
         hip = Vector((thigh_c[0], thigh_c[1] if pelvis_y is None else 0.5 * (thigh_c[1] + pelvis_y), hip_z))
         ankle = Vector((ankle_c[0], ankle_c[1], ankle_z))
-        # Knee: strongest bend of the side profile, else the donor ratio.
+        # Knee, from the leg profile between the ankle and the hip, inside kneeWindow
+        # (fraction of ankle -> hip) so trouser folds near the boot and the hip are ignored:
+        # 1. the strongest forward bend of the side profile, at least kneeBendMin (a bent
+        #    leg; a bend backwards is a calf, a fold or a boot back, never a knee);
+        # 2. else the narrowest section between thigh and calf: a local minimum of the
+        #    cross-section area smoothed over 5 cm, at least kneeProminence below the widest
+        #    section on each side within 8 cm, with no row-to-row step over kneeStepMax
+        #    within 4 cm (a boot top or a coat hem is a step, not a knee);
+        # 3. else kneeRatio.
+        lo_k, hi_k = J["kneeWindow"]
         prof = []
-        for z in np.arange(ankle_z + 0.05, hip_z - 0.05, 0.01):
-            cen, _ = leg_section(z)
+        for z in np.arange(ankle_z + 0.03, hip_z - 0.03, 0.01):
+            cen, area = leg_section(z)
             if cen is not None:
                 t = (z - ankle_z) / (hip_z - ankle_z)
                 straight = ankle + (hip - ankle) * t
-                prof.append((z, cen, cen[1] - straight.y))
-        bend = max(prof, key=lambda p: abs(p[2])) if prof else None
-        if bend and abs(bend[2]) >= J["kneeBendMin"]:
-            knee_z = bend[0]
-            notes[f"{prefix}Leg"] = f"side-profile bend {C.r(bend[2], 3)} m"
-        else:
+                prof.append((z, t, area, cen[1] - straight.y))
+        bends = [p for p in prof if lo_k <= p[1] <= hi_k and -p[3] >= J["kneeBendMin"]]
+        knee_z, best_drop = None, J["kneeProminence"]
+        if bends:
+            bend = max(bends, key=lambda p: -p[3])
+            knee_z = float(bend[0])
+            notes[f"{prefix}Leg"] = f"side-profile bend {C.r(-bend[3], 3)} m forward"
+        elif len(prof) >= 9:
+            P = np.array(prof)
+            area = np.convolve(P[:, 2], np.ones(5) / 5, mode="same")
+            for i in range(4, len(P) - 4):
+                if not (lo_k <= P[i, 1] <= hi_k) or area[i] > area[i - 1] or area[i] > area[i + 1]:
+                    continue
+                raw = P[i - 4:i + 5, 2]
+                if np.max(np.abs(np.diff(raw)) / np.maximum(raw[:-1], 1e-9)) > J["kneeStepMax"]:
+                    continue
+                lo_i, hi_i = max(i - 8, 0), min(i + 9, len(P))
+                drop = min(area[lo_i:i].max(), area[i + 1:hi_i].max()) / max(area[i], 1e-9) - 1
+                if drop >= best_drop:
+                    knee_z, best_drop = float(P[i, 0]), drop
+            if knee_z is not None:
+                notes[f"{prefix}Leg"] = f"narrowest section, {C.r(100 * best_drop, 1)}% below its sides"
+        if knee_z is None:
             knee_z = ankle_z + J["kneeRatio"] * (hip_z - ankle_z)
             notes[f"{prefix}Leg"] = "kneeRatio"
         knee_c, _ = leg_section(knee_z)
+        if knee_c is None:
+            # No section at the knee row (a skirt or tail extra took those faces): put the
+            # knee on the straight hip-ankle line.
+            t = (knee_z - ankle_z) / (hip_z - ankle_z)
+            knee_c = np.array([ankle.x + (hip.x - ankle.x) * t, ankle.y + (hip.y - ankle.y) * t])
+            notes[f"{prefix}Leg"] += "; no knee section, on the hip-ankle line"
         spans = C.section_y(bvh, float(knee_c[0]), float(knee_z), ymin, ymax)
         knee_y = knee_c[1]
         if spans:
@@ -212,25 +282,14 @@ def main():
 
     # ---------------------------------------------------------------- spine and head
     full_bvh = C.bvh_for_faces(body)
-    extra_v = set()
+    extra_v, body_v = set(), set()
     for i, p in enumerate(me.polygons):
-        if not body_mask[i]:
-            extra_v.update(p.vertices)
+        (body_v if body_mask[i] else extra_v).update(p.vertices)
     extra_co = co[sorted(extra_v)] if extra_v else np.zeros((0, 3))
+    body_co = co[sorted(body_v)]
 
-    def torso_section(z, half=None):
-        """Torso centroid at height z without extras.
-
-        Removing a backpack fused to the back leaves a hole, so rays that miss their exit
-        fall back to the full mesh clipped in front of the extras at this height.
-        """
-        half = half or lm["torsoHalfWidth"] * 0.6
-        xs = np.arange(-half, half + 1e-9, 0.005)
-        cen, _ = section_xy(bvh, xs, z, ymin, ymax)
-        if cen is not None:
-            return cen
-        near = extra_co[(np.abs(extra_co[:, 2] - z) < 0.03) & (np.abs(extra_co[:, 0]) < half)] if len(extra_co) else extra_co
-        y_cut = float(near[:, 1].min()) if len(near) else ymax
+    def full_section(xs, z, y_cut):
+        """Area centroid (x, y) of the full-mesh section at height z behind y_cut, or None."""
         total, acc = 0.0, np.zeros(2)
         for x in xs:
             for a, b in C.section_y(full_bvh, float(x), float(z), ymin, ymax):
@@ -238,27 +297,80 @@ def main():
                 if yb > ya:
                     total += yb - ya
                     acc += np.array([x, 0.5 * (ya + yb)]) * (yb - ya)
-        if total <= 0:
-            raise RuntimeError(f"no torso section at z={z:.3f}")
-        return acc / total
+        return acc / total if total > 0 else None
+
+    def torso_section(z, half=None):
+        """Torso centroid at height z without extras.
+
+        Removing a backpack fused to the back leaves a hole, so rays that miss their exit
+        fall back to the full mesh clipped in front of the extras at this height, then to
+        the mid-depth of the body vertices there.  An extra that wraps the whole torso at
+        this height (vlad's coat-lower moved up to 0.95 m) leaves no body vertex and clips
+        every span away; the full-mesh section, unclipped, is the last resort.
+        """
+        half = half or lm["torsoHalfWidth"] * 0.6
+        xs = np.arange(-half, half + 1e-9, 0.005)
+        cen, _ = section_xy(bvh, xs, z, ymin, ymax)
+        if cen is not None:
+            return cen
+        near = extra_co[(np.abs(extra_co[:, 2] - z) < 0.03) & (np.abs(extra_co[:, 0]) < half)] if len(extra_co) else extra_co
+        cen = full_section(xs, z, float(near[:, 1].min()) if len(near) else ymax)
+        if cen is not None:
+            return cen
+        near = body_co[np.abs(body_co[:, 2] - z) < 0.02]
+        if len(near):
+            return np.array([0.0, 0.5 * (near[:, 1].min() + near[:, 1].max())])
+        cen = full_section(xs, z, ymax)
+        if cen is None:
+            raise RuntimeError(f"no torso section or body vertices at z={z:.3f}")
+        return cen
 
     up_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
     hips_z = up_z + J["hipsAboveUpLeg"] * H
     shoulder_z = 0.5 * (joints["LeftArm"].z + joints["RightArm"].z)
     spine_z = shoulder_z - J["spineBelowShoulder"] * H
-    # Hips and Spine sit on the torso section centroid; the two middle joints lie on the
-    # straight line between them (vest plates, pouches and a removed backpack make the
-    # mid-torso centroid jump front to back).
-    hips_y = torso_section(hips_z)[1]
-    spine_y = torso_section(spine_z)[1]
-    for name, t in (("Hips", 0.0), ("Spine02", 1 / 3), ("Spine01", 2 / 3), ("Spine", 1.0)):
-        joints[name] = Vector((0.0, hips_y + t * (spine_y - hips_y), hips_z + t * (spine_z - hips_z)))
     head_z = lm["neckZ"] + J["headAboveNeck"] * H
+    neck_z = spine_z + J["neckRatio"] * (head_z - spine_z)
+    # Hips, Spine02, Spine01 and Spine sit on the torso medial axis: the centroids of
+    # horizontal sections every 1 cm (within 0.6 torso half-widths of the midline, so the
+    # arms stay out), smoothed by a local line fit.  Sections more than 2.5 robust
+    # deviations off their 7-section running median (a pouch, a belt buckle, a removed
+    # backpack) are dropped; each joint then takes a tricube-weighted line through the
+    # sections within 3% H of it, so the axis follows a hunched back or a belly without
+    # one odd section moving a joint, and the end joints are not extrapolated.  spineDepth
+    # moves the axis that fraction of the way from the centroid to the back surface (the
+    # donor's spine is 7-9 cm behind its torso centroid; a big belly pulls the centroid far
+    # forward of the back, so crouching stretches the back around a hinge inside the belly).
+    axis_z = np.arange(hips_z - 0.03 * H, spine_z + 0.03 * H + 1e-9, 0.01)
+    axis_y = np.array([torso_section(z)[1] for z in axis_z])
+    if J["spineDepth"]:
+        half = lm["torsoHalfWidth"] * 0.6
+        for i, z in enumerate(axis_z):
+            backs = [ymin - 0.1 + b for x in np.arange(-half, half + 1e-9, 0.005)
+                     for _a, b in C.section_y(bvh, float(x), float(z), ymin, ymax)]
+            if backs:
+                axis_y[i] += J["spineDepth"] * (max(backs) - axis_y[i])
+    running = np.array([np.median(axis_y[max(i - 3, 0):i + 4]) for i in range(len(axis_y))])
+    resid = np.abs(axis_y - running)
+    keep = resid <= 2.5 * (1.4826 * np.median(resid) + 1e-3)
+
+    def axis_at(z):
+        d = np.abs(axis_z - z) / (0.03 * H)
+        w = np.where(keep & (d < 1), (1 - d ** 3) ** 3, 0.0)
+        if (w > 0).sum() < 3:
+            return float(running[np.argmin(np.abs(axis_z - z))])
+        A = np.vstack([np.ones_like(axis_z), axis_z - z]).T * np.sqrt(w)[:, None]
+        return float(np.linalg.lstsq(A, axis_y * np.sqrt(w), rcond=None)[0][0])
+
+    notes["spineAxis"] = {"sections": int(len(axis_z)), "dropped": int((~keep).sum())}
+    for name, t in (("Hips", 0.0), ("Spine02", 1 / 3), ("Spine01", 2 / 3), ("Spine", 1.0)):
+        z = hips_z + t * (spine_z - hips_z)
+        joints[name] = Vector((0.0, axis_at(z), z))
+    # The neck is narrower than the torso: its own sections within 2 cm, median.
+    neck_y = [torso_section(z, half=lm["neckHalfWidth"] * 1.5)[1] for z in np.arange(neck_z - 0.02, neck_z + 0.02 + 1e-9, 0.01)]
+    joints["neck"] = Vector((0.0, float(np.median(neck_y)), neck_z))
     cen = torso_section(head_z, half=lm["neckHalfWidth"])
     joints["Head"] = Vector((0.0, cen[1], head_z))
-    neck_z = spine_z + J["neckRatio"] * (head_z - spine_z)
-    cen = torso_section(neck_z, half=lm["neckHalfWidth"] * 1.5)
-    joints["neck"] = Vector((0.0, cen[1], neck_z))
     top = lm["headTopZ"]
     cen = torso_section(head_z + 0.6 * (top - head_z), half=lm["neckHalfWidth"])
     joints["head_end"] = Vector((0.0, cen[1], top))
@@ -305,4 +417,4 @@ def main():
     print("JOINTS " + " ".join(f"{k}={v}" for k, v in final.items()))
 
 
-main()
+C.run_main(main)

@@ -1,0 +1,56 @@
+{
+  "id": "sorridente-onibus",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "gradientRamp": 0.05,
+    "voxelSize": 0.003,
+    "rampLength": 0.12,
+    "smoothRadius": 0.1,
+    "smoothIterations": 6,
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ],
+      ["LeftShoulder", "LeftArm", 0.06],
+      ["LeftArm", "LeftForeArm", 0.05],
+      ["RightShoulder", "RightArm", 0.06],
+      ["RightArm", "RightForeArm", 0.05]
+    ]
+  },
+  "extras": [
+    {
+      "name": "pelvis",
+      "select": {
+        "from": [
+          "torso",
+          "leg_L",
+          "leg_R"
+        ],
+        "box": {
+          "min": [
+            -0.06,
+            null,
+            0.78
+          ],
+          "max": [
+            0.06,
+            null,
+            0.84
+          ]
+        }
+      },
+      "rigid": "Hips"
+    }
+  ]
+}

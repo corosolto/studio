@@ -1,0 +1,53 @@
+{
+  "id": "padre-parapsicologo",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ],
+      [
+        "neck",
+        "Head",
+        0.05
+      ],
+      [
+        "Hips",
+        "Spine02",
+        0.1
+      ],
+      [
+        "Spine02",
+        "Spine01",
+        0.1
+      ],
+      [
+        "Spine01",
+        "Spine",
+        0.1
+      ],
+      [
+        "LeftUpLeg",
+        "LeftLeg",
+        0.15
+      ],
+      [
+        "RightUpLeg",
+        "RightLeg",
+        0.15
+      ]
+    ],
+    "headRigidAbove": 1.0
+  }
+}

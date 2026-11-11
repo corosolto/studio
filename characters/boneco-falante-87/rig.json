@@ -1,0 +1,25 @@
+{
+  "id": "boneco-falante-87",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "rampLength": 0.12,
+    "smoothRadius": 0.1,
+    "smoothIterations": 6,
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ]
+    ]
+  }
+}

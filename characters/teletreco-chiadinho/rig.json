@@ -1,0 +1,65 @@
+{
+  "id": "teletreco-chiadinho",
+  "forward": "-Y",
+  "targetHeight": 1.3,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "jointSmooth": { "joints": ["LeftShoulder", "RightShoulder"], "radius": 0.03, "iterations": 20, "alpha": 0.5 },
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.025
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.025
+      ],
+      [
+        "Hips",
+        "LeftUpLeg",
+        0.12
+      ],
+      [
+        "Hips",
+        "RightUpLeg",
+        0.12
+      ]
+    ],
+    "smoothRadius": 0.18,
+    "smoothIterations": 12,
+    "smoothJoints": [
+      "LeftArm",
+      "RightArm",
+      "LeftLeg",
+      "RightLeg",
+      "Hips",
+      "LeftUpLeg",
+      "RightUpLeg"
+    ]
+  },
+  "extras": [
+    {
+      "name": "antenna",
+      "select": {
+        "islandMaxFaces": 100,
+        "box": {
+          "min": [
+            null,
+            null,
+            1.0
+          ],
+          "max": [
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "rigid": "Head"
+    }
+  ]
+}

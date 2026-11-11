@@ -25,7 +25,12 @@
    around the wrist.  Heat alone switches ForeArm->Hand within one edge ring; on
    capitao-caveira that ring stretched 1.64× in the client hand gate (rig-maos-check) versus
    1.32× with the blend and ``parts.handPartOffset`` 0.04.
+4c. Opt-in band models (``weights.waistBand``, ``weights.neckBand``, ``weights.flankBand``):
+   weights in a band around the hips, the neck or the belly flanks as a function of height
+   and angle around the torso axis.
 5. At most 4 influences per vertex, normalised.
+6. Opt-in joint-zone smoothing (``weights.jointSmooth``): near the listed joints the final
+   weights are smoothed across part boundaries without giving any vertex a new bone.
 
 Writes ``weights.blend``, ``weights.json`` and ``blender-rig.glb`` (Blender's own skin; run
 tools/characters/rig-assemble.mjs next for the meshy-28 GLB).
@@ -56,6 +61,31 @@ DEFAULTS = {
     "smoothJoints": ["LeftArm", "RightArm", "LeftLeg", "RightLeg"],
     # [[parent, child, halfWidth x height], ...]: wrists by default (see step 4b).
     "linearBlends": [["LeftForeArm", "LeftHand", 0.035], ["RightForeArm", "RightHand", 0.035]],
+    # Groin: within groinBand x height of the crotch and between the thighs, the thigh share
+    # moves to Hips (fully on the midline), so spreading the legs does not tear the crotch.
+    "groinBand": 0.05,
+    # Weight gradient limit: along any edge no bone weight changes faster than the edge
+    # length / (gradientRamp x height); 0 disables.
+    "gradientRamp": 0.025,
+    "gradientIterations": 200,
+    # Torso height limits for the thighs and the clavicles (step 2); null leaves heat alone.
+    "thighCeiling": None,      # fraction of UpLeg -> Hips height, e.g. 1.0 = the Hips joint
+    "clavicleFloor": None,     # fraction of Spine02 -> Spine01 height, e.g. 0.0 = Spine02
+    # Band weight models (step 4c'), x height or null: the waist band reaches this far below
+    # the hip joints, the neck band this far above Head; each fades out over half of it.  The
+    # flank band covers Hips -> Spine01 on the torso sides and fades out over half of it;
+    # flankFade (x height or null) lengthens its lower fade, which ends at the Hips joint.
+    "waistBand": None,
+    "neckBand": None,
+    "flankBand": None,
+    "flankFade": None,
+    # Spine-chain locality (step 2), x height or null: margin beyond the parent and child joints.
+    "chainLocality": None,
+    # Side exclusivity (step 2), x height or null: no opposite-side bones past this margin.
+    "sideExclusive": None,
+    # Joint-zone smoothing (step 6), null or { "joints": [...], "radius": x height,
+    # "iterations": n, "alpha": 0..1 }.
+    "jointSmooth": None,
 }
 
 ARM_BONES = {"LeftArm", "LeftForeArm", "LeftHand", "RightArm", "RightForeArm", "RightHand"}
@@ -77,9 +107,132 @@ def part_rules(cfg):
         if extra.get("rigid"):
             allowed[extra["name"]] = {extra["rigid"]}
             rigid[extra["name"]] = extra["rigid"]
+        elif extra.get("kind") in CLOTH_BONES:
+            allowed[extra["name"]] = set(CLOTH_BONES[extra["kind"]])
+        elif extra.get("remove"):
+            allowed[extra["name"]] = set()  # deleted in the parts step; no face is left
         else:
             allowed[extra["name"]] = set(extra["bones"])
     return allowed, rigid
+
+
+# Bones a hanging-cloth extra may use (``kind`` in the config); weights are procedural.
+CLOTH_BONES = {
+    "skirt": ["Hips", "Spine02", "Spine01", "Spine", "LeftUpLeg", "RightUpLeg"],
+    "cape": ["Hips", "Spine02", "Spine01", "Spine", "neck", "LeftUpLeg", "RightUpLeg"],
+}
+# Share of a hanging cloth that follows the thighs at knee height: a skirt or a coat front
+# goes with the legs, a cape behind them only partly.
+CLOTH_LEG_SHARE = {"skirt": 0.8, "cape": 0.45}
+# Opt-in front panel of a cloth extra (``frontPanel`` on the extra, ``true`` or an object
+# overriding these): below the hip joints and in front of them the cloth follows both
+# thighs, split over ±spread x the hip half-width instead of ±1, with ``share`` on the legs
+# at knee height, like a skirt with less gain.
+FRONT_PANEL = {"share": 0.25, "spread": 3.0}
+
+
+def smoothstep(t):
+    t = np.clip(t, 0.0, 1.0)
+    return t * t * (3 - 2 * t)
+
+
+def cloth_weights(points, kind, joints, bidx, front_panel=None):
+    """Procedural weights for hanging cloth (coat skirts, skirts, capes).
+
+    Above the hips the cloth follows the spine chain by height (piecewise linear between
+    Hips, Spine02, Spine01, Spine and, for capes, neck).  Below the hip joints it fades into
+    the thighs down to the knees, split left/right by x, with ``CLOTH_LEG_SHARE`` of the
+    weight on the legs at knee height and the rest on Hips, so walking opens the cloth
+    instead of tearing it between Hips and a leg.  ``front_panel`` (see ``FRONT_PANEL``)
+    blends the front of the cloth, from the hip joints forward over one hip half-width,
+    into a both-thighs split with its own leg share.
+    """
+    chain = ["Hips", "Spine02", "Spine01", "Spine"] + (["neck"] if kind == "cape" else [])
+    zs = np.array([joints[b].z for b in chain])
+    W = np.zeros((len(points), len(bidx)))
+    z, x = points[:, 2], points[:, 0]
+    for i in range(len(chain) - 1):
+        lo, hi = zs[i], zs[i + 1]
+        inside = (z >= lo) & (z < hi) if i < len(chain) - 2 else (z >= lo)
+        t = np.clip((z[inside] - lo) / max(hi - lo, 1e-6), 0, 1)
+        W[inside, bidx[chain[i]]] = 1 - t
+        W[inside, bidx[chain[i + 1]]] += t
+    below = z < zs[0]
+    hip_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
+    knee_z = 0.5 * (joints["LeftLeg"].z + joints["RightLeg"].z)
+    leg_x = 0.5 * (abs(joints["LeftUpLeg"].x) + abs(joints["RightUpLeg"].x))
+    drop = smoothstep((hip_z - z[below]) / max(hip_z - knee_z, 1e-6))
+    legs = CLOTH_LEG_SHARE[kind] * drop
+    left = smoothstep((x[below] + leg_x) / (2 * leg_x))
+    if front_panel:
+        fp = {**FRONT_PANEL, **(front_panel if isinstance(front_panel, dict) else {})}
+        hip_y = 0.5 * (joints["LeftUpLeg"].y + joints["RightUpLeg"].y)
+        f = smoothstep((hip_y - points[below, 1]) / leg_x)
+        spread = fp["spread"] * leg_x
+        legs = (1 - f) * legs + f * fp["share"] * drop
+        left = (1 - f) * left + f * smoothstep((x[below] + spread) / (2 * spread))
+    W[below, bidx["LeftUpLeg"]] = legs * left
+    W[below, bidx["RightUpLeg"]] = legs * (1 - left)
+    W[below, bidx["Hips"]] = 1 - legs
+    return W
+
+
+def band_model(co, joints, bidx, kind, margin, fade_below=None):
+    """Weights of the waist, neck or flank band model and their blend factor per vertex.
+
+    waist: from ``margin`` below the hip joints up to Spine02.  The thighs take the sides
+    (|sin| of the angle around the vertical axis through Hips, so a belly or a coat front
+    and the small of the back stay on the spine) and fade out by the Hips joint; the rest
+    goes from Hips to Spine02 by height.
+    neck: from Spine up to ``margin`` above Head.  The clavicles take the sides and fade out
+    by the neck joint; the rest goes Spine -> neck -> Head by height.
+    flank: from Hips up to Spine01, on the sides of the torso only (|sin| of the angle
+    around the vertical through Hips from 0.5 to 0.9, so the belly front and the back keep
+    their weights): only the spine chain by height (Hips -> Spine02 -> Spine01), no
+    clavicle and no thigh, where heat put both on one flank of a big belly.
+    The blend factor is 1 inside the band and smoothsteps to 0 over margin / 2 beyond it
+    (below it over ``fade_below`` when given).
+    """
+    x, y, z = co[:, 0], co[:, 1], co[:, 2]
+    W = np.zeros((len(co), len(bidx)))
+    side_of = 1.0
+    if kind == "flank":
+        lo, mid, hi = joints["Hips"].z, joints["Spine02"].z, joints["Spine01"].z
+        side = np.abs(x) / np.maximum(np.hypot(x, y - joints["Hips"].y), 1e-6)
+        side_of = smoothstep((side - 0.5) / 0.4)
+        up = smoothstep((z - lo) / max(mid - lo, 1e-6))
+        top = smoothstep((z - mid) / max(hi - mid, 1e-6))
+        W[:, bidx["Hips"]] = 1 - up
+        W[:, bidx["Spine02"]] = up * (1 - top)
+        W[:, bidx["Spine01"]] = up * top
+    elif kind == "waist":
+        axis_y = joints["Hips"].y
+        up_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
+        lo, hips_z, hi = up_z - margin, joints["Hips"].z, joints["Spine02"].z
+        side = np.abs(x) / np.maximum(np.hypot(x, y - axis_y), 1e-6)
+        limb = smoothstep((side - 0.3) / 0.5) * smoothstep((hips_z - z) / max(hips_z - lo, 1e-6))
+        up = smoothstep((z - hips_z) / max(hi - hips_z, 1e-6))
+        W[:, bidx["LeftUpLeg"]] = np.where(x >= 0, limb, 0.0)
+        W[:, bidx["RightUpLeg"]] = np.where(x < 0, limb, 0.0)
+        W[:, bidx["Hips"]] = (1 - limb) * (1 - up)
+        W[:, bidx["Spine02"]] = (1 - limb) * up
+    else:
+        axis_y = joints["neck"].y
+        lo, neck_z, head_z = joints["Spine"].z, joints["neck"].z, joints["Head"].z
+        hi = head_z + margin
+        side = np.abs(x) / np.maximum(np.hypot(x, y - axis_y), 1e-6)
+        limb = smoothstep((side - 0.3) / 0.5) * (1 - smoothstep((z - lo) / max(neck_z - lo, 1e-6)))
+        lower = smoothstep((z - lo) / max(neck_z - lo, 1e-6))
+        upper = smoothstep((z - neck_z) / max(head_z - neck_z, 1e-6))
+        W[:, bidx["LeftShoulder"]] = np.where(x >= 0, limb, 0.0)
+        W[:, bidx["RightShoulder"]] = np.where(x < 0, limb, 0.0)
+        W[:, bidx["Spine"]] = (1 - limb) * (1 - lower)
+        W[:, bidx["neck"]] = (1 - limb) * lower * (1 - upper)
+        W[:, bidx["Head"]] = (1 - limb) * lower * upper
+    fade = 0.5 * margin
+    below = fade_below or fade
+    alpha = smoothstep((z - (lo - below)) / below) * smoothstep(((hi + fade) - z) / fade) * side_of
+    return W, alpha
 
 
 def vertex_groups_matrix(obj, bones):
@@ -227,6 +380,48 @@ def main():
             rigid[v] = rigid_bones.pop()
         elif vparts[v] == {"head"} and co[v, 2] > head_rigid_z:
             rigid[v] = "Head"
+    # Torso height limits (opt-in): heat lets a thigh reach up a belly or a coat front and a
+    # clavicle reach down a chest or a bib, where hip flexion or a shrug then drags skin far
+    # from the joint.  With thighCeiling, vertices on no leg part carry the thighs no higher
+    # than that fraction of UpLeg -> Hips; with clavicleFloor, vertices on no arm or hand
+    # part carry the clavicles no lower than that fraction of Spine02 -> Spine01.  The
+    # boundary fades of step 3 ramp them out.  Off by default: switched on for all 37
+    # characters of the 2026-11-09 set they fixed the chest of coelho-pascoa-shopping and
+    # corisco but made five passing rigs fail at the hips or shoulders.
+    if P["thighCeiling"] is not None:
+        up_z = 0.5 * (joints["LeftUpLeg"].z + joints["RightUpLeg"].z)
+        above = co[:, 2] > up_z + P["thighCeiling"] * (joints["Hips"].z - up_z)
+        off_legs = np.array([not any(part.startswith("leg_") for part in vparts[v]) for v in range(n)])
+        for bone in ("LeftUpLeg", "RightUpLeg"):
+            allowed[off_legs & above, bidx[bone]] = False
+    if P["clavicleFloor"] is not None:
+        below = co[:, 2] < joints["Spine02"].z + P["clavicleFloor"] * (joints["Spine01"].z - joints["Spine02"].z)
+        off_arms = np.array([not any(part.startswith(("arm_", "hand_")) for part in vparts[v]) for v in range(n)])
+        for bone in ("LeftShoulder", "RightShoulder"):
+            allowed[off_arms & below, bidx[bone]] = False
+    # Spine-chain locality (opt-in, chainLocality x height): on vertices of no limb part, a
+    # chain bone (Hips, Spine02, Spine01, Spine, neck) is allowed only between its parent
+    # joint and its child joint (where a linear blend along the chain would give it any
+    # weight), widened by the margin.  Heat on a coat or a big body can leave Hips weight
+    # 25 cm above the Hips joint, which a crouch then folds open.
+    if P["chainLocality"] is not None:
+        chain = ["Hips", "Spine02", "Spine01", "Spine", "neck", "Head"]
+        zs = [joints[b].z for b in chain]
+        margin = P["chainLocality"] * H
+        off_limbs = np.array([not any(p.startswith(("arm_", "hand_", "leg_")) for p in vparts[v]) for v in range(n)])
+        for i, bone in enumerate(chain[:-1]):
+            lo = zs[i - 1] - margin if i > 0 else -np.inf
+            hi = zs[i + 1] + margin
+            allowed[off_limbs & ((co[:, 2] < lo) | (co[:, 2] > hi)), bidx[bone]] = False
+    # Side exclusivity (opt-in, sideExclusive x height): a vertex more than the margin to
+    # one side of the midline carries no bone of the other side.  Heat through a collar,
+    # a cape or a fused chest can put RightShoulder weight on the left armpit.
+    if P["sideExclusive"] is not None:
+        margin = P["sideExclusive"] * H
+        for prefix, other_side in (("Right", co[:, 0] > margin), ("Left", co[:, 0] < -margin)):
+            for name in deform:
+                if name.startswith(prefix):
+                    allowed[other_side, bidx[name]] = False
     W = np.where(allowed, W, 0.0)
     nearest_fill = 0
     bone_heads = {name: joints[name.split(".")[0]] for name in deform}
@@ -297,6 +492,104 @@ def main():
         W[mask, cb] = share[mask] * s
         W[mask, pb] = share[mask] * (1 - s)
 
+    # ---------------------------------------------------------------- 4c. hanging cloth
+    for v in np.nonzero([r is not None for r in rigid])[0]:
+        W[v] = 0.0
+        W[v, bidx[rigid[v]]] = 1.0
+    landmarks = json.loads((args.work / "parts.json").read_text())["landmarks"]
+    crotch_z = float(landmarks["crotchZ"])
+    rigid_mask = np.array([r is not None for r in rigid])
+    # Vertices on a seam between two cloth extras (a coat cut into an upper and a lower
+    # extra) take the mean of their extras' cloth weights; left on heat they tore the seam
+    # (vlad death 4.05x: seam Hips 0.61 + RightUpLeg 0.28 next to cloth Hips 0.96).
+    cloth = {e["name"]: e for e in cfg.get("extras", []) if e.get("kind") in CLOTH_BONES}
+    on_cloth = np.array([bool(vparts[v]) and vparts[v] <= cloth.keys() for v in range(n)]) & ~rigid_mask
+    cloth_vertices = {}
+    if on_cloth.any():
+        Wc = np.zeros((n, len(bidx)))
+        share = np.array([len(vparts[v]) for v in range(n)], dtype=float)
+        for name, extra in cloth.items():
+            mask = on_cloth & np.array([name in vparts[v] for v in range(n)])
+            Wc[mask] += cloth_weights(co[mask], extra["kind"], joints, bidx, extra.get("frontPanel")) / share[mask, None]
+            cloth_vertices[name] = int((mask & (share == 1)).sum())
+        W[on_cloth] = Wc[on_cloth]
+        cloth_vertices["seam"] = int((on_cloth & (share > 1)).sum())
+
+    # ---------------------------------------------------------------- 4c'. band models
+    # Opt-in replacements for heat where crouch and death tear a junction whose heat
+    # weights depend on what the surface happens to touch (a coat front over the thighs,
+    # a tail base, dreads over the nape).  Inside the band the weights are a smooth
+    # function of height and of the angle around the torso axis only; they fade back to the
+    # rule weights over half the margin beyond each end.
+    band_vertices = {}
+    eligible = ~rigid_mask & np.array([not any(p.startswith(("arm_", "hand_")) for p in vparts[v]) for v in range(n)])
+    for kind, margin in (("waist", P["waistBand"]), ("neck", P["neckBand"]), ("flank", P["flankBand"])):
+        if not margin:
+            continue
+        fade_below = P["flankFade"] * H if kind == "flank" and P["flankFade"] else None
+        Wm, alpha = band_model(co, joints, bidx, kind, margin * H, fade_below)
+        Wm = np.where(allowed, Wm, 0.0)
+        sums = Wm.sum(axis=1)
+        alpha = np.where(eligible & (sums > 1e-6), alpha, 0.0)
+        if kind in ("waist", "flank"):
+            alpha = np.where([("head" in vparts[v]) for v in range(n)], 0.0, alpha)
+        if kind in ("neck", "flank"):
+            alpha = np.where([any(p.startswith("leg_") for p in vparts[v]) for v in range(n)], 0.0, alpha)
+        Wm = np.divide(Wm, sums[:, None], out=np.zeros_like(Wm), where=sums[:, None] > 1e-6)
+        rows = W.sum(axis=1, keepdims=True)
+        W = np.divide(W, rows, out=np.zeros_like(W), where=rows > 1e-9)
+        W = alpha[:, None] * Wm + (1 - alpha[:, None]) * W
+        band_vertices[kind] = int((alpha > 0.5).sum())
+
+    # ---------------------------------------------------------------- 4d. groin
+    band = P["groinBand"] * H
+    groin = 0
+    if band > 0:
+        leg_x = 0.5 * (abs(joints["LeftUpLeg"].x) + abs(joints["RightUpLeg"].x))
+        m = smoothstep(1 - np.abs(co[:, 0]) / leg_x) * smoothstep(1 - np.abs(co[:, 2] - crotch_z) / band)
+        m = np.where(rigid_mask | ~allowed[:, bidx["Hips"]], 0.0, m)
+        for side in ("LeftUpLeg", "RightUpLeg"):
+            moved = W[:, bidx[side]] * m
+            W[:, bidx[side]] -= moved
+            W[:, bidx["Hips"]] += moved
+        groin = int((m > 0.05).sum())
+
+    # ---------------------------------------------------------------- 4e. gradient limit
+    # Hard weight steps between neighbouring vertices (heat on layered cloth, proxy transfer
+    # across fused voxels, binary weights on small islands) tear edges open whatever the
+    # thresholds elsewhere.  Every edge whose weight change exceeds its length over
+    # gradientRamp x height is relaxed towards its neighbour, rigid vertices held fixed.
+    limit_iterations, limit_left = 0, 0
+    if P["gradientRamp"] > 0:
+        E = np.array([e.vertices[:] for e in me.edges], dtype=np.int64)
+        L = np.linalg.norm(co[E[:, 0]] - co[E[:, 1]], axis=1)
+        g = L / (P["gradientRamp"] * H)
+        free = (~rigid_mask).astype(float)
+        sums = W.sum(axis=1, keepdims=True)
+        W = np.divide(W, sums, out=np.zeros_like(W), where=sums > 1e-9)
+        for limit_iterations in range(1, int(P["gradientIterations"]) + 1):
+            d = W[E[:, 0]] - W[E[:, 1]]
+            mag = np.abs(d).max(axis=1)
+            over = mag > g * 1.001
+            if not over.any():
+                break
+            a, b = E[over, 0], E[over, 1]
+            fa, fb = free[a], free[b]
+            share = fa + fb
+            keep = share > 0
+            corr = d[over] * (1 - g[over] / mag[over])[:, None]
+            delta = np.zeros_like(W)
+            count = np.zeros(n)
+            np.add.at(delta, a[keep], -corr[keep] * (fa[keep] / share[keep])[:, None])
+            np.add.at(delta, b[keep], corr[keep] * (fb[keep] / share[keep])[:, None])
+            np.add.at(count, a[keep], 1)
+            np.add.at(count, b[keep], 1)
+            W = np.where(allowed, np.clip(W + delta / np.maximum(count, 1)[:, None], 0, None), 0.0)
+            sums = W.sum(axis=1, keepdims=True)
+            W = np.divide(W, sums, out=np.zeros_like(W), where=sums > 1e-9)
+        # Counted on the final weights, after the last correction of the loop.
+        limit_left = int((np.abs(W[E[:, 0]] - W[E[:, 1]]).max(axis=1) > g * 1.001).sum())
+
     # ---------------------------------------------------------------- 5. rigid, limit, normalise
     for v in range(n):
         if rigid[v] is not None:
@@ -316,6 +609,33 @@ def main():
         else:
             row /= total
         W[v] = row
+
+    # ---------------------------------------------------------------- 6. joint-zone smoothing
+    # Opt-in.  The rules above leave the shoulders, armpits and neck with weights that change
+    # bone mix from one vertex to the next (part borders, ramps, the 4-influence cut); when an
+    # arm is raised to hold a weapon those edges fold to under half their length or open to
+    # twice it (client select-inflate gate).  Within ``radius`` x height of the listed joints
+    # (fading to nothing at twice that) each vertex moves ``alpha`` of the way to the mean of
+    # its neighbours, per iteration, over the bones it already carries only: no vertex gains
+    # a bone, so the part rules, rigid vertices (one bone) and the 4-influence limit hold.
+    joint_smoothed = 0
+    js = P["jointSmooth"]
+    if js:
+        centres = np.array([joints[name][:] for name in js["joints"]])
+        dist = np.min(np.linalg.norm(co[:, None, :] - centres[None], axis=2), axis=1)
+        zone = np.clip(2.0 - dist / (js["radius"] * H), 0.0, 1.0) * float(js.get("alpha", 0.5))
+        support = W > 0
+        zone = np.where(rigid_mask | (support.sum(axis=1) < 2), 0.0, zone)
+        joint_smoothed = int((zone > 0).sum())
+        E = np.array([e.vertices[:] for e in me.edges], dtype=np.int64)
+        deg = np.bincount(E.ravel(), minlength=n).astype(float)
+        for _ in range(int(js.get("iterations", 20))):
+            mean = np.zeros_like(W)
+            np.add.at(mean, E[:, 0], W[E[:, 1]])
+            np.add.at(mean, E[:, 1], W[E[:, 0]])
+            mean = np.divide(mean, deg[:, None], out=W.copy(), where=deg[:, None] > 0)
+            W = np.where(support, (1 - zone[:, None]) * W + zone[:, None] * mean, 0.0)
+            W /= W.sum(axis=1, keepdims=True)
 
     for g in list(body.vertex_groups):
         body.vertex_groups.remove(g)
@@ -339,6 +659,9 @@ def main():
         "heat": {"unweightedVertices": int(unweighted.sum()), "emptyBones": empty_bones},
         "nearestBoneFill": nearest_fill, "fadedWeights": faded, "smoothedVertices": smoothed,
         "rigidVertices": int(sum(r is not None for r in rigid)),
+        "clothVertices": cloth_vertices, "bandVertices": band_vertices, "groinVertices": groin,
+        "gradientLimit": {"iterations": limit_iterations, "edgesStillOver": limit_left},
+        "jointSmoothedVertices": joint_smoothed,
         "armWeightOnNoArmParts": C.r(W[only_no_arm][:, arm_cols].max() if only_no_arm.any() else 0.0, 6),
         "hands": hand_checks,
         "influences": {str(k): int((influences == k).sum()) for k in range(1, 5)},
@@ -358,4 +681,4 @@ def main():
           f"armOnTorso={report['armWeightOnNoArmParts']} hands={hand_checks} maxInf={report['maxInfluences']}")
 
 
-main()
+C.run_main(main)

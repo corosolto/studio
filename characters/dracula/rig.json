@@ -1,0 +1,122 @@
+{
+  "id": "dracula",
+  "forward": "-Y",
+  "targetHeight": 1.7,
+  "parts": {
+    "handPartOffset": 0.03
+  },
+  "weights": {
+    "linearBlends": [
+      [
+        "LeftForeArm",
+        "LeftHand",
+        0.06
+      ],
+      [
+        "RightForeArm",
+        "RightHand",
+        0.06
+      ],
+      [
+        "neck",
+        "Head",
+        0.05
+      ],
+      [
+        "Spine01",
+        "Spine",
+        0.08
+      ],
+      [
+        "Spine02",
+        "Spine01",
+        0.1
+      ],
+      [
+        "Hips",
+        "Spine02",
+        0.1
+      ]
+    ],
+    "headRigidAbove": 0.06
+  },
+  "extras": [
+    {
+      "name": "cape-back",
+      "select": {
+        "box": {
+          "min": [
+            null,
+            0.09,
+            0.19
+          ],
+          "max": [
+            null,
+            null,
+            1.4
+          ]
+        }
+      },
+      "bones": [
+        "Hips",
+        "Spine02",
+        "Spine01",
+        "Spine"
+      ]
+    },
+    {
+      "name": "cape-left-edge",
+      "select": {
+        "from": [
+          "leg_L",
+          "torso"
+        ],
+        "box": {
+          "min": [
+            0.16,
+            null,
+            0.19
+          ],
+          "max": [
+            null,
+            null,
+            1.15
+          ]
+        }
+      },
+      "bones": [
+        "Hips",
+        "Spine02",
+        "Spine01",
+        "Spine"
+      ]
+    },
+    {
+      "name": "cape-right-edge",
+      "select": {
+        "from": [
+          "leg_R",
+          "torso"
+        ],
+        "box": {
+          "min": [
+            null,
+            null,
+            0.19
+          ],
+          "max": [
+            -0.16,
+            null,
+            1.15
+          ]
+        }
+      },
+      "bones": [
+        "Hips",
+        "Spine02",
+        "Spine01",
+        "Spine"
+      ]
+    }
+  ]
+}
