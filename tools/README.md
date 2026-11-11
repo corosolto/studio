@@ -20,13 +20,21 @@ The public repository must not contain `.blend`, `.blend1`, `.glb`, `.fbx`, `.md
 ## Commands
 
 ```bash
-# Structure, JSON, public asset boundary, tool syntax, and the synthetic character pack
-# and concept prompt contracts (tools/checks/character-*-check.mjs)
+# Structure, JSON, public asset boundary, tool syntax, and the synthetic character pack,
+# concept prompt, rig and animation conversion contracts (tools/checks/*-check.mjs)
 npm run check
 
 # Source contracts without API calls
 npm run check:asset-gen
 npm run check:pistol-source
+
+# Animation conversion (docs/animation-conversion.md): Mixamo FBX / UAL glTF -> meshy-28
+# reference clips, bake onto a character, QA gate and contact sheet (private bytes stay outside)
+node tools/animations/convert-clips.mjs --manifest=tools/animations/manifests/pilot-20261109.json \
+  --catalog=/path/to/studio-assets/animations/catalog.json --out=/path/to/work/reference
+node tools/animations/bake-character.mjs --model=/path/to/character.glb --clips=/path/to/work/reference --out=/path/to/work/character
+node tools/animations/clip-qa.mjs --model=/path/to/character.glb --clips=/path/to/work/character --out=/path/to/work/qa.json --strict
+node tools/animations/clip-sheet.mjs --model=/path/to/character.glb --clips=/path/to/work/character --out=/path/to/work/sheet.png
 
 # Valid-package, builder and mutant smoke tests (synthetic fixtures only)
 npm run smoke:pack

@@ -1,0 +1,11 @@
+{
+  "description": "P1 pilot (2026-11-09): six Mixamo clips owner-downloaded to ~/Downloads. `id` is the corosolto/studio-assets animation catalog id (animations/catalog.json, resolved with --catalog); 'walk left'/'walk right' come from 'Rifle 8-Way Locomotion Pack.zip', byte-identical to the Pro Rifle Pack copies. Source files are private.",
+  "clips": [
+    { "name": "reload", "id": "mixamo/loose/reload", "hold": "none" },
+    { "name": "grenade-throw", "id": "mixamo/loose/grenade-throw", "hold": "none" },
+    { "name": "knife-idle", "id": "mixamo/loose/knife-idle", "loop": true, "hold": "knife" },
+    { "name": "rifle-pull-out", "id": "mixamo/loose/rifle-pull-out", "hold": "none" },
+    { "name": "rifle-walk-left", "id": "mixamo/pro-rifle-pack/walk-left", "loop": true, "hold": "rifle" },
+    { "name": "rifle-walk-right", "id": "mixamo/pro-rifle-pack/walk-right", "loop": true, "hold": "rifle" }
+  ]
+}

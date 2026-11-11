@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 // Numeric pose test of a skinned meshy-28 GLB (docs/character-rig.md).
 //
-//   node tools/characters/rig-pose-test.mjs <model.glb> [--clips=<dir>] [--out=<report.json>]
-//        [--label=<name>] [--strict] [--bake=<pose>[@<fraction>]:<out.glb>]...
+//   node tools/characters/rig-pose-test.mjs <model.glb> [--clips=<dir>] [--states=<a,b,...>] [--samples=<n>]
+//        [--out=<report.json>] [--label=<name>] [--strict] [--bake=<pose>[@<fraction>]:<out.glb>]...
 //
 // Skins the mesh on the CPU exactly like three.js and measures, for five synthetic poses
 // (arms up 90°, arms forward 60°, a step with each leg, head turned 60°) and, with --clips, for
-// 8 instants of each of the 11 state clips (use the clips retargeted to this model): the
+// 8 instants (--samples) of each of the 11 state clips (use the clips retargeted to this model;
+// --states measures other clips of the directory, e.g. --states=reload,grenade-throw): the
 // longest edge stretch versus the bind pose, the 99th percentile, the upper-back and hand
 // regions, how far welded seam vertices drift apart, and the 10 worst vertices with their
 // bones. --strict exits 1 when tools/lib/character-rig.mjs#POSE_THRESHOLDS fail.
@@ -25,11 +26,13 @@ const args = process.argv.slice(2);
 const flag = (name) => args.find((a) => a.startsWith(`--${name}=`))?.slice(name.length + 3);
 const model = args.find((a) => !a.startsWith('--'));
 if (!model) {
-  console.error('usage: rig-pose-test.mjs <model.glb> [--clips=<dir>] [--out=<report.json>] [--label=<name>] [--strict] [--bake=<pose>[@<f>]:<out.glb>]');
+  console.error('usage: rig-pose-test.mjs <model.glb> [--clips=<dir>] [--states=<a,b>] [--samples=<n>] [--out=<report.json>] [--label=<name>] [--strict] [--bake=<pose>[@<f>]:<out.glb>]');
   process.exit(1);
 }
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
 const clipsDir = flag('clips');
+const states = flag('states') ? flag('states').split(',').filter(Boolean) : CLIP_STATES;
+const samples = Math.max(2, Number(flag('samples') || CLIP_SAMPLES));
 const rig = loadRig(await io.read(model));
 const setup = measureSetup(rig);
 const poses = [];
@@ -39,14 +42,14 @@ for (const pose of SYNTHETIC_POSES) {
   poses.push({ kind: 'synthetic', name: pose.name, ...measurePose(rig, setup, skinPositions(rig, syntheticOverrides(rig, pose))) });
 }
 if (clipsDir) {
-  for (const state of CLIP_STATES) {
+  for (const state of states) {
     const file = path.join(clipsDir, `${state}.glb`);
     if (!existsSync(file)) throw new Error(`missing clip ${file}`);
     const sampler = clipSampler(await io.read(file));
     if (!sampler) throw new Error(`${file}: no animation`);
     samplers.set(state, sampler);
-    for (let k = 0; k < CLIP_SAMPLES; k += 1) {
-      const fraction = k / (CLIP_SAMPLES - 1);
+    for (let k = 0; k < samples; k += 1) {
+      const fraction = k / (samples - 1);
       const time = +(sampler.duration * fraction).toFixed(4);
       poses.push({ kind: 'clip', name: state, time, ...measurePose(rig, setup, skinPositions(rig, clipOverrides(rig, sampler, time))) });
     }
