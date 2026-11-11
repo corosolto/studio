@@ -669,31 +669,42 @@ export const FLOAT_DROP = 0.02;
    the shallower depth first; the same IK raises a wrist or an ankle whose levers are all
    vertical (a hand planted under a straight arm). `lift` regions raise the hips instead:
    knees (a kneeling thigh is vertical, so no rotation lifts the knee) and the rest of the
-   body (`bones: null`: torso, head, upper limbs lying on the floor). */
+   body (`bones: null`: torso, head, upper limbs lying on the floor). `sole` regions define
+   the floor (the lowest of their vertices in the bind pose). */
 export const FLOOR_CLAMP_REGIONS = Object.freeze([
-  { name: 'heel', bones: ['LeftFoot'], pivots: ['LeftFoot'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'], ball: 'LeftToeBase' },
-  { name: 'heel', bones: ['RightFoot'], pivots: ['RightFoot'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'], ball: 'RightToeBase' },
-  { name: 'toe', bones: ['LeftToeBase'], pivots: ['LeftToeBase'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'] },
-  { name: 'toe', bones: ['RightToeBase'], pivots: ['RightToeBase'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'] },
+  { name: 'heel', bones: ['LeftFoot'], pivots: ['LeftFoot'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'], ball: 'LeftToeBase', sole: true },
+  { name: 'heel', bones: ['RightFoot'], pivots: ['RightFoot'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'], ball: 'RightToeBase', sole: true },
+  { name: 'toe', bones: ['LeftToeBase'], pivots: ['LeftToeBase'], limb: ['LeftUpLeg', 'LeftLeg', 'LeftFoot'], sole: true },
+  { name: 'toe', bones: ['RightToeBase'], pivots: ['RightToeBase'], limb: ['RightUpLeg', 'RightLeg', 'RightFoot'], sole: true },
   { name: 'hand', bones: ['LeftHand', 'Curl_L'], pivots: ['LeftForeArm', 'LeftArm'], limb: ['LeftArm', 'LeftForeArm', 'LeftHand'] },
   { name: 'hand', bones: ['RightHand', 'Curl_R'], pivots: ['RightForeArm', 'RightArm'], limb: ['RightArm', 'RightForeArm', 'RightHand'] },
   { name: 'knee', bones: ['LeftLeg'], lift: true, below: ['LeftFoot', 'shoe'] },
   { name: 'knee', bones: ['RightLeg'], lift: true, below: ['RightFoot', 'shoe'] },
-  { name: 'body', bones: null, lift: true },
+  // Non-leg vertices below mid-thigh in the bind pose are hanging cloth (see `hem`); thigh
+  // vertices (the kneecap included) stay body.
+  { name: 'body', bones: null, lift: true, below: [['LeftUpLeg', 'LeftLeg'], 'hem', ['LeftUpLeg', 'RightUpLeg']] },
   // Passive: shin-weighted vertices below the ankle in the bind pose (a shoe skinned to the
   // shin, a rig defect common in the legacy client rigs). They move with the shin, so no foot
   // pivot can lift them, and lifting the body for them makes the character float; the clamp
   // leaves them and the QA gate reports them as `shoe` (rig), not as floor penetration.
-  { name: 'shoe', bones: [], passive: true },
+  { name: 'shoe', bones: [], passive: true, sole: true },
+  // Passive: hanging cloth, torso- or arm-weighted vertices below mid-thigh in the bind pose
+  // (a cape, robe or coat skinned to the Hips or the spine: no pelvis reaches that low). It
+  // swings through the floor in a crouch; lifting the body for it floated dracula's soles
+  // 30 cm, and it does not hold the body up when it drops back to the floor either. The QA
+  // reports it apart, like shoes.
+  { name: 'hem', bones: [], passive: true, hangs: true },
 ]);
 
 /**
  * Region index of every vertex of `rig` (dominant joint; a `bones: null` region takes the rest;
- * `below: [joint, region]` sends vertices lower than that joint in the bind pose to `region`).
+ * `below: [joint, region, except]` sends vertices lower than that joint (or the mean height of
+ * a joint list) in the bind pose to `region`, unless their dominant joint is in `except`).
  */
 export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
   const world = worldMatrices(rig);
-  const height = (name) => { const n = rig.byName.get(name)?.[0]; return n ? new THREE.Vector3().setFromMatrixPosition(world(n)).y : -Infinity; };
+  const joint = (name) => { const n = rig.byName.get(name)?.[0]; return n ? new THREE.Vector3().setFromMatrixPosition(world(n)).y : -Infinity; };
+  const height = (at) => (Array.isArray(at) ? at.reduce((s, n) => s + joint(n), 0) / at.length : joint(at));
   const bind = skinPositions(rig);
   return rig.prims.map((p, pi) => {
     const out = new Array(p.count).fill(null);
@@ -704,7 +715,7 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
       let region = regions.findIndex((r) => r.bones?.includes(name));
       if (region < 0) region = regions.findIndex((r) => r.bones === null);
       const below = regions[region]?.below;
-      if (below && bind[pi][v * 3 + 1] < height(below[0])) {
+      if (below && !below[2]?.includes(name) && bind[pi][v * 3 + 1] < height(below[0])) {
         const other = regions.findIndex((r) => r.name === below[1]);
         if (other >= 0) region = other;
       }
@@ -715,13 +726,29 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
 }
 
 /**
+ * The floor of `rig` (bind pose y): the lowest vertex of the `sole` regions (feet, toes,
+ * shoes), or of the whole mesh when no vertex belongs to them. `membership`: vertexRegions().
+ */
+export function soleFloor(rig, membership, regions = FLOOR_CLAMP_REGIONS) {
+  const bind = skinPositions(rig);
+  let sole = Infinity, any = Infinity;
+  bind.forEach((b, pi) => membership[pi].forEach((region, v) => {
+    const y = b[v * 3 + 1];
+    any = Math.min(any, y);
+    if (region != null && regions[region].sole) sole = Math.min(sole, y);
+  }));
+  return Number.isFinite(sole) ? sole : any;
+}
+
+/**
  * Bake-time, mesh-aware floor clamp (`rig`: loadRig of the character). Per frame the mesh is
  * skinned; when a region's lowest vertex sinks more than FLOOR_CLAMP_TOLERANCE below the bind
- * floor, the region's pivot turns it up about the horizontal axis across the lever (at most 45°
- * per step), a foot whose heel and toes both sink (or a limb no pivot can lift) is raised by
+ * floor (soleFloor), the region's pivot turns it up about the horizontal axis across the lever
+ * (at most 45° per step), a foot whose heel and toes both sink (or a limb no pivot can lift) is raised by
  * two-bone IK, and `lift` regions raise the hips by the depth. Up to 8 passes per frame; then
  * the whole body is lifted out of any remaining penetration, or dropped when it hangs more than
  * FLOAT_DROP above the source's lowest foot (`clearance`: extras.clip.footClearance, scaled).
+ * Hanging cloth (`hangs` regions: a hem below the knee) neither lifts nor holds up the body.
  * A heel that sinks while its ball is planted (`contacts`: frame windows per joint, e.g.
  * result.contacts) turns about the ball instead of the ankle: the ankle moves by leg IK and the
  * ball stays where the foot lock put it (pitching about the ankle swept a planted ball up to
@@ -731,11 +758,9 @@ export function vertexRegions(rig, regions = FLOOR_CLAMP_REGIONS) {
  * below the tolerance.
  */
 export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passes = 8, clearance = null, contacts = null } = {}) {
-  const bind = skinPositions(rig);
-  let floor = Infinity;
-  for (const b of bind) for (let v = 1; v < b.length; v += 3) floor = Math.min(floor, b[v]);
   const node = (name) => rig.byName.get(name)?.[0];
   const membership = vertexRegions(rig, regions);
+  const floor = soleFloor(rig, membership, regions);
   const active = regions.map((r, i) => !r.passive && membership.some((m) => m.includes(i)) && (r.lift || r.pivots.some((p) => node(p) && result.rotations.has(p))));
   const stats = {};
   for (const r of regions) stats[r.name] ||= { frames: 0, max: 0 };
@@ -874,12 +899,13 @@ export function clampToFloor(rig, result, { regions = FLOOR_CLAMP_REGIONS, passe
     }
     // Whole body last: lift it out of the floor, or, where the source has a foot planted
     // (clearance ≤ 1 cm) and this character hangs more than FLOAT_DROP above the floor, drop it.
-    // Lift by the active regions; drop only as far as no vertex at all (passive shoes included) sinks.
+    // Lift by the active regions; drop only as far as no vertex (passive shoes included, hanging
+    // cloth not) sinks.
     let lowest = Infinity, lowestAll = Infinity;
     skinPositions(rig, overrides).forEach((p, pi) => membership[pi].forEach((region, v) => {
       const y = p[v * 3 + 1];
       if (region != null && active[region]) lowest = Math.min(lowest, y);
-      if (region != null && (active[region] || regions[region].passive)) lowestAll = Math.min(lowestAll, y);
+      if (region != null && (active[region] || (regions[region].passive && !regions[region].hangs))) lowestAll = Math.min(lowestAll, y);
     }));
     lowest -= floor; lowestAll -= floor;
     // Drop: the lowest point follows the source's lowest foot (clearance, scaled): a planted
