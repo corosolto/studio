@@ -18,7 +18,8 @@
         0.06
       ]
     ],
-    "gradientRamp": 0.04
+    "gradientRamp": 0.04,
+    "neckBand": 0.04
   },
   "extras": [
     {
@@ -41,6 +42,12 @@
           ]
         }
       },
+      "bones": ["Spine", "neck", "Head", "LeftShoulder", "RightShoulder"],
+      "measure": true
+    },
+    {
+      "name": "hood-crown",
+      "select": { "from": ["hood"], "box": { "min": [null, null, 1.58], "max": [null, null, null] } },
       "rigid": "Head",
       "measure": true
     },

@@ -6,6 +6,7 @@
     "handPartOffset": 0.03
   },
   "weights": {
+    "gradientRamp": 0.05,
     "voxelSize": 0.003,
     "rampLength": 0.12,
     "smoothRadius": 0.1,
@@ -20,7 +21,11 @@
         "RightForeArm",
         "RightHand",
         0.06
-      ]
+      ],
+      ["LeftShoulder", "LeftArm", 0.06],
+      ["LeftArm", "LeftForeArm", 0.05],
+      ["RightShoulder", "RightArm", 0.06],
+      ["RightArm", "RightForeArm", 0.05]
     ]
   },
   "extras": [

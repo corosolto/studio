@@ -6,6 +6,7 @@
     "handPartOffset": 0.03
   },
   "weights": {
+    "jointSmooth": { "joints": ["LeftShoulder", "RightShoulder"], "radius": 0.03, "iterations": 20, "alpha": 0.5 },
     "linearBlends": [
       [
         "LeftForeArm",

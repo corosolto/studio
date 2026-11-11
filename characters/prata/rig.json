@@ -3,6 +3,8 @@
   "forward": "-Y",
   "targetHeight": 1.7,
   "weights": {
+    "jointSmooth": { "joints": ["LeftShoulder", "RightShoulder", "LeftArm", "RightArm"], "radius": 0.03, "iterations": 5, "alpha": 0.5 },
+    "gradientRamp": 0.05,
     "linearBlends": [
       [
         "LeftForeArm",
@@ -33,7 +35,9 @@
         "RightShoulder",
         "RightArm",
         0.08
-      ]
+      ],
+      ["LeftArm", "LeftForeArm", 0.05],
+      ["RightArm", "RightForeArm", 0.05]
     ]
   }
 }

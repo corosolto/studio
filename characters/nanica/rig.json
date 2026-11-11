@@ -9,6 +9,7 @@
     "armMinLength": null
   },
   "weights": {
+    "jointSmooth": { "joints": ["LeftShoulder", "RightShoulder", "LeftArm", "RightArm"], "radius": 0.06, "iterations": 20, "alpha": 0.5 },
     "linearBlends": [
       [
         "LeftForeArm",
