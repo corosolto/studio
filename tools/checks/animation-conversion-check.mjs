@@ -683,6 +683,42 @@ await clause('Q4 a body hanging above the floor drops back where the source has 
   return `planted: ${planted.maxCm} cm, source in the air: kept at ${flying.minCm} cm`;
 });
 
+/* A Hips-skinned skirt hanging below the knees crosses the floor in a crouch (dracula's cape,
+   satanista's robe). The soles define the floor: the clamp leaves the hem passive and drops the
+   body onto the soles; the old rule (hem vertices in the lifting `body` region) hoisted the hips
+   by the hem's depth and the soles floated, which the QA's lowest-sole float gate must catch
+   even though the hem itself lies on the floor. */
+await clause('Q4 a hem below the knees never lifts the body; the QA catches floating soles above a low hem', async () => {
+  const hemDoc = synthDocument({ hem: true });
+  const hemRig = loadRig(hemDoc);
+  const theta = 60, drop = (J.LeftUpLeg[1] - J.LeftFoot[1]) * (1 - Math.cos(THREE.MathUtils.degToRad(theta)));
+  const crouch = () => ({
+    deltas: { LeftUpLeg: Q(X, -theta), LeftLeg: Q(X, 2 * theta), LeftFoot: Q(X, -theta), RightUpLeg: Q(X, -theta), RightLeg: Q(X, 2 * theta), RightFoot: Q(X, -theta) },
+    hips: [0, -drop, 0],
+  });
+  const doc = bodyClip(crouch, { loop: false }, { duration: 0.2 });
+  const graph = skeletonGraph(doc);
+  const planted = new Array(7).fill(0);
+  const bake = async (regions) => {
+    const r = retargetClip(gltfPoseSource(doc, doc.getRoot().listAnimations()[0], RIG_MAPS['meshy-28']), bodyGraph, { rootMotion: 'keep', footIk: false, footContact: false, alignLimbs: [] });
+    const stats = clampToFloor(hemRig, r, { clearance: planted, regions });
+    const meta = { loop: false, footClearance: planted };
+    const reread = await io.readBinary(await io.writeBinary(writeClipDocument(graph, r, 'crouch', meta)));
+    const metrics = measureClip(hemRig, clipSampler(reread), clipMetadata(reread));
+    return { stats, low: metrics.lowestVertex, failures: evaluateClip(metrics, clipMetadata(reread)) };
+  };
+  const hem = FLOOR_CLAMP_REGIONS.findIndex((x) => x.name === 'hem');
+  assert(vertexRegions(hemRig)[0].some((x) => x === hem), 'no hem vertex in the skirted body');
+  const fixed = await bake(FLOOR_CLAMP_REGIONS);
+  assert(Math.abs(fixed.low.soleMaxCm) < 1 && fixed.low.floatOverSourceCm < 1 && !fixed.failures.some((f) => /floats|penetration|heel/.test(f)), `soles ${fixed.low.soleMaxCm} cm above the floor (${fixed.failures.join('; ')})`);
+  assert(fixed.low.byRegionCm.hem < -5, `fixture: the hem must cross the floor (${fixed.low.byRegionCm.hem} cm)`);
+  // Mutant: the old rule, the hem in the lifting body region.
+  const old = await bake(FLOOR_CLAMP_REGIONS.map((x) => (x.name === 'body' ? { ...x, below: undefined } : x)));
+  assert(old.stats.body.frames > 0 && old.low.soleMaxCm > 5, `mutant: hem lift did not float the soles (${old.low.soleMaxCm} cm, ${JSON.stringify(old.stats.body)})`);
+  assert(old.failures.some((f) => /floats/.test(f)), `QA mutant passed: soles ${old.low.soleMaxCm} cm above the floor over a hem at ${old.low.byRegionCm.hem} cm (${old.failures.join('; ') || 'no failure'})`);
+  return `hem ${fixed.low.byRegionCm.hem} cm, soles ${fixed.low.soleMaxCm} cm; old rule lifts the hips ${old.stats.body.max} m, soles float ${old.low.soleMaxCm} cm: ${old.failures.find((f) => /floats/.test(f))}`;
+});
+
 await clause('Q5 stretch cause: weight defects are the rig, neighbouring blends are the clip', () => {
   const v = (...bones) => ({ bones });
   const cases = [

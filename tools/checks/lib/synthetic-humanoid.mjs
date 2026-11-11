@@ -19,8 +19,9 @@ export const J = {
 export const TIPS = { LeftHandTip: [0.72, 1.25, 0], RightHandTip: [-0.72, 1.25, 0] };
 
 /** Tubes along joint chains (`joints`: another layout, same names); each ring is weighted by a
-    smoothstep blend around every joint. */
-export function synthBody({ mutant = null, joints: layout = J } = {}) {
+    smoothstep blend around every joint. `hem`: a skirt skinned to the Hips alone, hanging from
+    the hips to 15 cm above the floor (a cape or robe hem below the knees). */
+export function synthBody({ mutant = null, joints: layout = J, hem = false } = {}) {
   const positions = [], joints = [], weights = [], indices = [];
   const slot = new Map(meshy28Joints.map(([name], i) => [name, i]).reverse());
   const tube = (chain, radius, step = 0.02, sides = 8, blend = 0.05) => {
@@ -67,6 +68,7 @@ export function synthBody({ mutant = null, joints: layout = J } = {}) {
   tube(['RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', [-0.72, 1.25, 0]], 0.045);
   tube(['LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase', [0.14, 0.03, 0.2]], 0.06);
   tube(['RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase', [-0.14, 0.03, 0.2]], 0.06);
+  if (hem) tube(['Hips', [layout.Hips[0], 0.12, layout.Hips[2]]], 0.2);
   if (mutant === 'arm-weight-on-torso') {
     // Upper-back vertices of the spine tube take 60% LeftArm (the defect the part rules forbid).
     for (let i = 0; i < positions.length / 3; i += 1) {
