@@ -29,6 +29,8 @@
    weights in a band around the hips, the neck or the belly flanks as a function of height
    and angle around the torso axis.
 5. At most 4 influences per vertex, normalised.
+6. Opt-in joint-zone smoothing (``weights.jointSmooth``): near the listed joints the final
+   weights are smoothed across part boundaries without giving any vertex a new bone.
 
 Writes ``weights.blend``, ``weights.json`` and ``blender-rig.glb`` (Blender's own skin; run
 tools/characters/rig-assemble.mjs next for the meshy-28 GLB).
@@ -81,6 +83,9 @@ DEFAULTS = {
     "chainLocality": None,
     # Side exclusivity (step 2), x height or null: no opposite-side bones past this margin.
     "sideExclusive": None,
+    # Joint-zone smoothing (step 6), null or { "joints": [...], "radius": x height,
+    # "iterations": n, "alpha": 0..1 }.
+    "jointSmooth": None,
 }
 
 ARM_BONES = {"LeftArm", "LeftForeArm", "LeftHand", "RightArm", "RightForeArm", "RightHand"}
@@ -605,6 +610,33 @@ def main():
             row /= total
         W[v] = row
 
+    # ---------------------------------------------------------------- 6. joint-zone smoothing
+    # Opt-in.  The rules above leave the shoulders, armpits and neck with weights that change
+    # bone mix from one vertex to the next (part borders, ramps, the 4-influence cut); when an
+    # arm is raised to hold a weapon those edges fold to under half their length or open to
+    # twice it (client select-inflate gate).  Within ``radius`` x height of the listed joints
+    # (fading to nothing at twice that) each vertex moves ``alpha`` of the way to the mean of
+    # its neighbours, per iteration, over the bones it already carries only: no vertex gains
+    # a bone, so the part rules, rigid vertices (one bone) and the 4-influence limit hold.
+    joint_smoothed = 0
+    js = P["jointSmooth"]
+    if js:
+        centres = np.array([joints[name][:] for name in js["joints"]])
+        dist = np.min(np.linalg.norm(co[:, None, :] - centres[None], axis=2), axis=1)
+        zone = np.clip(2.0 - dist / (js["radius"] * H), 0.0, 1.0) * float(js.get("alpha", 0.5))
+        support = W > 0
+        zone = np.where(rigid_mask | (support.sum(axis=1) < 2), 0.0, zone)
+        joint_smoothed = int((zone > 0).sum())
+        E = np.array([e.vertices[:] for e in me.edges], dtype=np.int64)
+        deg = np.bincount(E.ravel(), minlength=n).astype(float)
+        for _ in range(int(js.get("iterations", 20))):
+            mean = np.zeros_like(W)
+            np.add.at(mean, E[:, 0], W[E[:, 1]])
+            np.add.at(mean, E[:, 1], W[E[:, 0]])
+            mean = np.divide(mean, deg[:, None], out=W.copy(), where=deg[:, None] > 0)
+            W = np.where(support, (1 - zone[:, None]) * W + zone[:, None] * mean, 0.0)
+            W /= W.sum(axis=1, keepdims=True)
+
     for g in list(body.vertex_groups):
         body.vertex_groups.remove(g)
     groups = {name: body.vertex_groups.new(name=name) for name in deform}
@@ -629,6 +661,7 @@ def main():
         "rigidVertices": int(sum(r is not None for r in rigid)),
         "clothVertices": cloth_vertices, "bandVertices": band_vertices, "groinVertices": groin,
         "gradientLimit": {"iterations": limit_iterations, "edgesStillOver": limit_left},
+        "jointSmoothedVertices": joint_smoothed,
         "armWeightOnNoArmParts": C.r(W[only_no_arm][:, arm_cols].max() if only_no_arm.any() else 0.0, 6),
         "hands": hand_checks,
         "influences": {str(k): int((influences == k).sum()) for k in range(1, 5)},

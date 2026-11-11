@@ -79,6 +79,12 @@ clause('R1 character rig configs are well formed', () => {
       const v = cfg.weights?.[key];
       assert(v === undefined || v === null || (v > 0 && v <= 0.2), `${file}: weights.${key} must be null or in (0, 0.2] x height`);
     }
+    const js = cfg.weights?.jointSmooth;
+    assert(js === undefined || js === null || (typeof js === 'object' && Object.keys(js).every((k) => ['joints', 'radius', 'iterations', 'alpha'].includes(k))
+      && Array.isArray(js.joints) && js.joints.length && js.joints.every((j) => uniqueJointNames.includes(j))
+      && js.radius > 0 && js.radius <= 0.2 && (js.iterations === undefined || (Number.isInteger(js.iterations) && js.iterations > 0 && js.iterations <= 200))
+      && (js.alpha === undefined || (js.alpha > 0 && js.alpha <= 1))),
+    `${file}: weights.jointSmooth must be null or { joints: [meshy-28 joints], radius in (0, 0.2] x height, iterations in 1..200, alpha in (0, 1] }`);
     assert([undefined, 'armpit', 'junction'].includes(cfg.joints?.shoulderAt), `${file}: joints.shoulderAt must be "armpit" or "junction"`);
   }
   return configs.map(([dir]) => dir).join(', ');
