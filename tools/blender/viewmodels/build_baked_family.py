@@ -37,6 +37,7 @@ def parse_args() -> argparse.Namespace:
     values = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--familia", required=True)
+    parser.add_argument("--manifest", type=Path, default=None)
     parser.add_argument("--arma", required=True)
     parser.add_argument("--mint", type=Path, required=True)
     parser.add_argument("--len", dest="length", type=float, required=True)
@@ -251,6 +252,8 @@ def main() -> None:
 
     # Constrói a família com o código PROVADO (a cena fica viva ao final).
     sys.argv = ["blender", "--", "--family", args.familia]
+    if args.manifest is not None:
+        sys.argv.extend(["--manifest", str(args.manifest)])
     _bpf.build()
     scene = bpy.context.scene
     scene.frame_set(1)
